@@ -55,11 +55,13 @@
   tags: SERVICE_NAME
 
 - name: Create SERVICE_NAME Docker Container
-  docker_container:
+  community.general.docker_container:
     name: SERVICE_NAME
     image: "{{registry_host}}/{{registry_username}}/docker-SERVICE_NAME:{{SERVICE_NAME_version}}"
     pull: yes
     hostname: SERVICE_NAME
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

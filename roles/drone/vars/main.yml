@@ -1,6 +1,0 @@
----
-drone_gitea_client_id: "{{vault_drone_gitea_client_id}}"
-drone_gitea_client_secret: "{{vault_drone_gitea_client_secret}}"
-drone_server_proto: "http"
-drone_cookie_secret: "{{vault_drone_cookie_secret}}"
-drone_cookie_timeout: "72h"

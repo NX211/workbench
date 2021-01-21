@@ -1,6 +1,7 @@
 ---
-    - name: Restart SERVICE_NAME
-      docker_container:
-        name: SERVICE_NAME
-        restart: yes
-      listen: restart SERVICE_NAME
+- name: Restart SERVICE_NAME
+  community.general.docker_container:
+    name: SERVICE_NAME
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart SERVICE_NAME

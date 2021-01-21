@@ -24,7 +24,6 @@ bazarr_version=latest
 bitwarden_version=latest
 chowdown_version=latest
 cyberchef_version=latest
-drone_version=latest
 elk_stack_version=7.8.0
 evebox_version=latest
 element_version=latest
