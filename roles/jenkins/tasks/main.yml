@@ -1,0 +1,31 @@
+---
+- name: Ensure Jenkins Volume Exist
+  docker_volume:
+    name: jenkins_data
+    state: present
+  notify: restart jenkins
+  tags: jenkins
+
+- name: Create jenkins Docker Container
+  community.general.docker_container:
+    name: jenkins
+    image: "jenkins/jenkins:{{jenkins_version}}"
+    pull: yes
+    hostname: jenkins
+    container_default_behavior: compatibility
+    network_mode: default
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    state: started
+    volumes:
+      - jenkins_data:/var/jenkins_home
+    labels:
+      traefik.http.routers.jenkins.entrypoints: "websecure"
+      traefik.http.routers.jenkins.tls: "true"
+      traefik.http.routers.jenkins.rule: "Host(`ci.{{git_tld}}`)"
+      traefik.http.routers.jenkins.service: "jenkins"
+      traefik.http.services.jenkins.loadbalancer.server.port: "8080"
+      traefik.enable: "true"
+  tags: jenkins

@@ -4,6 +4,7 @@
   gather_facts: False
   become: yes
   roles:
+    - peertube
     - jackett
     - hydra
     - bazarr

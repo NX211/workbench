@@ -1,0 +1,7 @@
+---
+- name: Restart Huginn
+  community.general.docker_container:
+    name: huginn
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart huginn

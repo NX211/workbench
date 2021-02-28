@@ -1,0 +1,7 @@
+---
+- name: Restart Jenkins
+  community.general.docker_container:
+    name: jenkins
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart jenkins

@@ -1,24 +1,28 @@
 ---
 - name: Restart Filebeat
-  docker_container:
+  community.general.docker_container:
     name: filebeat
+    container_default_behavior: compatibility
     restart: yes
   listen: restart filebeat
 
 - name: Restart Logstash
-  docker_container:
+  community.general.docker_container:
     name: logstash
+    container_default_behavior: compatibility
     restart: yes
   listen: restart logstash
 
 - name: Restart Elasticsearch
-  docker_container:
+  community.general.docker_container:
     name: elasticsearch
+    container_default_behavior: compatibility
     restart: yes
   listen: restart elasticsearch
 
 - name: Restart Kibana
-  docker_container:
+  community.general.docker_container:
     name: kibana
+    container_default_behavior: compatibility
     restart: yes
   listen: restart kibana

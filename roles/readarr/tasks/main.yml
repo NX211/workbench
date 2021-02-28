@@ -10,17 +10,19 @@
 - name: Ensure Readarr Configuration Files Exist
   template:
     src: "config.xml.j2"
-    dest: "{{project_directory}}/readarr/app/config.xml"
+    dest: "{{project_directory}}/readarr/config.xml"
   tags: readarr
   no_log: true
   notify: restart readarr
 
-- name: Create readarr Docker Container
-  docker_container:
+- name: Create Readarr Docker Container
+  community.general.docker_container:
     name: readarr
     image: "hotio/readarr:{{readarr_version}}"
     pull: yes
     hostname: readarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -33,6 +35,8 @@
       TZ: "{{default_timezone}}"
       ARGS: ""
       DEBUG: "no"
+      DOCKER_MODS: "gilbn/theme.park:radarr"
+      TP_THEME: "{{theme_park_default}}"
     volumes:
       - "{{project_directory}}/readarr:/config"
       - "{{media_directory}}/books:/media/books"
@@ -43,6 +47,7 @@
       traefik.http.routers.readarr.entrypoints: "websecure"
       traefik.http.routers.readarr.tls: "true"
       traefik.http.routers.readarr.rule: "Host(`readarr.{{project_tld}}`)"
+      traefik.http.routers.readarr.middlewares: "default-headers@file"
       traefik.http.routers.readarr.service: "readarr"
       traefik.http.services.readarr.loadbalancer.server.port: "8787"
       traefik.enable: "true"

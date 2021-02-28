@@ -6,14 +6,14 @@
   tags: vscode
 
 - name: Create VS Code Docker Container
-  docker_container:
+  community.general.docker_container:
     name: vscode
     image: "linuxserver/code-server:{{vscode_version}}"
     pull: yes
     hostname: vscode
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
-    published_ports:
-      - "22:2262"
     comparisons:
       labels: allow_more_present
       '*': strict
@@ -27,7 +27,7 @@
       SUDO_PASSWORD: "{{vscode_sudo_password}}"
       PROXY_DOMAINL: "ide.{{git_tld}}"
     volumes:
-      - "{{project_directory}}/vscode:/config"
+      - /home/nx211:/config
     labels:
       traefik.http.routers.vscode.entrypoints: "websecure"
       traefik.http.routers.vscode.tls: "true"

@@ -1,10 +1,12 @@
 ---
 - name: Create Registry Docker Container
-  docker_container:
+  community.general.docker_container:
     name: registry
     image: "registry:{{registry_version}}"
     pull: yes
     hostname: registry
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

@@ -1,0 +1,7 @@
+---
+- name: Restart Wallabag
+  community.general.docker_container:
+    name: wallabag
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart wallabag

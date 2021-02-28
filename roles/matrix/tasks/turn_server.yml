@@ -14,16 +14,18 @@
   notify: restart matrix
 
 - name: Create Turn Server Docker Container
-  docker_container:
+  community.general.docker_container:
     name: coturn
     image: "instrumentisto/coturn:{{matrix_version}}"
     pull: yes
     hostname: coturn
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
     networks_cli_compatible: yes
-    state: started
+    state: absent
     volumes:
       - "{{project_directory}}/synapse/coturn/turnserver.conf:/etc/coturn/turnserver.conf"
     labels:

@@ -14,11 +14,13 @@
   no_log: true
 
 - name: Create Gitea Docker Container
-  docker_container:
+  community.general.docker_container:
     name: gitea
     image: "gitea/gitea:{{gitea_version}}"
     pull: yes
     hostname: gitea
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     published_ports:
       - "2222:22"
@@ -37,6 +39,9 @@
       traefik.http.routers.gitea.entrypoints: "websecure"
       traefik.http.routers.gitea.tls: "true"
       traefik.http.routers.gitea.rule: "Host(`{{git_tld}}`)"
+      traefik.http.middlewares.gitea_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.gitea_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/gitea/{{theme_park_default}}.css></head>"
+      traefik.http.routers.gitea.middlewares: "default-headers@file,gitea_rewrite_theme"
       traefik.http.routers.gitea.service: "gitea"
       traefik.http.services.gitea.loadbalancer.server.port: "3000"
       traefik.enable: "true"

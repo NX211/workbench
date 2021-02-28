@@ -6,11 +6,13 @@
   tags: mongodb
 
 - name: Create MongoDB Docker Container
-  docker_container:
+  community.general.docker_container:
     name: mongodb
     hostname: mongodb
     image: "mongo:{{mongodb_version}}"
     pull: yes
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     published_ports:
       - 27017:27017

@@ -1,0 +1,75 @@
+---
+
+- name: Ensure PeerTube Directory Exist
+  file:
+    path: "{{project_directory}}/peertube"
+    state: directory
+    owner: "{{media_user}}"
+    group: "{{media_group}}"
+  tags: peertube
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  vars:
+    database_name: "{{peertube_database}}"
+    database_user: "{{peertube_database_user}}"
+    database_password: "{{peertube_database_password}}"
+  no_log: true
+  tags: peertube
+
+- name: Adds pg_trgm Extension to the PeerTube Database
+  postgresql_ext:
+    name: pg_trgm
+    db: "{{peertube_database}}"
+    login_host: "{{postgres_host}}"
+    login_port: "{{postgres_port}}"
+    login_password: "{{postgres_root_password}}"
+    cascade: true
+  tags: peertube
+
+- name: Adds Unaccent Extension to the PeerTube Database
+  postgresql_ext:
+    name: unaccent
+    db: "{{peertube_database}}"
+    login_host: "{{postgres_host}}"
+    login_port: "{{postgres_port}}"
+    login_password: "{{postgres_root_password}}"
+    cascade: true
+  tags: peertube
+
+- name: Ensure PeerTube Configuration Files Exist
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - {src: env.j2,dest: "{{project_directory}}/peertube/config//.env"}
+    - {src: production.yaml.j2,dest: "{{project_directory}}/peertube/config/production.yaml"}
+  tags: peertube
+  no_log: true
+  notify: restart peertube
+
+- name: Create PeerTube Docker Container
+  community.general.docker_container:
+    name: peertube
+    image: "chocobozzz/peertube:{{peertube_version}}"
+    pull: yes
+    hostname: peertube
+    container_default_behavior: compatibility
+    network_mode: default
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    env_file: "{{project_directory}}/peertube/config/.env"
+    state: started
+    volumes:
+      - "{{project_directory}}/peertube/data:/data"
+      - "{{project_directory}}/peertube/config:/config"
+      - "{{media_directory}}/peertube:/app/client/dist"
+    labels:
+      traefik.http.routers.peertube.entrypoints: "websecure"
+      traefik.http.routers.peertube.tls: "true"
+      traefik.http.routers.peertube.rule: "Host(`{{peertube_tld}}`)"
+      traefik.http.routers.peertube.service: "peertube"
+      traefik.http.services.peertube.loadbalancer.server.port: "9000"
+      traefik.enable: "true"
+  tags: peertube

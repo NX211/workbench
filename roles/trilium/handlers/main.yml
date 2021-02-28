@@ -1,6 +1,0 @@
----
-    - name: Restart Trilium
-      docker_container:
-        name: trilium
-        restart: yes
-      listen: restart trilium

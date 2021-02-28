@@ -1,8 +1,9 @@
 ---
-- name: Ensure Podify Directory Exist
-  file:
-    path: "{{project_directory}}/podify"
-    state: directory
+- name: Ensure Podify Volume Exist
+  docker_volume:
+    name: podify_data
+    state: present
+  notify: restart podify
   tags: podify
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
@@ -13,11 +14,13 @@
   tags: podify
 
 - name: Create Podify Docker Container
-  docker_container:
+  community.general.docker_container:
     name: podify
     image: "maxhollmann/podify-web:{{podify_version}}"
     pull: yes
     hostname: podify
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -34,28 +37,31 @@
       INITIAL_USER_PASSWORD: "{{podify_user_password}}"
       ENABLE_SIGNUP: "no"
     volumes:
-      - "{{project_directory}}/podify:/storage"
+      - podify:/storage
     labels:
       traefik.http.routers.podify.entrypoints: "websecure"
       traefik.http.routers.podify.tls: "true"
       traefik.http.routers.podify.rule: "Host(`podify.{{project_tld}}`)"
-      traefik.http.routers.podify.middlewares: "sslheader@docker"
-      traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: "https"
+      traefik.http.routers.podify.middlewares: "default-headers@file"
       traefik.http.routers.podify.service: "podify"
       traefik.http.services.podify.loadbalancer.server.port: "3000"
       traefik.enable: "true"
   tags: podify
 
 - name: Create Podify Worker Docker Container
-  docker_container:
+  community.general.docker_container:
     name: podify-worker
     image: "maxhollmann/podify-worker:{{podify_version}}"
     pull: yes
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
     networks_cli_compatible: yes
     state: started
+    volumes:
+      - podify:/storage
     env:
       URL_HOST: "https://podify.{{project_tld}}"
       DATABASE_URL: "postgres://{{podify_database_user}}:{{podify_database_password}}@database/{{podify_database}}"
@@ -63,6 +69,4 @@
       SECRET_KEY_BASE: "{{podify_secrey_key}}"
       RAILS_LOG_TO_STDOUT: "yes"
       STORAGE_DIR: "/storage"
-    volumes:
-      - "{{project_directory}}/podify:/storage"
   tags: podify

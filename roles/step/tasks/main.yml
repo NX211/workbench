@@ -1,0 +1,23 @@
+---
+- name: Ensure Step Directory Exist
+  file:
+    path: "{{project_directory}}/step"
+    state: directory
+    owner: "USERNAME"
+    group: "USERNAME"
+  tags: step
+
+- name: Create step Docker Container
+  docker_container:
+    name: step
+    image: "smallstep/step-ca:{{step_version}}"
+    pull: yes
+    hostname: step
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    state: started
+    volumes:
+      - "{{project_directory}}/step:/home/step"
+  tags: step

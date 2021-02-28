@@ -1,10 +1,12 @@
 ---
 - name: Create AMVD Docker Container
-  docker_container:
+  community.general.docker_container:
     name: amvd
     image: "randomninjaatk/amvd:{{amvd_version}}"
     pull: yes
     hostname: amvd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present

@@ -2,20 +2,22 @@
 <ServerConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <LogFileRetentionDays>3</LogFileRetentionDays>
   <IsStartupWizardCompleted>true</IsStartupWizardCompleted>
-  <EnableUPnP>true</EnableUPnP>
+  <CachePath>/config/cache</CachePath>
+  <EnableUPnP>false</EnableUPnP>
+  <EnableMetrics>false</EnableMetrics>
   <PublicPort>8096</PublicPort>
   <PublicHttpsPort>8920</PublicHttpsPort>
   <HttpServerPortNumber>8096</HttpServerPortNumber>
   <HttpsPortNumber>8920</HttpsPortNumber>
-  <EnableHttps>true</EnableHttps>
+  <EnableHttps>false</EnableHttps>
   <EnableNormalizedItemByNameIds>true</EnableNormalizedItemByNameIds>
   <IsPortAuthorized>true</IsPortAuthorized>
   <AutoRunWebApp>true</AutoRunWebApp>
   <EnableRemoteAccess>true</EnableRemoteAccess>
-  <CameraUploadUpgraded>true</CameraUploadUpgraded>
-  <CollectionsUpgraded>true</CollectionsUpgraded>
   <EnableCaseSensitiveItemIds>true</EnableCaseSensitiveItemIds>
   <DisableLiveTvChannelUserDataName>true</DisableLiveTvChannelUserDataName>
+  <MetadataPath>/config/data/metadata</MetadataPath>
+  <MetadataNetworkPath />
   <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
   <MetadataCountryCode>US</MetadataCountryCode>
   <SortReplaceCharacters>
@@ -71,7 +73,6 @@
       <MetadataFetcherOrder />
       <DisabledImageFetchers>
         <string>The Open Movie Database</string>
-        <string>FanArt</string>
       </DisabledImageFetchers>
       <ImageFetcherOrder />
     </MetadataOptions>
@@ -127,9 +128,7 @@
         <string>TheMovieDb</string>
       </DisabledMetadataFetchers>
       <MetadataFetcherOrder />
-      <DisabledImageFetchers>
-        <string>FanArt</string>
-      </DisabledImageFetchers>
+      <DisabledImageFetchers />
       <ImageFetcherOrder />
     </MetadataOptions>
     <MetadataOptions>
@@ -148,9 +147,9 @@
       <ImageFetcherOrder />
     </MetadataOptions>
   </MetadataOptions>
-  <EnableAutomaticRestart>true</EnableAutomaticRestart>
   <SkipDeserializationForBasicTypes>true</SkipDeserializationForBasicTypes>
-  <BaseUrl>/jellyfin</BaseUrl>
+  <ServerName>jellyfin</ServerName>
+  <BaseUrl />
   <UICulture>en-US</UICulture>
   <SaveMetadataHidden>false</SaveMetadataHidden>
   <ContentTypes />
@@ -161,17 +160,24 @@
   <LocalNetworkSubnets />
   <LocalNetworkAddresses />
   <CodecsUsed />
+  <PluginRepositories>
+    <RepositoryInfo>
+      <Name>Jellyfin Stable</Name>
+      <Url>https://repo.jellyfin.org/releases/plugin/manifest-stable.json</Url>
+    </RepositoryInfo>
+    <RepositoryInfo>
+      <Name>Inception</Name>
+      <Url>https://dkanada.xyz/plugins/manifest.json</Url>
+    </RepositoryInfo>
+  </PluginRepositories>
   <IgnoreVirtualInterfaces>false</IgnoreVirtualInterfaces>
   <EnableExternalContentInSuggestions>true</EnableExternalContentInSuggestions>
   <RequireHttps>false</RequireHttps>
-  <IsBehindProxy>false</IsBehindProxy>
   <EnableNewOmdbSupport>true</EnableNewOmdbSupport>
   <RemoteIPFilter />
   <IsRemoteIPFilterBlacklist>false</IsRemoteIPFilterBlacklist>
   <ImageExtractionTimeoutMs>0</ImageExtractionTimeoutMs>
   <PathSubstitutions />
-  <EnableSimpleArtistDetection>true</EnableSimpleArtistDetection>
-  <UninstalledPlugins>
-    <string>Email</string>
-  </UninstalledPlugins>
+  <EnableSimpleArtistDetection>false</EnableSimpleArtistDetection>
+  <UninstalledPlugins />
 </ServerConfiguration>

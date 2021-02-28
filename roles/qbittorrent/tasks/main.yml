@@ -16,11 +16,13 @@
   notify: restart qbittorrent
 
 - name: Create qBittorrent Docker Container
-  docker_container:
+  community.general.docker_container:
     name: qbittorrent
     image: "linuxserver/qbittorrent:{{qbittorrent_version}}"
     pull: yes
     hostname: qbittorrent
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -42,6 +44,9 @@
       traefik.http.routers.qbittorrent.entrypoints: "websecure"
       traefik.http.routers.qbittorrent.tls: "true"
       traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{project_tld}}`)"
+      traefik.http.middlewares.qbittorrent_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.qbittorrent_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/qbittorrent/{{theme_park_default}}.css></head>"
+      traefik.http.routers.qbittorrent.middlewares: "qbittorrent_rewrite_theme"
       traefik.http.routers.qbittorrent.service: "qbittorrent"
       traefik.http.services.qbittorrent.loadbalancer.server.port: "8090"
       traefik.tcp.routers.torrent.entrypoints: "torrent"

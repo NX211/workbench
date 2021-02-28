@@ -10,13 +10,13 @@
     - redis
     - tecnativa
     - traefik
-    - matrix
-    - gitea
     - portus
-    - molecule
+    - gitea
+    - matrix
+    - jenkins
     - homer
+    - molecule
     - elk
     - evebox
     - netbootxyz
-    - trilium
     - leantime

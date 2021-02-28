@@ -1,0 +1,218 @@
+APP_NAME = Git
+RUN_MODE = prod
+RUN_USER = git
+
+[repository]
+ROOT = /data/git/repositories
+
+[repository.local]
+LOCAL_COPY_PATH                                = /data/gitea/tmp/local-repo
+SCRIPT_TYPE                                    = bash
+DETECTED_CHARSETS_ORDER                        = UTF-8, UTF-16BE, UTF-16LE, UTF-32BE, UTF-32LE, ISO-8859, windows-1252, ISO-8859, windows-1250, ISO-8859, ISO-8859, ISO-8859, windows-1253, ISO-8859, windows-1255, ISO-8859, windows-1251, windows-1256, KOI8-R, ISO-8859, windows-1254, Shift_JIS, GB18030, EUC-JP, EUC-KR, Big5, ISO-2022, ISO-2022, ISO-2022, IBM424_rtl, IBM424_ltr, IBM420_rtl, IBM420_ltr
+FORCE_PRIVATE                                  = false
+DEFAULT_PRIVATE                                = last
+MAX_CREATION_LIMIT                             = -1
+MIRROR_QUEUE_LENGTH                            = 1000
+PULL_REQUEST_QUEUE_LENGTH                      = 1000
+PREFERRED_LICENSES                             = Apache License 2.0,MIT License
+DISABLE_HTTP_GIT                               = false
+USE_COMPAT_SSH_URI                             = false
+DEFAULT_CLOSE_ISSUES_VIA_COMMITS_IN_ANY_BRANCH = false
+ENABLE_PUSH_CREATE_USER                        = false
+ENABLE_PUSH_CREATE_ORG                         = false
+DEFAULT_REPO_UNITS                             = repo.code,repo.releases,repo.issues,repo.pulls,repo.wiki
+PREFIX_ARCHIVE_FILES                           = true
+DISABLE_MIRRORS                                = false
+DEFAULT_BRANCH                                 = master
+
+[repository.upload]
+ENABLED       = true
+TEMP_PATH     = /data/gitea/uploads
+FILE_MAX_SIZE = 3
+MAX_FILES     = 5
+
+[server]
+PROTOCOL                        = http
+DOMAIN                          = {{git_tld}}
+ROOT_URL                        = https://{{git_tld}}/
+HTTP_ADDR                       = 0.0.0.0
+HTTP_PORT                       = 3000
+REDIRECT_OTHER_PORT             = false
+PORT_TO_REDIRECT                = 80
+UNIX_SOCKET_PERMISSION          = 666
+LOCAL_ROOT_URL                  = %(PROTOCOL)s://%(HTTP_ADDR)s:%(HTTP_PORT)s/
+DISABLE_SSH                     = false
+START_SSH_SERVER                = true
+SSH_DOMAIN                      = {{git_tld}}
+SSH_LISTEN_HOST                 = 0.0.0.0
+SSH_PORT                        = 22
+SSH_LISTEN_PORT                 = 2222
+SSH_CREATE_AUTHORIZED_KEYS_FILE = false
+SSH_SERVER_CIPHERS              = aes128-ctr, aes192-ctr, aes256-ctr, aes128-gcm@openssh.com, arcfour256, arcfour128
+SSH_SERVER_KEY_EXCHANGES        = diffie-hellman-group1-sha1, diffie-hellman-group14-sha1, ecdh-sha2-nistp256, ecdh-sha2-nistp384, ecdh-sha2-nistp521, curve25519-sha256@libssh.org
+SSH_SERVER_MACS                 = hmac-sha2-256-etm@openssh.com, hmac-sha2-256, hmac-sha1, hmac-sha1-96
+SSH_KEY_TEST_PATH               = 
+SSH_KEYGEN_PATH                 = ssh-keygen
+SSH_BACKUP_AUTHORIZED_KEYS      = true
+SSH_EXPOSE_ANONYMOUS            = false
+MINIMUM_KEY_SIZE_CHECK          = false
+OFFLINE_MODE                    = false
+DISABLE_ROUTER_LOG              = false
+APP_DATA_PATH                   = /data/gitea
+ENABLE_GZIP                     = false
+ENABLE_PPROF                    = false
+PPROF_DATA_PATH                 = data/tmp/pprof
+LANDING_PAGE                    = home
+ALLOW_GRACEFUL_RESTARTS         = true
+GRACEFUL_HAMMER_TIME            = 60s
+STARTUP_TIMEOUT                 = 0
+STATIC_CACHE_TIME               = 6h
+LFS_START_SERVER                = true
+LFS_CONTENT_PATH                = /data/gitea/lfs
+LFS_JWT_SECRET                  = {{gitea_lfs_jwt_secret}}
+
+[database]
+DB_TYPE             = postgres
+HOST                = database:5432
+NAME                = {{gitea_database}}
+USER                = {{gitea_database_user}}
+PASSWD              = {{gitea_database_password}}
+SSL_MODE            = disable
+ITERATE_BUFFER_SIZE = 50
+LOG_SQL             = true
+DB_RETRIES          = 10
+DB_RETRY_BACKOFF    = 3s
+MAX_IDLE_CONNS      = 2
+CONN_MAX_LIFETIME   = 3s
+MAX_OPEN_CONNS      = 0
+SCHEMA              = 
+CHARSET             = utf8
+PATH                = /data/gitea/gitea.db
+
+[mailer]
+ENABLED            = true
+SEND_BUFFER_LEN    = 100
+SUBJECT_PREFIX     = Git
+HOST               = {{email_host}}
+DISABLE_HELO       = true
+SKIP_VERIFY        = false
+USE_CERTIFICATE    = false
+IS_TLS_ENABLED     = true
+FROM               = {{email_user}}
+USER               = {{email_user}}
+PASSWD             = {{email_password}}
+SEND_AS_PLAIN_TEXT = false
+MAILER_TYPE        = smtp
+
+[indexer]
+ISSUE_INDEXER_TYPE               = bleve
+ISSUE_INDEXER_PATH               = /data/gitea/indexers/issues.bleve
+ISSUE_INDEXER_NAME               = gitea_issues
+ISSUE_INDEXER_QUEUE_TYPE         = redis
+ISSUE_INDEXER_QUEUE_CONN_STR     = addrs=redis:6379 db=0
+ISSUE_INDEXER_QUEUE_BATCH_NUMBER = 20
+STARTUP_TIMEOUT                  = 30s
+REPO_INDEXER_ENABLED             = false
+REPO_INDEXER_PATH                = indexers/repos.bleve
+UPDATE_BUFFER_LEN                = 20
+MAX_FILE_SIZE                    = 1048576
+
+[session]
+PROVIDER          = redis
+PROVIDER_CONFIG   = network=tcp,addr=redis:6379,db=0,pool_size=100,idle_timeout=180
+COOKIE_NAME       = gitea_session
+COOKIE_SECURE     = false
+ENABLE_SET_COOKIE = true
+GC_INTERVAL_TIME  = 86400
+SESSION_LIFE_TIME = 86400
+
+[cache]
+ENABLED	= true
+ADAPTER	= redis
+HOST	= network=tcp,addr=redis:6379,db=0,pool_size=100,idle_timeout=180
+
+[picture]
+AVATAR_UPLOAD_PATH               = /data/gitea/avatars
+REPOSITORY_AVATAR_UPLOAD_PATH    = /data/gitea/repo-avatars
+REPOSITORY_AVATAR_FALLBACK       = none
+REPOSITORY_AVATAR_FALLBACK_IMAGE = /img/repo_default.png
+AVATAR_MAX_WIDTH                 = 4096
+AVATAR_MAX_HEIGHT                = 3072
+AVATAR_MAX_FILE_SIZE             = 1048576
+GRAVATAR_SOURCE                  = gravatar
+DISABLE_GRAVATAR                 = false
+ENABLE_FEDERATED_AVATAR          = false
+
+[attachment]
+PATH          = /data/gitea/attachments
+ENABLED       = true
+ALLOWED_TYPES = image/jpeg|image/png|application/zip|application/gzip
+MAX_SIZE      = 4
+MAX_FILES     = 5
+
+[cron]
+ENABLED      = true
+RUN_AT_START = false
+
+[cron.update_mirrors]
+SCHEDULE = @every 10m
+
+[cron.repo_health_check]
+SCHEDULE = @every 24h
+TIMEOUT  = 60s
+
+[cron.check_repo_stats]
+RUN_AT_START = true
+SCHEDULE     = @every 24h
+
+[cron.archive_cleanup]
+ENABLED      = true
+RUN_AT_START = true
+SCHEDULE     = @every 24h
+OLDER_THAN   = 24h
+
+[cron.sync_external_users]
+RUN_AT_START    = false
+SCHEDULE        = @every 24h
+UPDATE_EXISTING = true
+
+[cron.update_migration_poster_id]
+SCHEDULE = @every 24h
+
+[log]
+ROOT_PATH = /data/gitea/log
+MODE      = file
+LEVEL     = info
+
+[security]
+INSTALL_LOCK   = true
+SECRET_KEY     = {{gitea_secret_key}}
+INTERNAL_TOKEN = {{gitea_internal_token}}
+
+[service]
+DISABLE_REGISTRATION              = false
+REQUIRE_SIGNIN_VIEW               = false
+REGISTER_EMAIL_CONFIRM            = false
+ENABLE_NOTIFY_MAIL                = true
+ALLOW_ONLY_EXTERNAL_REGISTRATION  = false
+ENABLE_CAPTCHA                    = false
+DEFAULT_KEEP_EMAIL_PRIVATE        = false
+DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+DEFAULT_ENABLE_TIMETRACKING       = true
+NO_REPLY_ADDRESS                  = noreply.{{git_tld}}
+
+[oauth2]
+ENABLE                        = true
+ACCESS_TOKEN_EXPIRATION_TIME  = 3600
+REFRESH_TOKEN_EXPIRATION_TIME = 730
+INVALIDATE_REFRESH_TOKENS     = false
+JWT_SECRET                    = {{gitea_jwt_secret}}
+
+[other]
+SHOW_FOOTER_BRANDING           = false
+SHOW_FOOTER_VERSION            = false
+SHOW_FOOTER_TEMPLATE_LOAD_TIME = false
+
+[openid]
+ENABLE_OPENID_SIGNIN = true
+ENABLE_OPENID_SIGNUP = true

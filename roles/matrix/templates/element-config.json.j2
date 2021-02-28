@@ -5,7 +5,7 @@
             "server_name": "{{chat_tld}}"
         },
 	"m.identity_server": {
-            "base_url": "https://{{chat_tld}}"
+            "base_url": "https://id.{{chat_tld}}"
         }
 
     },
@@ -13,6 +13,11 @@
     "disable_guests": true,
     "disable_login_language_selector": false,
     "disable_3pid_login": false,
+    "brand": "Authoritah Chat",
+    "branding": {
+        "authHeaderLogoUrl": "https://www.{{project_tld}}/assets/tools/badge.png",
+        "welcomeBackgroundUrl": "https://www.{{project_tld}}/assets/background.png"
+    },
     "embeddedPages": {
         "welcomeUrl": "https://element.{{chat_tld}}/#/login"
     },

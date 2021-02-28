@@ -8,11 +8,13 @@
   tags: hydra
 
 - name: Create Hydra Docker Container
-  docker_container:
+  community.general.docker_container:
     name: hydra
     image: "linuxserver/hydra2:{{hydra_version}}"
     pull: yes
     hostname: hydra
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -32,7 +34,9 @@
       traefik.http.routers.hydra.entrypoints: "websecure"
       traefik.http.routers.hydra.tls: "true"
       traefik.http.routers.hydra.rule: "Host(`hydra.{{project_tld}}`)"
-      traefik.http.routers.hydra.middlewares: "default-headers@file"
+      traefik.http.middlewares.hydra_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.hydra_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/nzbhydra2/{{theme_park_default}}.css></head>"
+      traefik.http.routers.hydra.middlewares: "default-headers@file,hydra_rewrite_theme"
       traefik.http.routers.hydra.service: "hydra"
       traefik.http.services.hydra.loadbalancer.server.port: "5076"
       traefik.enable: "true"

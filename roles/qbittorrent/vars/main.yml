@@ -1,4 +1,4 @@
 ---
 qbittorrent_webui_password: "{{vault_qbittorrent_webui_password}}"
 qbittorrent_webui_password_hash: "{{vault_qbittorrent_webui_password_hash}}"
-qbittorrent_notification_email: nx211@authoritah.com
+qbittorrent_notification_email: "{{project_notification_email}}"

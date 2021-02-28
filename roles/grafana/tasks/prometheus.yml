@@ -18,11 +18,13 @@
     - grafana
 
 - name: Create Prometheus Docker Container
-  docker_container:
+  community.general.docker_container:
     name: prometheus
     image: "prom/prometheus:{{grafana_stack_version}}"
     pull: yes
     hostname: prometheus
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

@@ -1,6 +1,7 @@
 ---
-    - name: Restart Invoice Ninja
-      docker_container:
-        name: invoiceninja
-        restart: yes
-      listen: restart invoiceninja
+- name: Restart Invoice Ninja
+  community.general.docker_container:
+    name: invoiceninja
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart invoiceninja

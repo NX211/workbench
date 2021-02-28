@@ -1,6 +1,7 @@
 ---
 - name: Restart Pyload
-  docker_container:
+  community.general.docker_container:
     name: pyload
+    container_default_behavior: compatibility
     restart: yes
   listen: restart pyload

@@ -6,11 +6,13 @@
   tags: postgres
 
 - name: Create Postgres Docker Container
-  docker_container:
+  community.general.docker_container:
     name: database
     image: "postgres:{{postgres_version}}"
     pull: yes
     hostname: database
+    container_default_behavior: compatibility
+    network_mode: default
     comparisons:
       '*': strict
     restart_policy: unless-stopped
@@ -23,6 +25,7 @@
     env:
       POSTGRES_PASSWORD: "{{postgres_root_password}}"
       PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_INITDB_ARGS: "--auth-local=md5"
     volumes:
       - "{{project_directory}}/postgres/data/:/var/lib/postgresql/data/pgdata:Z"
       - "{{project_directory}}/postgres/old/data/:/var/lib/postgresql/data/pgdata_old:Z"

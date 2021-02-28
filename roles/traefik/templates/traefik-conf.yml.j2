@@ -11,18 +11,18 @@ entryPoints:
     address: ":80"
   websecure:
     address: ":443"
+    forwardedHeaders:
+      trustedIPs:
+        - "127.0.0.1/32"
+        - "10.10.0.1"
   prometheus:
     address: ":8082"
   docker:
     address: ":5005"
-  rtmp:
-    address: ":1935"
   torrent:
     address: ":6881"
   bittorrent:
     address: ":6881/udp"
-  wireguard:
-    address: ":51820/udp"
   mongodb:
     address: ":27017"
   netboot:
@@ -41,10 +41,11 @@ providers:
 certificatesResolvers:
   dnsChallenge:
     acme:
-      email: support@{{project_tld}}
+      email:
       storage: acme.json
       dnsChallenge:
-        provider: digitalocean
+        provider: dreamhost
+        disablePropagationCheck: true
         delayBeforeCheck: 0
 
 metrics:
@@ -57,3 +58,12 @@ metrics:
     addEntryPointsLabels: true
     addServicesLabels: true
     entryPoint: prometheus
+
+pilot:
+  token: "{{traefik_pilot_token}}"
+
+experimental:
+  plugins:
+    rewritebody:
+      modulename: "github.com/traefik/plugin-rewritebody"
+      version: "v0.3.1"

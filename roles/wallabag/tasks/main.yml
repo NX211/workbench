@@ -11,14 +11,17 @@
     database_user: "{{wallabag_database_user}}"
     database_password: "{{wallabag_database_password}}"
   tags: wallabag
-  no_log: true
+  register: wallabag_database_state
+  no_log: true              
 
 - name: Create Wallabag Docker Container
-  docker_container:
+  community.general.docker_container:
     name: wallabag
     image: "wallabag/wallabag:{{wallabag_version}}"
     pull: yes
     hostname: wallabag
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -35,15 +38,19 @@
       SYMFONY__ENV__DATABASE_NAME: "{{wallabag_database}}"
       SYMFONY__ENV__DATABASE_USER: "{{wallabag_database_user}}"
       SYMFONY__ENV__DATABASE_PASSWORD: "{{wallabag_database_password}}"
+      SYMFONY__ENV__MAILER_TRANSPORT: "smtp"
       SYMFONY__ENV__MAILER_HOST: "{{email_host}}"
+      SYMFONY__ENV__MAILER_PORT: "465"
+      SYMFONY__ENV__MAILER_ENCRYPTION: "ssl"
+      SYMFONY__ENV__MAILER_AUTH_MODE: "plain"
       SYMFONY__ENV__MAILER_USER: "{{email_user}}"
-      SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
       SYMFONY__ENV__MAILER_PASSWORD: "{{email_password}}"
       SYMFONY__ENV__FROM_EMAIL: "{{email_user}}"
       SYMFONY__ENV__DOMAIN_NAME: "https://wallabag.{{project_tld}}"
       SYMFONY__ENV__REDIS_SCHEME: "tcp"
       SYMFONY__ENV__REDIS_HOST: "{{redis_host}}"
       SYMFONY__ENV__REDIS_PORT: "{{redis_port}}"
+      SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
     volumes:
       - wallabag_images:/var/www/wallabag/web/assets/images
     labels:

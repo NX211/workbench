@@ -1,6 +1,7 @@
 ---
     - name: Restart Chow Down
-      docker_container:
+      community.general.docker_container:
         name: chowdown
+        container_default_behavior: compatibility
         restart: yes
       listen: restart chowdown

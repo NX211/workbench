@@ -16,11 +16,13 @@
   tags: jackett
 
 - name: Create Jackett Docker Container
-  docker_container:
+  community.general.docker_container:
     name: jackett
     image: "linuxserver/jackett:{{jackett_version}}"
     pull: yes
     hostname: jackett
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -40,8 +42,34 @@
       traefik.http.routers.jackett.entrypoints: "websecure"
       traefik.http.routers.jackett.tls: "true"
       traefik.http.routers.jackett.rule: "Host(`jackett.{{project_tld}}`)"
-      traefik.http.routers.jackett.middlewares: "default-headers@file"
+      traefik.http.middlewares.jackett_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.jackett_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel: stylesheet type: text/css href: https://gilbn.github.io/theme.park/CSS/themes/jackett/{{theme_park_default}}.css></head>"
+      traefik.http.routers.jackett.middlewares: "default-headers@file,jackett_rewrite_theme"
       traefik.http.routers.jackett.service: "jackett"
       traefik.http.services.jackett.loadbalancer.server.port: "9117"
       traefik.enable: "true"
+  tags: jackett
+
+- name: Create Flair Resolverr Docker Container
+  community.general.docker_container:
+    name: flaresolverr
+    image: "ghcr.io/flaresolverr/flaresolverr:{{flaresolverr_version}}"
+    pull: yes
+    hostname: flaresolverr
+    container_default_behavior: compatibility
+    network_mode: default
+    restart_policy: unless-stopped
+    comparisons:
+      labels: allow_more_present
+      '*': strict
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    state: started
+    env:
+      LOG_LEVEL: "info"
+      LOG_HTML: "false"
+      CAPTCHA_SOLVER: "none"
+      HEADLESS: "true"
+      PORT: "8191"
   tags: jackett

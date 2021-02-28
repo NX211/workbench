@@ -1,9 +1,11 @@
 - name: Create Portus Background Docker Container
-  docker_container:
+  community.general.docker_container:
     name: background
     image: "opensuse/portus:{{portus_version}}"
     pull: yes
-    hostname: background
+    hostname: portus_background
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

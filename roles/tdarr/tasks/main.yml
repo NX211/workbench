@@ -6,14 +6,18 @@
   tags: tdarr
   notify: restart tdarr
 
-- name: Create Tdarr Docker Container
-  docker_container:
+- name: Create Tdarr Server Docker Container
+  community.general.docker_container:
     name: tdarr
     image: "haveagitgat/tdarr:{{tdarr_version}}"
     pull: yes
     user: root
     hostname: tdarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
+    published_ports:
+      - 8266:8266
     networks:
       - name: proxy
     networks_cli_compatible: yes
@@ -22,6 +26,9 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       TZ: "{{default_timezone}}"
+      webUIPort: "8265"
+      serverPort: "8266"
+      serverIP: "172.0.0.30"
     volumes:
       - "{{project_directory}}/tdarr/app:/home/Tdarr/Documents/Tdarr"
       - "{{project_directory}}/tdarr/data:/var/lib/mongodb"
@@ -36,4 +43,34 @@
       traefik.http.routers.tdarr.service: "tdarr"
       traefik.http.services.tdarr.loadbalancer.server.port: "8265"
       traefik.enable: "true"
+  tags: tdarr
+
+- name: Create Tdarr Node Docker Container
+  community.general.docker_container:
+    name: tdarrnode
+    image: "haveagitgat/tdarr_node:{{tdarr_version}}"
+    pull: yes
+    user: root
+    hostname: tdarrnode
+    container_default_behavior: compatibility
+    network_mode: default
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    state: started
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+      nodeID: ""
+      serverPort: "8266"
+      serverIP: "172.0.0.30"
+      nodeIP: "172.0.0.59"
+    volumes:
+      - "{{project_directory}}/tdarr/app:/home/Tdarr/Documents/Tdarr"
+      - "{{project_directory}}/tdarr/data:/var/lib/mongodb"
+      - "{{media_directory}}:/home/Tdarr/media"
+      - transcode:/temp
+      - /etc/localtime:/etc/localtime:ro
   tags: tdarr

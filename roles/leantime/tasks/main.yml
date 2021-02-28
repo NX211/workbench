@@ -14,11 +14,13 @@
   no_log: true
 
 - name: Create Leantime Docker Container
-  docker_container:
+  community.general.docker_container:
     name: leantime
     image: "leantime/leantime:{{leantime_version}}"
     pull: yes
     hostname: leantime
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

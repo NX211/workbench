@@ -6,11 +6,13 @@
   tags: minio
 
 - name: Create MinIO Docker Container
-  docker_container:
+  community.general.docker_container:
     name: minio
     image: "minio/minio:{{minio_version}}"
     pull: yes
     hostname: minio
+    container_default_behavior: compatibility
+    network_mode: default
     command: "server /data"
     restart_policy: unless-stopped
     env:

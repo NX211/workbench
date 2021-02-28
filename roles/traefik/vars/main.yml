@@ -1,2 +1,3 @@
 ---
-digitalocean_token: "{{vault_digitalocean_token}}"
+dreamhost_token: "{{vault_dreamhost_token}}"
+traefik_pilot_token: "{{vault_traefik_pilot_token}}"

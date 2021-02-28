@@ -1,4 +1,4 @@
 ---
 ansible_user: "ansible"
 ansible_python_interpreter: "/usr/bin/python3"
-project_root_directory: "/project_directory"
+project_root_directory: "/blacktalon"

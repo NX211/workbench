@@ -1,19 +1,19 @@
 [servers]
-host1 ansible_port=22 ansible_host=IP_ADDRESS
+hostname ansible_port=2252 ansible_host=
 
 [servers:vars]
-project_tld=DOMAIN.TLD
-chat_tld=DOMAIN.TLD
-kutt_tld=DOMAIN.TLD
-photo_tld=DOMAIN.TLD
-git_tld=DOMAIN.TLD
-jellyfin_tld=DOMAIN.TLD
-rtsp_tld=DOMAIN.TLD
-postgres_host=IP_ADDRESS
+project_tld=
+chat_tld=
+kutt_tld=
+photo_tld=
+git_tld=
+jellyfin_tld=
+peertube_tld=
+postgres_host=
 postgres_port=5432
-mariadb_host=IP_ADDRESS
+mariadb_host=
 mariadb_port=3306
-mongo_host=IP_ADDRESS
+mongo_host=
 mongo_port=27017
 
 # Version Control
@@ -28,6 +28,7 @@ elk_stack_version=7.8.0
 evebox_version=latest
 element_version=latest
 firefly_version=latest
+flaresolverr_version=latest
 freeipa_version=latest
 freshrss_version=latest
 gitea_version=latest
@@ -37,13 +38,14 @@ guacd_version=latest
 homeassistant_version=latest
 homer_version=latest
 huginn_version=latest
-hydra_version=latest
+hydra_version=dev
 inspircd_version=latest
 invoiceninja_version=latest
 jackett_version=latest
 jellyfin_version=latest
+jenkins_version=latest
 kutt_version=latest
-lidarr_version=preview
+lidarr_version=develop
 matrix_version=latest
 molecule_version=latest
 mongodb_version=latest
@@ -52,25 +54,24 @@ leantime_version=latest
 minio_version=latest
 mariadb_version=latest
 netbootxyz_version=latest
+peertube_version=production-buster
 photoprism_version=latest
 podify_version=latest
 portus_version=head
 postgres_version=12
 pyload_version=latest
 qbittorrent_version=latest
-radarr_version=preview
-readarr_version=unstable
+radarr_version=nightly
+readarr_version=nightly
 redis_version=latest
 registry_version=2
 rssbridge_version=latest
-rtmp_version=latest
 sabnzbd_version=latest
 sonarr_version=preview
-tdarr_version=pro_latest
+tdarr_version=latest
 tecnativa_version=latest
 teedy_version=latest
-traefik_version=v2.2
+traefik_version=v2.4
 traefik_auth_version=latest
-trilium_version=latest
 vscode_version=latest
 wallabag_version=latest

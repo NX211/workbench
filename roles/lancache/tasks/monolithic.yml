@@ -14,11 +14,13 @@
   tags: lancache
 
 - name: Create Monolithic Docker Container
-  docker_container:
+  community.general.docker_container:
     name: monolithic
     image: "{{registry_host}}/{{registry_username}}/docker-monolithic:{{monolithic_version}}"
     pull: yes
     hostname: monolithic
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

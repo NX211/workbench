@@ -14,11 +14,13 @@
   notify: restart radarr
 
 - name: Create Radarr Docker Container
-  docker_container:
+  community.general.docker_container:
     name: radarr
     image: "linuxserver/radarr:{{radarr_version}}"
     pull: yes
     hostname: radarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -31,6 +33,8 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:readarr"
+      TP_THEME: "{{theme_park_default}}"
     volumes:
       - "{{project_directory}}/radarr:/config"
       - "{{media_directory}}/movies:/media/movies"

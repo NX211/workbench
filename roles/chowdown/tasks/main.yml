@@ -6,11 +6,13 @@
   tags: chowdown
 
 - name: Create Chow Down Docker Container
-  docker_container:
+  community.general.docker_container:
     name: chowdown
     image: "gregyankovoy/chowdown:{{chowdown_version}}"
     pull: yes
     hostname: chowdown
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

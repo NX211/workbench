@@ -10,8 +10,8 @@ database:
 ircService:
   servers:
     irc.{{chat_tld}}:
-      name: "ORG NAME"
-      icon: URL
+      name: ""
+      icon: https://{{git_tld}}/images/badge.png
       port: 6697
       ssl: false
       sslselfsign: false
@@ -73,7 +73,6 @@ ircService:
         nickTemplate: "$DISPLAY[m]"
         allowNickChanges: true
         maxClients: 30
-        ipv6:
         idleTimeout: 10800
         reconnectIntervalMs: 5000
         concurrentReconnectLimit: 50

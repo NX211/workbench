@@ -1,6 +1,7 @@
 ---
 - name: Restart Home Assistant
-  docker_container:
+  community.general.docker_container:
     name: homeassistant
+    container_default_behavior: compatibility
     restart: yes
   listen: restart home assistant

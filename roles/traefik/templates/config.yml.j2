@@ -14,29 +14,46 @@ http:
     traefik-auth:
       basicAuth:
         users:
-          - "AUTH_STRING"
+          - ""
     tdarr-auth:
       basicAuth:
         users:
-          - "AUTH_STRING"
+          - ""
     netbootxyz-auth:
       basicAuth:
         users:
-          - "AUTH_STRING"
+          - ""
+    cups-auth:
+      basicAuth:
+        users:
+          - ""
   routers:
-    freeipa:
+    cups:
       entryPoints:
         - "websecure"
-      rule: "Host(`freeipa.{{project_tld}}`)"
+      rule: "Host(`print.{{project_tld}}`)"
       tls: {}
       middlewares:
         - default-headers@file
-      service: "freeipa"
+        - cups-auth
+      service: "cups"
+    monit:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`monit.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "monit"
   services:
-    freeipa:
+    cups:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.203/"
+          - url: ""
+    monit:
+      loadBalancer:
+        servers:
+          - url: ""
 tls:
   options:
     default:

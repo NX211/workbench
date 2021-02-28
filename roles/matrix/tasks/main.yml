@@ -4,11 +4,13 @@
     - matrix
 
 - name: Create Matrix Docker Container
-  docker_container:
+  community.general.docker_container:
     name: synapse
     image: "docker.io/matrixdotorg/synapse:{{matrix_version}}"
     pull: yes
     hostname: synapse
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -36,5 +38,17 @@
     - matrix
 
 - import_tasks: "{{role_path}}/tasks/element.yml"
+  tags:
+    - matrix
+
+- import_tasks: "{{role_path}}/tasks/turn_server.yml"
+  tags:
+    - matrix
+
+- import_tasks: "{{role_path}}/tasks/inspircd.yml"
+  tags:
+    - matrix
+
+- import_tasks: "{{role_path}}/tasks/irc_bridge.yml"
   tags:
     - matrix

@@ -1,7 +1,7 @@
 ---
 - name: Download Custom Login Extension
   get_url:
-    url: "https://authoritah.io/nx211/guacamole-custom-login-extension/-/blob/master/branding.jar"
+    url: ""
     dest: "{{project_directory}}/guacamole/extensions/branding.jar"
 
 - name: Download TOTP Auth Extension

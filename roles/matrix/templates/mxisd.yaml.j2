@@ -1,0 +1,42 @@
+matrix:
+  domain: '{{chat_tld}}'
+  v1: true
+  v2: true
+
+key:
+  path: '/var/mxisd/sign.key'
+
+storage:
+  provider:
+    sqlite:
+      database: '/mxisd/mxisd.db'
+
+threepid:
+  medium:
+    email:
+      identity:
+        from: {{email_user}}
+      connectors:
+        smtp:
+          host: {{email_host}}
+          port: {{email_port}}
+          tls: 1
+          login: {{email_user}}
+          password: '{{email_password}}'
+        generators:
+          template:
+            invite: '/var/mxisd/invite-template.eml'
+            session:
+              validation: '/var/mxisd/validate-template.eml'
+              unbind:
+                frandulent: '/var/mxisd/unbind-fraudulent.eml'
+            generic:
+              matrixId: '/var/mxisd/mxid-template.eml'
+
+hashing:
+  enabled: true
+  pepperLength: 20
+  rotationPolicy: per_requests
+  hashStorageType: sql
+  algorithms:
+    - sha256

@@ -18,10 +18,12 @@
     - elk
 
 - name: Create Filebeat Docker Container
-  docker_container:
+  community.general.docker_container:
     name: filebeat
     user: "root"
     hostname: filebeat
+    container_default_behavior: compatibility
+    network_mode: default
     image: "docker.elastic.co/beats/filebeat:{{elk_stack_version}}"
     pull: yes
     restart_policy: unless-stopped

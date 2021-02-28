@@ -1,6 +1,7 @@
 ---
-    - name: Restart Photoprism
-      docker_container:
-        name: photoprism
-        restart: yes
-      listen: restart photoprism
+- name: Restart Photoprism
+  community.general.docker_container:
+    name: photoprism
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart photoprism

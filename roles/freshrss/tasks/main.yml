@@ -14,8 +14,11 @@
   no_log: true
 
 - name: Create FreshRSS Docker Container
-  docker_container:
+  community.general.docker_container:
     name: freshrss
+    hostname: freshrss
+    container_default_behavior: compatibility
+    network_mode: default
     image: "linuxserver/freshrss:{{freshrss_version}}"
     pull: yes
     restart_policy: unless-stopped
@@ -40,40 +43,6 @@
       traefik.enable: "true"
   tags: freshrss
 
-- name: Ensure RSS-Bridge Directory Exist
-  file:
-    path: "{{project_directory}}/rssbridge"
-    state: directory
-  tags: freshrss
-
-- name: Ensure RSS-Bridge Configuration File Exist
-  template:
-    src: whitelist.txt.j2
-    dest: "{{project_directory}}/rssbridge/whitelist.txt"
-  tags: freshrss
-  no_log: true
-  notify: restart rssbridge
-
-- name: Create RSS-Bridge Docker Container
-  docker_container:
-    name: rssbridge
-    image: "rssbridge/rss-bridge:{{rssbridge_version}}"
-    pull: yes
-    hostname: freshrss
-    restart_policy: unless-stopped
-    networks:
-      - name: proxy
-    networks_cli_compatible: yes
-    comparisons:
-      '*': strict
-    state: started
-    volumes:
-      - "{{project_directory}}/rssbridge/whitelist.txt:/app/whitelist.txt"
-    labels:
-      traefik.http.routers.rssbridge.entrypoints: "websecure"
-      traefik.http.routers.rssbridge.tls: "true"
-      traefik.http.routers.rssbridge.rule: "Host(`rssbridge.{{project_tld}}`)"
-      traefik.http.routers.rssbridge.service: "rssbridge"
-      traefik.http.services.rssbridge.loadbalancer.server.port: "80"
-      traefik.enable: "true"
-  tags: freshrss
+- import_tasks: "{{role_path}}/tasks/bridge.yml"
+  tags:
+    - freshrss

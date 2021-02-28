@@ -5,18 +5,20 @@
     state: directory
 
 - name: Create Home Assistant Docker Container
-  docker_container:
+  community.general.docker_container:
     name: homeassistant
     image: "homeassistant/home-assistant:{{homeassistant_version}}"
     pull: yes
     hostname: homeassistant
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     env:
       TZ: "{{default_timezone}}"
     networks:
       - name: proxy
     networks_cli_compatible: yes
-    state: absent
+    state: started
     volumes:
       - "{{project_directory}}/homeassistant:/config"
     labels:

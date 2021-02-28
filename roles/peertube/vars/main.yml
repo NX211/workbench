@@ -1,0 +1,4 @@
+---
+peertube_database: "peertube_prod"
+peertube_database_user: "peertube"
+peertube_database_password: "{{vault_peertube_database_password}}"

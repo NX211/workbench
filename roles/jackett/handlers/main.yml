@@ -1,6 +1,7 @@
 ---
 - name: Restart Jackett
-  docker_container:
+  community.general.docker_container:
     name: jackett
+    container_default_behavior: compatibility
     restart: yes
   listen: restart jackett

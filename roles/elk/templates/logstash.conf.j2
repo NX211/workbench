@@ -3,9 +3,133 @@ input {
               port => 5044
               tags => ["docker-logs"]
              }
+        syslog {
+                port => 5140
+                type => "syslog"
+                }
      }
 
 ## Add your filters / logstash plugins configuration here
+filter {
+  if [type] == "syslog" {
+    mutate { strip => ["message"] }
+    if [program] == "devd" {
+      if "!system=CAM" in [message] {
+        grok {
+          match => {"message" => "Processing event %{QUOTEDSTRING:data}"}
+        }
+        kv {source => "data"}
+        mutate { remove_field => 'data' }
+      }
+      drop { }
+    }
+    if [program] == "filterlog" {
+      opnsensefilter { field_name => "message" }
+      geoip { source => "source" }
+      if [geoip.ip] { 
+        geoip {
+          source => "source"
+          target => "destination" 
+        }
+      }
+      if ![geoip.ip] { 
+        geoip { source => "destination" }
+      }
+    }
+    if [program] == "suricata" {
+      geoip { source => "src_ip" }
+      if [geoip.ip] { 
+        geoip {
+          source => "src_ip"
+          target => "dest_ip"
+        }
+      }
+      if ![geoip.ip] { 
+        geoip { source => "dest_ip" }
+      }
+    }
+    if [program] == "opnsense" or [program] == 'opnsense-devel' {
+      if "for" in [message] and "from" in [message] {
+        mutate { add_field => {'os_type' => 'auth'} }
+        if "from:" in [message] {
+          grok {
+            match => {
+              "message" => "%{DATA:scriptname}: %{DATA:login_status} for user '%{USERNAME:username}' from: %{DATA:ip}"
+            }
+          }
+        }
+        else {
+          grok {
+            match => {
+              "message" => "%{DATA:scriptname}: %{DATA:login_status} for '%{USERNAME:username}' from %{DATA:ip}"
+            }
+          }
+        }
+      }
+    }
+    if [program] == "configd.py" {
+      if "message" in ["message"] {
+        grok {
+          match => {
+            "message" => "message %{UUID:uuid} \[%{DATA:action_name}\] returned %{WORD:status_word}.*" 
+          }
+        }
+      }
+      if [message] =~ "^\[.+?\]" {
+        grok {
+          match => {"message" => "\[%{UUID:uuid}\] %{GREEDYDATA:configd_message}"}
+        }
+      }
+      if [message] =~ "^\S+* generated \S+$" {
+        grok {
+          match => {"message" => "^%{NOTSPACE:component_name} generated %{NOTSPACE:file_name}$"}
+        }
+      }
+      #mutate { remove_field => 'message' }
+    }
+    if [program] == "/usr/sbin/cron" {
+      grok {
+        match => {"message" => "\(%{USER:user}\) CMD %{GREEDYDATA:cron_message}"}
+      }
+      mutate { remove_field => 'message' }
+    }
+    if [program] in ["ospfd", "ospf6d"] {
+      if ":" in [message] {
+        grok {
+          match => {"message" => "%{DATA:component}: %{GREEDYDATA:sub_message}"}
+        }
+      }
+      if ":" in [sub_message] and "# Areas" not in [sub_message] {
+        grok {
+          match => {"sub_message" => "%{DATA:subcomponent}: %{GREEDYDATA:msg}"}
+        }
+        mutate { remove_field => "sub_message" }
+        mutate { rename => {"msg" => "sub_message"} }
+      }
+      if [message] =~ /^\S+\(\S+\).*/ {
+        grok {
+          match => {"message" => "%{NOTSPACE:component}\(%{NOTSPACE:function_name}\) %{GREEDYDATA:sub_message}"}
+        }
+      }
+      if [component] == "SPF" {
+        grok {
+          match => {"sub_message" => "Scheduled in %{NUMBER:scheduled} msec"}
+        }
+      }
+      if [component] == "SPF processing" {
+        grok {
+          match => {"sub_message" => "# Areas: %{NUMBER:number_areas}, SPF runtime: %{NUMBER:runtime_sec} sec %{NUMBER:runtime_usec} usec, Reason: %{GREEDYDATA:reason}"}
+        }
+      }
+      
+    }
+      #"SPF processing: # Areas: 1, SPF runtime: 0 sec 0 usec, Reason: R+, R-"
+      #"OSPF6d (Quagga-1.2.1 ospf6d-0.9.7r) starts: vty@2606"
+    if [program] == "zebra" {
+      #"client 18 says hello and bids fair to announce only ospf6 routes"
+    }
+  }
+}
 
 output {
         if "docker-logs" in [tags] {
@@ -17,4 +141,8 @@ output {
                                                    index => "docker-logs"
                                                   }
 			           }
+  elasticsearch { 
+     hosts =>  "http://localhost:9200"
+     index => "logstash-opnsense-syslog-%{+YYYY.MM.dd}"
+  }
 	}

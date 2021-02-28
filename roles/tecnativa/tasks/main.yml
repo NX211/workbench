@@ -1,6 +1,6 @@
 ---
 - name: Create Tecnativa Docker Container
-  docker_container:
+  community.general.docker_container:
     name: tecnativa
     image: "tecnativa/docker-socket-proxy:{{tecnativa_version}}"
     pull: yes

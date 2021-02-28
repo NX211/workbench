@@ -1,10 +1,12 @@
 ---
 - name: Create Redis Docker Container
-  docker_container:
+  community.general.docker_container:
     name: redis
     image: "redis:{{redis_version}}"
     pull: yes
     hostname: redis
+    container_default_behavior: compatibility
+    network_mode: default
     comparisons:
       '*': strict
     restart_policy: unless-stopped

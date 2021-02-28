@@ -1,12 +1,14 @@
 ---
 - name: Restart Firefly
-  docker_container:
+  community.general.docker_container:
     name: firefly
+    container_default_behavior: compatibility
     restart: yes
   listen: restart firefly
 
 - name: Restart Firefly Importer
-  docker_container:
+  community.general.docker_container:
     name: firefly-importer
+    container_default_behavior: compatibility
     restart: yes
   listen: restart firefly-importer

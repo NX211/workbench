@@ -1,26 +1,19 @@
 ---
-- name: Ensure Photoprism Directory Exist
+- name: Ensure Photoprism Directories Exist
   file:
-    path: "{{project_directory}}/photoprism/data"
+    path: "{{item}}"
     state: directory
-  tags: photoprism
-
-- name: Ensure Photoprism Import Directory Exist
-  file:
-    path: "{{project_directory}}/photoprism/import"
-    state: directory
-  tags: photoprism
-
-- name: Ensure Photoprism Originals Directory Exist
-  file:
-    path: "{{project_directory}}/photoprism/originals"
-    state: directory
+  loop:
+    - "{{project_directory}}/photoprism/data/config/photoprism"
+    - "{{project_directory}}/photoprism/originals"
+    - "{{project_directory}}/photoprism/import"
+    - "{{project_directory}}/photoprism/data"
   tags: photoprism
 
 - name: Ensure Photoprism Configuration Files Exist
   template:
-    src: settings.yml.j2
-    dest: "{{project_directory}}/photoprism/data/settings/settings.yml"
+    src: photoprism.env.j2
+    dest: "{{project_directory}}/photoprism/data/config/photoprism/photoprism.env"
   notify: restart photoprism
   no_log: true
   tags: photoprism
@@ -33,12 +26,15 @@
   tags: photoprism
 
 - name: Create Photoprism Docker Container
-  docker_container:
+  community.general.docker_container:
     name: photoprism
     image: "photoprism/photoprism:{{photoprism_version}}"
     pull: yes
     hostname: photoprism
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
+    env_file: "{{project_directory}}/photoprism/data/config/photoprism/photoprism.env"
     security_opts:
       - "seccomp=unconfined"
       - "apparmor=unconfined"
@@ -47,8 +43,8 @@
     networks_cli_compatible: yes
     state: started
     volumes:
-      - "{{project_directory}}/photoprism:/photoprism/originals"
-      - "{{project_directory}}/photoprism:/photoprism/import"
+      - "{{project_directory}}/photoprism/originals:/photoprism/originals"
+      - "{{project_directory}}/photoprism/import:/photoprism/import"
       - "{{project_directory}}/photoprism/data:/photoprism/storage"
     labels:
       traefik.http.routers.photoprism.entrypoints: "websecure"

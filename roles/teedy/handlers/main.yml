@@ -1,0 +1,7 @@
+---
+- name: Restart Teedy
+  community.general.docker_container:
+    name: teedy
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart teedy

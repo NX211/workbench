@@ -1,5 +1,5 @@
 ---
-grafana_user: "USER"
+grafana_user: "user"
 grafana_user_password: "{{vault_grafana_user_password}}"
 grafana_database_user: "grafana"
 grafana_database_password: "{{vault_grafana_database_password}}"

@@ -1,0 +1,7 @@
+---
+- name: Restart MariaDB
+  community.general.docker_container:
+    name: mariadb
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart mariadb

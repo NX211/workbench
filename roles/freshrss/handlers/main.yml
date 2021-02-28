@@ -1,12 +1,14 @@
 ---
 - name: Restart FreshRSS
-  docker_container:
+  community.general.docker_container:
     name: freshrss
+    container_default_behavior: compatibility
     restart: yes
   listen: restart freshrss
 
 - name: Restart RSS-Bridge
-  docker_container:
+  community.general.docker_container:
     name: rssbridge
+    container_default_behavior: compatibility
     restart: yes
   listen: restart rssbridge

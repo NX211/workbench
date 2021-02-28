@@ -1,10 +1,12 @@
 ---
 - name: Create CyberChef Docker Container
-  docker_container:
+  community.general.docker_container:
     name: cyberchef
     image: "mpepping/cyberchef:{{cyberchef_version}}"
     pull: yes
     hostname: cyberchef
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     privileged: yes
     networks:

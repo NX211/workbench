@@ -20,11 +20,13 @@
     - grafana
 
 - name: Create Alert Manager Docker Container
-  docker_container:
+  community.general.docker_container:
     name: alertmanager
     image: "prom/alertmanager:{{grafana_stack_version}}"
     pull: yes
     hostname: alertmanager
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

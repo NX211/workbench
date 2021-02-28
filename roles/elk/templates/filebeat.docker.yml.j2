@@ -17,6 +17,11 @@ filebeat.config:
     path: ${path.config}/modules.d/*.yml
     reload.enabled: false
 
+filebeat.inputs:
+- type: syslog
+  protocol.udp:
+    host: "localhost:9000"
+
 filebeat.autodiscover:
   providers:
     - type: docker

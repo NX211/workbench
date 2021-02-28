@@ -17,11 +17,13 @@
   tags: matrix
 
 - name: Create Element Docker Container
-  docker_container:
+  community.general.docker_container:
     name: element
-    image: "bubuntux/riot-web:{{element_version}}"
+    image: "bubuntux/element-web:{{element_version}}"
     pull: yes
     hostname: element
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -32,7 +34,7 @@
       PGID: "8675309"
       TZ: "{{default_timezone}}"
     volumes:
-      - "{{project_directory}}/element/config.json:/etc/riot-web/config.json:ro"
+      - "{{project_directory}}/element/config.json:/etc/element-web/config.json:ro"
     labels:
       traefik.http.routers.element.entrypoints: "websecure"
       traefik.http.routers.element.tls: "true"

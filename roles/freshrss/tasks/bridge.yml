@@ -1,0 +1,40 @@
+---
+- name: Ensure RSS-Bridge Directory Exist
+  file:
+    path: "{{project_directory}}/rssbridge"
+    state: directory
+  tags: freshrss
+
+- name: Ensure RSS-Bridge Configuration File Exist
+  template:
+    src: whitelist.txt.j2
+    dest: "{{project_directory}}/rssbridge/whitelist.txt"
+  tags: freshrss
+  no_log: true
+  notify: restart rssbridge
+
+- name: Create RSS-Bridge Docker Container
+  community.general.docker_container:
+    name: rssbridge
+    image: "rssbridge/rss-bridge:{{rssbridge_version}}"
+    pull: yes
+    hostname: rssbridge
+    container_default_behavior: compatibility
+    network_mode: default
+    restart_policy: unless-stopped
+    networks:
+      - name: proxy
+    networks_cli_compatible: yes
+    comparisons:
+      '*': strict
+    state: started
+    volumes:
+      - "{{project_directory}}/rssbridge/whitelist.txt:/app/whitelist.txt"
+    labels:
+      traefik.http.routers.rssbridge.entrypoints: "websecure"
+      traefik.http.routers.rssbridge.tls: "true"
+      traefik.http.routers.rssbridge.rule: "Host(`rssbridge.{{project_tld}}`)"
+      traefik.http.routers.rssbridge.service: "rssbridge"
+      traefik.http.services.rssbridge.loadbalancer.server.port: "80"
+      traefik.enable: "true"
+  tags: freshrss

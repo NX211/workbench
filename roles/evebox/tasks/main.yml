@@ -6,11 +6,13 @@
   tags: evebox
 
 - name: Create Evebox Docker Container
-  docker_container:
+  community.general.docker_container:
     name: evebox
     image: "jasonish/evebox:{{evebox_version}}"
     pull: yes
     hostname: evebox
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

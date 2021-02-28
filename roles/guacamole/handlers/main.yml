@@ -1,12 +1,14 @@
 ---
 - name: Restart Guacd
-  docker_container:
+  community.general.docker_container:
     name: guacd
+    container_default_behavior: compatibility
     restart: yes
   listen: restart gucad
 
 - name: Restart Guacamole
-  docker_container:
+  community.general.docker_container:
     name: guacamole
+    container_default_behavior: compatibility
     restart: yes
   listen: restart guacamole

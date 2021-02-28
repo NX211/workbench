@@ -1,6 +1,7 @@
 ---
 - name: Restart qBittorrent
-  docker_container:
+  community.general.docker_container:
     name: qbittorrent
+    container_default_behavior: compatibility
     restart: yes
   listen: restart qbittorrent

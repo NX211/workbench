@@ -1,18 +1,21 @@
 ---
-    - name: Restart Portus
-      docker_container:
-        name: portus
-        restart: yes
-      listen: restart portus
+- name: Restart Portus
+  community.general.docker_container:
+    name: portus
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart portus
 
-    - name: Restart Registry
-      docker_container:
-        name: registry
-        restart: yes
-      listen: restart registry
+- name: Restart Registry
+  community.general.docker_container:
+    name: registry
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart registry
 
-    - name: Restart Clair
-      docker_container:
-        name: clair
-        restart: yes
-      listen: restart clair
+- name: Restart Clair
+  community.general.docker_container:
+    name: clair
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart clair

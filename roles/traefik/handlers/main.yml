@@ -1,6 +1,7 @@
 ---
 - name: Restart Traefik
-  docker_container:
+  community.general.docker_container:
     name: traefik
+    container_default_behavior: compatibility
     restart: yes
   listen: restart traefik

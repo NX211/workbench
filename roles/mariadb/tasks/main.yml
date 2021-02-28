@@ -1,16 +1,18 @@
 ---
-- name: Ensure mariadb Directory Exist
+- name: Ensure MariaDB Directory Exist
   file:
     path: "{{project_directory}}/mariadb"
     state: directory
   tags: mariadb
 
-- name: Create mariadb Docker Container
-  docker_container:
+- name: Create MariaDB Docker Container
+  community.general.docker_container:
     name: database2
     image: "linuxserver/mariadb:{{mariadb_version}}"
     pull: yes
     hostname: database2
+    container_default_behavior: compatibility
+    network_mode: default
     published_ports:
       - 3306:3306
     restart_policy: unless-stopped

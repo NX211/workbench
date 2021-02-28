@@ -1,0 +1,5 @@
+  - git: 
+    version: master
+    files:
+      - src: /
+        dst: .

@@ -1,6 +1,7 @@
 ---
     - name: Restart Bazarr
-      docker_container:
+      community.general.docker_container:
         name: bazarr
+        container_default_behavior: compatibility
         restart: yes
       listen: restart bazarr

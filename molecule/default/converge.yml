@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include workbench"
+      include_role:
+        name: "workbench"

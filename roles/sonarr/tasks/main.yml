@@ -14,11 +14,13 @@
   notify: restart sonarr
 
 - name: Create Sonarr Docker Container
-  docker_container:
+  community.general.docker_container:
     name: sonarr
     image: "linuxserver/sonarr:{{sonarr_version}}"
     pull: yes
     hostname: sonarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -33,6 +35,8 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:sonarr"
+      TP_THEME: "{{theme_park_default}}"
     volumes:
       - "{{project_directory}}/sonarr:/config"
       - "{{media_directory}}/tv:/media/tv"

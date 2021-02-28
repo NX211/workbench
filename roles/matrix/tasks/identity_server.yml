@@ -1,25 +1,28 @@
 ---
 - set_fact:
-    ma1sd_url_endpoint_public: "https://{{chat_tld}}/_matrix/identity/api/v1"
+    mxisd_url_endpoint_public: "https://{{chat_tld}}/_matrix/identity/api/v1"
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
-  vars:
-    database_name: "{{ma1sd_database}}"
-    database_user: "{{ma1sd_database_user}}"
-    database_password: "{{ma1sd_database_password}}"
+- name: Ensure Identity Server Volume Exist
+  docker_volume:
+    name: mxisd
+    state: present
+  notify: restart mxisd
   tags: matrix
-  no_log: true
 
-- name: Create Matrix Identity Server Directory
+- name: Ensure Matrix Identity Server Directories Exist
   file:
-    path: "{{project_directory}}/synapse/ma1sd"
+    path: "{{item}}"
     state: directory
+  loop:
+    - "{{project_directory}}/synapse/mxisd"
+    - "{{project_directory}}/synapse/mxisd/etc"
+    - "{{project_directory}}/synapse/mxisd/var"
   tags: matrix
 
 - name: Ensure Identity Server Config Exist
   template:
-    src: ma1sd.yaml.j2
-    dest: "{{project_directory}}/synapse/ma1sd/etc/ma1sd.yaml"
+    src: mxisd.yaml.j2
+    dest: "{{project_directory}}/synapse/mxisd/etc/mxisd.yaml"
   no_log: true
   tags: matrix
 
@@ -28,32 +31,36 @@
     src: "{{item.src}}"
     dest: "{{item.dest}}"
   with_items:
-    - {src: invite-template.eml.j2,dest: "{{project_directory}}/synapse/ma1sd/var/invite-template.eml"}
-    - {src: validate-template.eml.j2,dest: "{{project_directory}}/synapse/ma1sd/var/validate-template.eml"}
-    - {src: unbind-fraudulent.eml.j2,dest: "{{project_directory}}/synapse/ma1sd/var/unbind-fraudulent.eml"}
-    - {src: mxid-template.eml.j2,dest: "{{project_directory}}/synapse/ma1sd/var/mxid-template.eml"}
+    - {src: invite-template.eml.j2,dest: "{{project_directory}}/synapse/mxisd/var/invite-template.eml"}
+    - {src: validate-template.eml.j2,dest: "{{project_directory}}/synapse/mxisd/var/validate-template.eml"}
+    - {src: unbind-fraudulent.eml.j2,dest: "{{project_directory}}/synapse/mxisd/var/unbind-fraudulent.eml"}
+    - {src: mxid-template.eml.j2,dest: "{{project_directory}}/synapse/mxisd/var/mxid-template.eml"}
+  no_log: true
   tags: matrix
 
 - name: Create Matrix Identity Server Container
-  docker_container:
-    name: ma1sd
-    image: "ma1uta/ma1sd:{{matrix_version}}"
+  community.general.docker_container:
+    name: mxisd
+    image: "kamax/mxisd:{{matrix_version}}"
     pull: yes
-    hostname: ma1sd
+    hostname: mxisd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
     networks_cli_compatible: yes
     state: started
     volumes:
-      - "{{project_directory}}/synapse/ma1sd/etc:/etc/ma1sd"
-      - "{{project_directory}}/synapse/ma1sd/var:/var/ma1sd"
+      - "{{project_directory}}/synapse/mxisd/etc:/etc/mxisd"
+      - "{{project_directory}}/synapse/mxisd/var:/var/mxisd"
+      - mxisd:/mxisd
     labels:
-      traefik.http.routers.ma1sd.entrypoints: "websecure"
-      traefik.http.routers.ma1sd.tls: "true"
-      traefik.http.routers.ma1sd.rule: "(Host(`{{chat_tld}}`) && Path(`/_matrix/identity`))"
-      traefik.http.routers.ma1sd.middlewares: "default-headers@file"
-      traefik.http.routers.ma1sd.service: "ma1sd"
-      traefik.http.services.ma1sd.loadbalancer.server.port: "8090"
+      traefik.http.routers.mxisd.entrypoints: "websecure"
+      traefik.http.routers.mxisd.tls: "true"
+      traefik.http.routers.mxisd.rule: "Host(`id.{{chat_tld}}`)"
+      traefik.http.routers.mxisd.middlewares: "default-headers@file"
+      traefik.http.routers.mxisd.service: "mxisd"
+      traefik.http.services.mxisd.loadbalancer.server.port: "8090"
       traefik.enable: "true"
   tags: matrix

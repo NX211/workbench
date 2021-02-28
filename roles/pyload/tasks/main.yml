@@ -14,11 +14,13 @@
   notify: restart pyload
 
 - name: Create Pyload Docker Container
-  docker_container:
+  community.general.docker_container:
     name: pyload
     image: "linuxserver/pyload:{{pyload_version}}"
     pull: yes
     hostname: pyload
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

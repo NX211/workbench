@@ -1,10 +1,12 @@
 ---
 - name: Create SNI Proxy Docker Container
-  docker_container:
+  community.general.docker_container:
     name: sniproxy
     image: "lancachenet/sniproxy:{{sniproxy_version}}"
     pull: yes
     hostname: sniproxy
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

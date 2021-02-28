@@ -14,11 +14,13 @@
   no_log: true
 
 - name: Create Portus Docker Container
-  docker_container:
+  community.general.docker_container:
     name: portus
     image: "opensuse/portus:{{portus_version}}"
     pull: yes
     hostname: portus
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

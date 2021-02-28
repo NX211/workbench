@@ -27,9 +27,11 @@
     - elk
 
 - name: Create Elasticsearch Docker Container
-  docker_container:
+  community.general.docker_container:
     name: elasticsearch
     hostname: elasticsearch
+    container_default_behavior: compatibility
+    network_mode: default
     privileged: true
     image: "docker.elastic.co/elasticsearch/elasticsearch:{{elk_stack_version}}"
     pull: yes

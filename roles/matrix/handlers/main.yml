@@ -1,30 +1,35 @@
 ---
 - name: Restart Matrix
-  docker_container:
+  community.general.docker_container:
     name: synapse
+    container_default_behavior: compatibility
     restart: yes
   listen: restart matrix
 
 - name: Restart Turn Server
-  docker_container:
+  community.general.docker_container:
     name: coturn
+    container_default_behavior: compatibility
     restart: yes
   listen: restart coturn
 
 - name: Restart Identity Server
-  docker_container:
-    name: ma1sd
+  community.general.docker_container:
+    name: mxisd
+    container_default_behavior: compatibility
     restart: yes
-  listen: restart ma1sd
+  listen: restart mxisd
 
 - name: Restart InspIRCd
-  docker_container:
+  community.general.docker_container:
     name: inspircd
+    container_default_behavior: compatibility
     restart: yes
   listen: restart inspircd
 
 - name: Restart IRC Bridge
-  docker_container:
+  community.general.docker_container:
     name: irc-bridge
+    container_default_behavior: compatibility
     restart: yes
   listen: restart irc-bridge

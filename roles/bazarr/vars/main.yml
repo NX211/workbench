@@ -2,3 +2,4 @@
 bazarr_auth_user: bazarr
 bazarr_auth_password_hash: "{{vault_bazarr_auth_password_hash}}"
 bazarr_api_key: "{{vault_bazarr_api_key}}"
+bazarr_flask_secret_key: "{{vault_bazarr_flask_secret_key}}"

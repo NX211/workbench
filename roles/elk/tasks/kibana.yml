@@ -18,9 +18,11 @@
     - elk
 
 - name: Create Kibana Docker Container
-  docker_container:
+  community.general.docker_container:
     name: kibana
     hostname: kibana
+    container_default_behavior: compatibility
+    network_mode: default
     image: "docker.elastic.co/kibana/kibana:{{elk_stack_version}}"
     pull: yes
     restart_policy: unless-stopped

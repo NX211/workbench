@@ -8,11 +8,13 @@
   no_log: true
 
 - name: Create Huginn Docker Container
-  docker_container:
+  community.general.docker_container:
     name: huginn
     image: "huginn/huginn:{{huginn_version}}"
     pull: yes
     hostname: huginn
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy

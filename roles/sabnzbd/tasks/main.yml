@@ -5,20 +5,14 @@
     state: directory
   tags: sabnzbd
 
-- name: Ensure Sabnzbd Configuration Files Exist
-  template:
-    src: sabnzbd.ini.j2
-    dest: "{{project_directory}}/sabnzbd/sabnzbd.ini"
-  notify: restart sabnzbd
-  no_log: true
-  tags: sabnzbd
-
 - name: Create Sabnzbd Docker Container
-  docker_container:
+  community.general.docker_container:
     name: sabnzbd
     image: "linuxserver/sabnzbd:{{sabnzbd_version}}"
     pull: yes
     hostname: sabnzbd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -31,6 +25,8 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:sabnzbd"
+      TP_THEME: "{{theme_park_default}}"
     volumes:
       - "{{project_directory}}/sabnzbd:/config"
       - "{{media_directory}}/downloads/:/media/downloads"

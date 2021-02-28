@@ -17,19 +17,31 @@
     - ircbridge
     - irc
 
+- name: Ensure Matrix IRC Bridge Config Exist
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - {src: matrix-appservice-irc.yaml.j2,dest: "{{project_directory}}/synapse/irc-bridge/config.yaml"}
+    - {src: appservice-registration-irc.yaml.j2,dest: "{{project_directory}}/synapse/irc-bridge/appservice-registration-irc.yaml"}
+  no_log: true
+  tags: matrix
+
 - name: Create Matrix IRC Bridge Docker Container
-  docker_container:
+  community.general.docker_container:
     name: irc-bridge
     image: "matrixdotorg/matrix-appservice-irc:{{irc_bridge_version}}"
     pull: yes
     hostname: ircbridge
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
     networks_cli_compatible: yes
-    state: absent
+    state: abesnt
     volumes:
-      - "{{project_directory}}/synapse/irc-bridge:/irc-config.yaml"
+      - "{{project_directory}}/synapse/irc-bridge:/data"
   tags:
     - ircbridge
     - irc

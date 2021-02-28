@@ -18,11 +18,13 @@
   tags: kutt
 
 - name: Create Kutt Docker Container
-  docker_container:
+  community.general.docker_container:
     name: kutt
     image: "kutt/kutt:{{kutt_version}}"
     pull: yes
     hostname: kutt
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -35,7 +37,7 @@
       DB_NAME: "{{kutt_database}}"
       DB_USER: "{{kutt_database_user}}"
       DB_PASSWORD: "{{kutt_database_password}}"
-      ADMIN_EMAILS: "nx211@{{project_tld}}"
+      ADMIN_EMAILS: "user@{{project_tld}}"
       REPORT_EMAIL: "abuse@{{project_tld}}"
       CONTACT_EMAIL: "contact@{{project_tld}}"
       JWT_SECRET: "{{kutt_jwt_secret}}"

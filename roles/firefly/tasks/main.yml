@@ -21,11 +21,13 @@
   notify: restart firefly
 
 - name: Create Firefly Docker Container
-  docker_container:
+  community.general.docker_container:
     name: firefly
     image: "jc5x/firefly-iii:{{firefly_version}}"
     pull: yes
     hostname: firefly
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     env_file: "{{project_directory}}/firefly/.env"
     networks:

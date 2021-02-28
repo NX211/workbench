@@ -1,6 +1,7 @@
 ---
-    - name: Restart Leantime
-      docker_container:
-        name: leantime
-        restart: yes
-      listen: restart leantime
+- name: Restart Leantime
+  community.general.docker_container:
+    name: leantime
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart leantime

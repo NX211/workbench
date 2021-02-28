@@ -14,11 +14,13 @@
   no_log: true
 
 - name: Create Bazarr Docker Container
-  docker_container:
+  community.general.docker_container:
     name: bazarr
     image: "linuxserver/bazarr:{{bazarr_version}}"
     pull: yes
     hostname: bazarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -41,8 +43,10 @@
       traefik.http.routers.bazarr.entrypoints: "websecure"
       traefik.http.routers.bazarr.tls: "true"
       traefik.http.routers.bazarr.rule: "Host(`bazarr.{{project_tld}}`)"
+      traefik.http.middlewares.bazarr_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.bazarr_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/bazarr/{{theme_park_default}}.css></head>"
       traefik.http.middlewares.bazarr-refer-header.headers.referrerPolicy: "strict-origin-when-cross-origin"
-      traefik.http.routers.bazarr.middlewares: "bazarr-refer-header"
+      traefik.http.routers.bazarr.middlewares: "bazarr-refer-header,bazarr_rewrite_theme"
       traefik.http.routers.bazarr.service: "bazarr"
       traefik.http.services.bazarr.loadbalancer.server.port: "6767"
       traefik.enable: "true"

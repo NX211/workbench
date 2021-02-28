@@ -3,23 +3,27 @@
   file:
     path: "{{project_directory}}/inspircd"
     state: directory
+    owner: "10000"
+    group: "10000"
   tags: irc
 
 - name: Create InspIRCd Docker Container
-  docker_container:
+  community.general.docker_container:
     name: inspircd
     image: "inspircd/inspircd-docker:{{inspircd_version}}"
     pull: yes
     hostname: inspircd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
     networks_cli_compatible: yes
-    state: absent
+    state: started
     env:
-      INSP_NET_SUFFIX: ".authoritah.chat"
+      INSP_NET_SUFFIX: ".{{chat_tld}}"
       INSP_NET_NAME: "Authoritah"
-      INSP_SERVER_NAME: "irc.authoritah.chat"
+      INSP_SERVER_NAME: "irc.{{chat_tld}}"
       INSP_ADMIN_NAME: "nx211"
       INSP_ADMIN_NICK: "nx211"
       INSP_ADMIN_EMAIL: "support@{{project_tld}}"

@@ -1,18 +1,21 @@
 ---
-    - name: Restart LANcache DNS
-      docker_container:
-        name: lancache-dns
-        restart: yes
-      listen: restart lancache-dns
+- name: Restart LANcache DNS
+  community.general.docker_container:
+    name: lancache-dns
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart lancache-dns
 
-    - name: Restart SNI Proxy
-      docker_container:
-        name: sniproxy
-        restart: yes
-      listen: restart sniproxy
+- name: Restart SNI Proxy
+  community.general.docker_container:
+    name: sniproxy
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart sniproxy
 
-    - name: Restart Monolithic
-      docker_container:
-        name: monolithic
-        restart: yes
-      listen: restart monolithic
+- name: Restart Monolithic
+  community.general.docker_container:
+    name: monolithic
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart monolithic

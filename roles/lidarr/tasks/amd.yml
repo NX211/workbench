@@ -1,10 +1,12 @@
 ---
 - name: Create AMD Docker Container
-  docker_container:
+  community.general.docker_container:
     name: amd
     image: "randomninjaatk/amd:{{amd_version}}"
     pull: yes
     hostname: amd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present

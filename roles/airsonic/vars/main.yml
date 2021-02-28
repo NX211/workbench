@@ -2,4 +2,4 @@
 airsonic_jwtkey: "{{vault_airsonic_jwtkey}}"
 airsonic_smtp_password: "{{vault_airsonic_smtp_password}}"
 airsonic_recaptcha_sitekey: "{{vault_airsonic_recaptcha_sitekey}}"
-airsonic_welcome_title: "Authoritah Music"
+airsonic_welcome_title: "Music"

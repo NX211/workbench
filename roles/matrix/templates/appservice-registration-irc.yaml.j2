@@ -1,0 +1,13 @@
+id: "IRC Bridge"
+url: "http://127.0.0.1:1234"
+as_token: "{{matrix_iecbridge_application_services_token}}"
+hs_token: "{{matrix_iecbridge_homeserver_token}}"
+sender_localpart: "_irc_bot" # Will result in @_irc_bot:{{chat_tld}}
+namespaces:
+  users:
+    - exclusive: true
+      regex: "@_irc_bridge_.*"
+  aliases:
+    - exclusive: false
+      regex: "#_irc_bridge_.*"
+  rooms: []

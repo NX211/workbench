@@ -2,7 +2,7 @@
 - name: Send matrix notification
   matrix:
     msg_plain: "{{notification_message}}"
-    room_id: "!MWsGcsyEfYsLNWXBOv:authoritah.chat"
+    room_id: ""
     hs_url: "{{matrix_notification_host}}"
     user_id: "{{matrix_notification_user}}"
     password: "{{matrix_notification_password}}"

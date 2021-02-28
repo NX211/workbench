@@ -26,9 +26,11 @@
     - elk
 
 - name: Create Logstash Docker Container
-  docker_container:
+  community.general.docker_container:
     name: logstash
     hostname: logstash
+    container_default_behavior: compatibility
+    network_mode: default
     image: "docker.elastic.co/logstash/logstash:{{elk_stack_version}}"
     pull: yes
     restart_policy: unless-stopped

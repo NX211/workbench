@@ -3,5 +3,5 @@ podify_database_user: "podify"
 podify_database_password: "{{vault_podify_database_password}}"
 podify_database: "podify"
 podify_secrey_key: "{{vault_podify_secrey_key}}"
-podify_user: nx211@authoritah.com
+podify_user: "{{project_notification_email}}"
 podify_user_password: "{{vault_podify_user_password}}"

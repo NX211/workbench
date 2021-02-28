@@ -8,17 +8,17 @@
   tags: jellyfin
 
 - name: Create Jellyfin Docker Container
-  docker_container:
+  community.general.docker_container:
     name: jellyfin
     hostname: jellyfin
+    container_default_behavior: compatibility
+    network_mode: default
     image: "linuxserver/jellyfin:{{jellyfin_version}}"
     pull: yes
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
       '*': strict
-    published_ports:
-      - 8096:8096
     networks:
       - name: proxy
     networks_cli_compatible: yes

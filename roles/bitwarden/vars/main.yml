@@ -1,3 +1,5 @@
 ---
 bitwarden_admin_token: "{{vault_bitwarden_admin_token}}"
 bitwarden_hibp_api_key: "{{vault_bitwarden_hibp_api_key}}"
+bitwarden_yubico_client_id: "{{vault_bitwarden_yubico_client_id}}"
+bitwarden_yubico_client_key: "{{vault_bitwarden_yubico_client_key}}"

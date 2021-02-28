@@ -14,11 +14,13 @@
   no_log: true
 
 - name: Create Teedy Docker Container
-  docker_container:
+  community.general.docker_container:
     name: teedy
     image: "sismics/docs:{{teedy_version}}"
     pull: yes
     hostname: teedy
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     env:
       DOCS_BASE_URL: "https://docs.{{project_tld}}"

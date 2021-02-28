@@ -1,6 +1,7 @@
 ---
 - name: Restart Tdarr
-  docker_container:
+  community.general.docker_container:
     name: tdarr
+    container_default_behavior: compatibility
     restart: yes
   listen: restart tdarr

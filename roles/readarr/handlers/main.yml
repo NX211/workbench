@@ -1,6 +1,7 @@
 ---
-    - name: Restart Readarr
-      docker_container:
-        name: readarr
-        restart: yes
-      listen: restart readarr
+- name: Restart Readarr
+  community.general.docker_container:
+    name: readarr
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart readarr

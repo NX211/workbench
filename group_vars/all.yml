@@ -1,9 +1,10 @@
 ---
-default_timezone: "UTC"
-email_host: "mail.domain.tld"
+default_timezone: ""
+email_host: ""
 email_port: "587"
-email_user: "noreply@domain.tld"
+email_user: ""
 email_password: "{{vault_email_password}}"
 opensubtitles_user: "{{vault_opensubtitles_user}}"
 opensubtitles_password: "{{vault_opensubtitles_password}}"
 omdb_apikey: "{{vault_omdb_apikey}}"
+project_notification_email: ""

@@ -14,12 +14,14 @@
   notify: restart firefly-importer
 
 - name: Create Firefly Importer Docker Container
-  docker_container:
+  community.general.docker_container:
     name: firefly-importer
     image: "fireflyiii/csv-importer:{{firefly_version}}"
     env_file: "{{project_directory}}/firefly/firefly-importer/.env"
     pull: yes
     hostname: firefly-importer
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     published_ports:
       - 8081:80

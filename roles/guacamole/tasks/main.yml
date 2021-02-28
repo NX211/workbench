@@ -1,10 +1,12 @@
 ---
 - name: Create Guacd Docker Container
-  docker_container:
+  community.general.docker_container:
     name: guacd
     image: "linuxserver/guacd:{{guacd_version}}"
     pull: yes
     hostname: guacd
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -23,8 +25,11 @@
   no_log: true
 
 - name: Create Guacamole Docker Container
-  docker_container:
+  community.general.docker_container:
     name: guacamole
+    hostname: guacamole
+    container_default_behavior: compatibility
+    network_mode: default
     image: "guacamole/guacamole:{{guacamole_version}}"
     user: root
     pull: yes

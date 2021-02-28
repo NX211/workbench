@@ -16,11 +16,13 @@
   no_log: true
 
 - name: Create Bitwarden Docker Container
-  docker_container:
+  community.general.docker_container:
     name: bitwarden
     image: "bitwardenrs/server:{{bitwarden_version}}"
     pull: yes
     hostname: bitwarden
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     networks:
       - name: proxy
@@ -42,6 +44,9 @@
       traefik.http.routers.bitwarden.entrypoints: "websecure"
       traefik.http.routers.bitwarden.tls: "true"
       traefik.http.routers.bitwarden.rule: "Host(`vault.{{project_tld}}`)"
+      traefik.http.middlewares.bitwarden_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.bitwarden_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/bitwarden/{{theme_park_default}}.css></head>"
+      traefik.http.routers.bitwarden.middlewares: "default-headers@file,bitwarden_rewrite_theme"
       traefik.http.routers.bitwarden.service: "bitwarden"
       traefik.http.services.bitwarden.loadbalancer.server.port: "80"
       traefik.enable: "true"

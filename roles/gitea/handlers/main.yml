@@ -1,6 +1,7 @@
 ---
     - name: Restart Gitea
-      docker_container:
+      community.general.docker_container:
         name: gitea
+        container_default_behavior: compatibility
         restart: yes
       listen: restart gitea

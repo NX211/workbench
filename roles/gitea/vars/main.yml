@@ -2,3 +2,7 @@
 gitea_database_user: "gitea"
 gitea_database_password: "{{vault_gitea_database_password}}"
 gitea_database: "gitea"
+gitea_lfs_jwt_secret: "{{vault_gitea_lfs_jwt_secret}}"
+gitea_secret_key: "{{vault_gitea_secret_key}}"
+gitea_internal_token: "{{vault_gitea_internal_token}}"
+gitea_jwt_secret: "{{vault_gitea_jwt_secret}}"

@@ -1,0 +1,7 @@
+---
+- name: Restart VScode
+  community.general.docker_container:
+    name: vscode
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart vscode

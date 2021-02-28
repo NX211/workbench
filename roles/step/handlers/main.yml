@@ -1,0 +1,6 @@
+---
+    - name: Restart Step
+      docker_container:
+        name: step
+        restart: yes
+      listen: restart step

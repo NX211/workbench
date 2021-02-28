@@ -14,11 +14,13 @@
   tags: lidarr
 
 - name: Create Lidarr Docker Container
-  docker_container:
+  community.general.docker_container:
     name: lidarr
     image: "linuxserver/lidarr:{{lidarr_version}}"
     pull: yes
     hostname: lidarr
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     comparisons:
       labels: allow_more_present
@@ -32,6 +34,8 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:lidarr"
+      TP_THEME: "{{theme_park_default}}"
     volumes:
       - "{{project_directory}}/lidarr:/config"
       - "{{media_directory}}/music:/media/music"

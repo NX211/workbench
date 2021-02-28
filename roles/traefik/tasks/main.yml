@@ -27,7 +27,7 @@
   notify: restart traefik
 
 - name: Create Teaefik Docker Container
-  docker_container:
+  community.general.docker_container:
     name: traefik
     image: "traefik:{{traefik_version}}"
     comparisons:
@@ -35,9 +35,11 @@
       '*': strict
     pull: yes
     hostname: traefik
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     env:
-      DO_AUTH_TOKEN: "{{digitalocean_token}}"
+      DREAMHOST_API_KEY: "{{dreamhost_token}}"
     published_ports:
       - 80:80
       - 443:443
@@ -57,14 +59,15 @@
       - "{{project_directory}}/traefik/config.yml:/config.yml:ro"
       - /etc/localtime:/etc/localtime:ro
     labels:
-      traefik.http.routers.http-catchall.rule: "hostregexp(`{host:.+}`)"
       traefik.http.routers.http-catchall.entrypoints: "web"
+      traefik.http.routers.http-catchall.rule: "hostregexp(`{any:.+}`)"
       traefik.http.routers.http-catchall.middlewares: "redirect-to-https"
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: "https"
       traefik.http.routers.traefiksecure.entrypoints: "websecure"
       traefik.http.routers.traefiksecure.rule: "Host(`api.{{project_tld}}`)"
-      traefik.http.routers.traefiksecure.middlewares: "traefik-auth@file"
       traefik.http.routers.traefiksecure.tls: "true"
+      traefik.http.routers.traefiksecure.middlewares: "traefik-auth@file"
+      traefik.http.routers.traefiksecure.service: "api@internal"
       traefik.http.routers.wildcard.tls.certresolver: "dnsChallenge"
       traefik.http.routers.wildcard.tls.domains[0].main: "{{project_tld}}"
       traefik.http.routers.wildcard.tls.domains[0].sans: "*.{{project_tld}}"
@@ -76,21 +79,7 @@
       traefik.http.routers.wildcard.tls.domains[3].sans: "*.{{chat_tld}}"
       traefik.http.routers.wildcard.tls.domains[4].main: "{{kutt_tld}}"
       traefik.http.routers.wildcard.tls.domains[4].sans: "*.{{kutt_tld}}"
-      traefik.http.routers.wildcard.tls.domains[5].main: "{{rtsp_tld}}"
-      traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{rtsp_tld}}"
-      traefik.http.routers.traefiksecure.service: "api@internal"
-      traefik.tcp.routers.wildcard.tls.certresolver: "dnsChallenge"
-      traefik.tcp.routers.wildcard.tls.domains[0].main: "{{project_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[0].sans: "*.{{project_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[1].main: "{{git_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[1].sans: "*.{{git_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[2].main: "{{jellyfin_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[2].sans: "*.{{jellyfin_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[3].main: "{{chat_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[3].sans: "*.{{chat_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[4].main: "{{kutt_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[4].sans: "*.{{kutt_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[5].main: "{{rtsp_tld}}"
-      traefik.tcp.routers.wildcard.tls.domains[5].sans: "*.{{rtsp_tld}}"
+      traefik.http.routers.wildcard.tls.domains[5].main: "{{peertube_tld}}"
+      traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{peertube_tld}}"
       traefik.enable: "true"
   tags: traefik

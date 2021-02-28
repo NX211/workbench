@@ -1,0 +1,7 @@
+---
+- name: Restart Podify
+  community.general.docker_container:
+    name: podify
+    container_default_behavior: compatibility
+    restart: yes
+  listen: restart podify

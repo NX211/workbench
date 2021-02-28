@@ -1,7 +1,7 @@
 [general]
 ip = 0.0.0.0
 port = 6767
-base_url = /
+base_url = 
 path_mappings = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
 debug = False
 branch = master
@@ -10,7 +10,11 @@ single_language = False
 minimum_score = 90
 use_scenename = True
 use_postprocessing = False
-postprocessing_cmd =
+postprocessing_cmd = 
+postprocessing_threshold = 90
+use_postprocessing_threshold = False
+postprocessing_threshold_movie = 70
+use_postprocessing_threshold_movie = False
 use_sonarr = True
 use_radarr = True
 path_mappings_movie = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
@@ -23,10 +27,13 @@ movie_default_language = ['en']
 movie_default_hi = False
 movie_default_forced = False
 page_size = 25
+page_size_manual_search = 10
 minimum_score_movie = 70
 use_embedded_subs = True
+embedded_subs_show_desired = True
 utf8_encode = True
 ignore_pgs_subs = False
+ignore_vobsub_subs = False
 adaptive_searching = False
 enabled_providers = opensubtitles
 throtteled_providers = {}
@@ -34,7 +41,7 @@ multithreading = True
 chmod_enabled = False
 chmod = 0640
 subfolder = current
-subfolder_custom =
+subfolder_custom = 
 update_restart = True
 upgrade_subs = False
 upgrade_frequency = 12
@@ -42,6 +49,10 @@ days_to_upgrade_subs = None
 upgrade_manual = False
 anti_captcha_provider = None
 wanted_search_frequency = 3
+wanted_search_frequency_movie = 3
+subzero_mods = 
+dont_notify_manual_actions = False
+flask_secret_key = {{bazarr_flask_secret_key}}
 
 [auth]
 type = form
@@ -59,6 +70,10 @@ full_update = Daily
 full_update_day = 6
 full_update_hour = 4
 only_monitored = False
+series_sync = 1
+episodes_sync = 5
+excluded_tags = []
+excluded_series_types = []
 
 [radarr]
 ip = radarr
@@ -89,49 +104,57 @@ timeout = 15
 skip_wrong_fps = False
 
 [addic7ed]
-username =
-password =
+username = 
+password = 
 random_agents = True
 
 [legendasdivx]
-username =
-password =
+username = 
+password = 
 skip_wrong_fps = False
 
 [legendastv]
-username =
-password =
+username = 
+password = 
 
 [xsubs]
-username =
-password =
+username = 
+password = 
 
 [assrt]
-token =
+token = 
 
 [anticaptcha]
-anti_captcha_key =
+anti_captcha_key = 
 
 [deathbycaptcha]
-username =
-password =
+username = 
+password = 
 
 [napisy24]
-username =
-password =
+username = 
+password = 
 
 [subscene]
-username =
-password =
+username = 
+password = 
 
 [betaseries]
-token =
+token = 
 
 [analytics]
 enabled = True
 
 [titlovi]
-username =
-password =
+username = 
+password = 
+
+[subsync]
+use_subsync = False
+use_subsync_threshold = False
+subsync_threshold = 90
+use_subsync_movie_threshold = False
+subsync_movie_threshold = 70
+debug = False
 
 [titulky]

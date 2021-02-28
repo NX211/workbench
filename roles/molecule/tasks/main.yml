@@ -1,10 +1,12 @@
 ---
 - name: Create Molecule Docker Container
-  docker_container:
+  community.general.docker_container:
     name: molecule
     image: "quay.io/ansible/molecule:{{molecule_version}}"
     pull: yes
     hostname: molecule
+    container_default_behavior: compatibility
+    network_mode: default
     privileged: yes
     restart_policy: unless-stopped
     networks:

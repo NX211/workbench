@@ -32,11 +32,13 @@
   tags: netbootxyz
 
 - name: Create NetBootxyz Docker Container
-  docker_container:
+  community.general.docker_container:
     name: netbootxyz
     image: "linuxserver/netbootxyz:{{netbootxyz_version}}"
     pull: yes
     hostname: netbootxyz
+    container_default_behavior: compatibility
+    network_mode: default
     user: "root"
     comparisons:
       labels: allow_more_present

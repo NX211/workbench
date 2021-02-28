@@ -14,11 +14,13 @@
   tags: lancache
 
 - name: Create LANcache DNS Docker Container
-  docker_container:
+  community.general.docker_container:
     name: lancache-dns
     image: "lancachenet/lancache-dns:{{lancache-dns_version}}"
     pull: yes
     hostname: lancache-dns
+    container_default_behavior: compatibility
+    network_mode: default
     restart_policy: unless-stopped
     env_file: "{{project_directory}}/lancache/lancache-dns/.env"
     networks:
