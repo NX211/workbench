@@ -1,0 +1,8 @@
+repos:
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v3.4.0
+        hooks:
+        -   id: trailing-whitespace
+            name: Trim Trailing Whitespace
+            description: This hook trims trailing whitespace.
+            entry: trailing-whitespace-fixer
