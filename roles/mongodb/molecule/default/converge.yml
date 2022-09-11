@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include mongodb"
+      include_role:
+        name: "mongodb"

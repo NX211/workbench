@@ -1,0 +1,73 @@
+---
+- name: Install Docker Python library
+  when: inventory_hostname == groups['managers'][0]
+  apt:
+    name: python3-docker
+  tags: wallabag
+
+- name: Ensure Wallabag Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: wallabag_images
+    state: present
+  tags: wallabag
+
+- name: Deploy Wallabag Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: wallabag
+    hostname: "{{wallabag_hostname}}"
+    image: "{{wallabag_docker_image}}:{{wallabag_version}}"
+    networks:
+      - "{{traefik_network}}"
+    env:
+      POSTGRES_USER: "{{postgres_root_user}}"
+      POSTGRES_PASSWORD: "{{postgres_root_password}}"
+      POSTGRES_DB: "{{wallabag_database}}"
+      SYMFONY__ENV__DATABASE_DRIVER: "pdo_pgsql"
+      SYMFONY__ENV__DATABASE_HOST: "{{postgres_hostname}}"
+      SYMFONY__ENV__DATABASE_PORT: "{{postgres_port}}"
+      SYMFONY__ENV__DATABASE_NAME: "{{wallabag_database}}"
+      SYMFONY__ENV__DATABASE_USER: "{{wallabag_database_user}}"
+      SYMFONY__ENV__DATABASE_PASSWORD: "{{wallabag_database_password}}"
+      SYMFONY__ENV__DATABASE_CHARSET: "utf8"
+      SYMFONY__ENV__SECRET: "{{wallabag_env_secret}}"
+      SYMFONY__ENV__LOCALE: "en"
+      SYMFONY__ENV__MAILER_HOST: "{{email_host}}"
+      SYMFONY__ENV__MAILER_PORT: "465"
+      SYMFONY__ENV__MAILER_USER: "{{email_user}}"
+      SYMFONY__ENV__MAILER_PASSWORD: "{{email_password}}"
+      SYMFONY__ENV__FROM_EMAIL: "{{email_user}}"
+      SYMFONY__ENV__DOMAIN_NAME: "https://wallabag.{{project_tld}}"
+      SYMFONY__ENV__REDIS_SCHEME: "tcp"
+      SYMFONY__ENV__REDIS_HOST: "{{redis_hostname}}"
+      SYMFONY__ENV__REDIS_PORT: "{{redis_port}}"
+      SYMFONY__ENV__REDIS_PASSWORD: ""
+      SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
+      SYMFONY__ENV__FOSUSER_CONFIRMATION: "true"
+      SYMFONY__ENV__TWOFACTOR_AUTH: "false"
+      SYMFONY__ENV__TWOFACTOR_SENDER: "{{email_user}}"
+      POPULATE_DATABASE: "false"
+      SYMFONY__ENV__SERVER_NAME: "{{wallabag_server_name}}"
+    mode: global
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    mounts:
+      - source: wallabag_images
+        target: /var/www/wallabag/web/assets/images/
+        type: volume
+    labels:
+      traefik.http.routers.wallabag.entrypoints: "websecure"
+      traefik.http.routers.wallabag.rule: "Host(`wallabag.{{project_tld}}`)"
+      traefik.http.routers.wallabag.middlewares: "default-headers@file"
+      traefik.http.routers.wallabag.tls: "true"
+      traefik.http.routers.wallabag.service: "wallabag"
+      traefik.http.routers.wallabag.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.wallabag.loadbalancer.server.port: "{{wallabag_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: wallabag

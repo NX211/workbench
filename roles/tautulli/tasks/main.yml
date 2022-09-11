@@ -1,0 +1,43 @@
+---
+- name: Ensure Tautulli Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/tautulli"
+    state: directory
+  tags: tautulli
+
+- name: Deploy Tautulli Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: tautulli
+    hostname: "{{tautulli_hostname}}"
+    image: "{{tautulli_docker_image}}:{{tautulli_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{default_timezone}}"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/tautulli/
+        target: /config/
+        type: bind
+    labels:
+      traefik.http.routers.tautulli.entrypoints: "websecure"
+      traefik.http.routers.tautulli.rule: "Host(`stats.{{media_tld}}`)"
+      traefik.http.routers.tautulli.middlewares: "default-headers@file"
+      traefik.http.routers.tautulli.tls: "true"
+      traefik.http.routers.tautulli.service: "tautulli"
+      traefik.http.routers.tautulli.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.tautulli.loadbalancer.server.port: "{{tautulli_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: tautulli

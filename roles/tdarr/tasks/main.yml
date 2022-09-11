@@ -1,0 +1,39 @@
+---
+- name: Ensure Tdarr Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/tdarr"
+    state: directory
+  tags: tdarr
+
+- name: Ensure Tdarr Transcode Volume Exist
+  when: inventory_hostname == groups['media'][0]
+  docker_volume:
+    name: transcode
+    state: present
+  tags: tdarr
+
+- name: Install jsondiff Python library
+  when: inventory_hostname == groups['managers'][0]
+  become: true
+  become_method: sudo
+  pip:
+    name: jsondiff
+  tags: tdarr
+
+- name: Create Tdarr Docker Compose File
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{project_root_directory}}/tdarr/docker-compose.yml"
+    mode: 0775
+  tags: tdarr
+
+- name: Deploy Tdarr from Compose File
+  when: inventory_hostname == groups['managers'][0]
+  docker_stack:
+    state: present
+    name: tdarr
+    compose:
+      - "{{project_root_directory}}/tdarr/docker-compose.yml"
+  tags: tdarr

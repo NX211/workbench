@@ -1,0 +1,4 @@
+---
+readarr_version: "nightly"
+readarr_hostname: "readarr"
+readarr_docker_image: "ghcr.io/linuxserver/readarr"

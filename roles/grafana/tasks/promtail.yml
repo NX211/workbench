@@ -1,0 +1,40 @@
+---
+- name: Ensure Promtail Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{project_root_directory}}/grafana/promtail"
+    state: directory
+  tags: promtail
+
+- name: Ensure Promtail Configuration File Exist
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: promtail.yml.j2
+    dest: "{{project_root_directory}}/grafana/promtail/promtail.yml"
+  no_log: true
+  tags: promtail
+
+- name: Deploy Promtail Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: promtail
+    hostname: "{{promtail_hostname}}"
+    image: "{{promtail_docker_image}}:{{grafana_stack_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    command: 
+      - '-config.file=/etc/promtail-config/promtail.yml'
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+    replicas: 1
+    mounts:
+      - source: /
+        target: 
+        type: bind
+    state: present
+  tags: promtail

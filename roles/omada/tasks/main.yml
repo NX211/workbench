@@ -1,0 +1,67 @@
+---
+- name: Ensure omOmadada Data Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: omada-data
+    state: present
+  tags: omada
+
+- name: Ensure Omada Work Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: omada-work
+    state: present
+  tags: omada
+
+- name: Ensure Omada Logs Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: omada-logs
+    state: present
+  tags: omada
+
+- name: Deploy Omada Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: omada
+    hostname: "{{omada_hostname}}"
+    image: "{{omada_docker_image}}:{{omada_version}}"
+    networks:
+      - "{{traefik_network}}"
+    env:
+      MANAGE_HTTP_PORT: "8088"
+      MANAGE_HTTPS_PORT: "8043"
+      PGID: "508"
+      PORTAL_HTTP_PORT: "8088"
+      PORTAL_HTTPS_PORT: "8043"
+      PUID: "508"
+      SHOW_SERVER_LOGS: "true"
+      SHOW_MONGODB_LOGS: "false"
+      TZ: "{{default_timezone}}"
+    mode: global
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    mounts:
+      - source: omada-data
+        target: /opt/tplink/EAPController/data/
+        type: volume
+      - source: omada-work
+        target: /opt/tplink/EAPController/work/
+        type: volume
+      - source: omada-logs
+        target: /opt/tplink/EAPController/logs/
+        type: volume
+    labels:
+      traefik.http.routers.omada.rule: "Host(`omada.{{project_tld}}`)"
+      traefik.http.routers.omada.entrypoints: "websecure"
+      traefik.http.routers.omada.tls: "true"
+      traefik.http.routers.omada.service: "omada"
+      traefik.http.routers.omada.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.omada.loadbalancer.server.port: "{{omada_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: omada

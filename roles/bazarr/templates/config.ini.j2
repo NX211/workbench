@@ -1,0 +1,220 @@
+[general]
+ip = 0.0.0.0
+port = {{bazarr_port}}
+base_url = 
+path_mappings = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
+debug = False
+branch = master
+auto_update = True
+single_language = False
+minimum_score = 90
+use_scenename = True
+use_postprocessing = False
+postprocessing_cmd = 
+postprocessing_threshold = 90
+use_postprocessing_threshold = False
+postprocessing_threshold_movie = 70
+use_postprocessing_threshold_movie = False
+use_sonarr = True
+use_radarr = True
+path_mappings_movie = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
+serie_default_enabled = True
+serie_default_profile = 
+movie_default_enabled = True
+movie_default_profile = 
+page_size = 25
+page_size_manual_search = 10
+minimum_score_movie = 70
+use_embedded_subs = True
+embedded_subs_show_desired = True
+utf8_encode = True
+ignore_pgs_subs = False
+ignore_vobsub_subs = False
+ignore_ass_subs = False
+adaptive_searching = False
+adaptive_searching_delay = 3w
+adaptive_searching_delta = 1w
+enabled_providers = ['opensubtitles', 'opensubtitlescom', 'subscene']
+multithreading = True
+chmod_enabled = False
+chmod = 0640
+subfolder = current
+subfolder_custom = 
+upgrade_subs = False
+upgrade_frequency = 12
+days_to_upgrade_subs = None
+upgrade_manual = False
+anti_captcha_provider = None
+wanted_search_frequency = 3
+wanted_search_frequency_movie = 3
+subzero_mods = 
+dont_notify_manual_actions = False
+serie_default_language = ['en']
+serie_default_hi = False
+serie_default_forced = False
+movie_default_language = ['en']
+movie_default_hi = False
+movie_default_forced = False
+flask_secret_key = {{bazarr_flask_secret_key}}
+
+[auth]
+type = None
+username = {{bazarr_auth_username}}
+password = {{bazarr_auth_password_hash}}
+apikey = {{bazarr_api_key}}
+
+[sonarr]
+ip = sonarr
+port = 8989
+base_url = 
+ssl = False
+apikey = {{sonarr_api_key}}
+full_update = Daily
+full_update_day = 6
+full_update_hour = 4
+only_monitored = False
+series_sync = 60
+episodes_sync = 60
+excluded_tags = []
+excluded_series_types = []
+use_ffprobe_cache = True
+exclude_season_zero = False
+
+[radarr]
+ip = radarr
+port = 7878
+base_url = 
+ssl = False
+apikey = {{radarr_api_key}}
+full_update = Daily
+full_update_day = 6
+full_update_hour = 5
+only_monitored = False
+movies_sync = 60
+excluded_tags = []
+use_ffprobe_cache = True
+
+[proxy]
+type = None
+url = 
+port = 
+username = 
+password = 
+exclude = localhost,127.0.0.1
+
+[opensubtitles]
+username = {{opensubtitles_username}}
+password = {{opensubtitles_password}}
+use_tag_search = False
+vip = False
+ssl = True
+timeout = 15
+skip_wrong_fps = False
+
+[opensubtitlescom]
+username = {{opensubtitlescom_username}}
+password = {{opensubtitlescom_password_hash}}
+use_hash = True
+
+[addic7ed]
+username = 
+password = 
+vip = False
+random_agents = True
+
+[podnapisi]
+verify_ssl = True
+
+[legendasdivx]
+username = 
+password = 
+skip_wrong_fps = False
+
+[ktuvit]
+email = 
+hashed_password = 
+
+[legendastv]
+username = 
+password = 
+featured_only = False
+
+[xsubs]
+username = 
+password = 
+
+[assrt]
+token = 
+
+[anticaptcha]
+anti_captcha_key = 
+
+[deathbycaptcha]
+username = 
+password = 
+
+[napisy24]
+username = 
+password = 
+
+[subscene]
+username = {{subscene_username}}
+password = {{subscene_password_hash}}
+
+[betaseries]
+token = 
+
+[analytics]
+enabled = True
+
+[titlovi]
+username = 
+password = 
+
+[titulky]
+username = 
+password = 
+skip_wrong_fps = False
+approved_only = False
+multithreading = True
+
+[embeddedsubtitles]
+include_ass = True
+include_srt = True
+
+[subsync]
+use_subsync = False
+use_subsync_threshold = False
+subsync_threshold = 90
+use_subsync_movie_threshold = False
+subsync_movie_threshold = 70
+debug = False
+
+[series_scores]
+hash = 359
+series = 180
+year = 90
+season = 30
+episode = 30
+release_group = 15
+source = 7
+audio_codec = 3
+resolution = 2
+video_codec = 2
+hearing_impaired = 1
+streaming_service = 0
+edition = 0
+
+[movie_scores]
+hash = 119
+title = 60
+year = 30
+release_group = 15
+source = 7
+audio_codec = 3
+resolution = 2
+video_codec = 2
+hearing_impaired = 1
+streaming_service = 0
+edition = 0
+

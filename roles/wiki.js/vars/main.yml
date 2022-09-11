@@ -1,0 +1,4 @@
+---
+wikijs_database: "wikijs"
+wikijs_database_user: "wikijs"
+wikijs_database_password: "{{vault_wikijs_database_password}}"

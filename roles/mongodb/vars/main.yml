@@ -1,0 +1,3 @@
+---
+mongo_initdb_root_password: "{{vault_mongo_initdb_root_password}}"
+mongo_initdb_root_username: "{{vault_mongo_initdb_root_username}}"

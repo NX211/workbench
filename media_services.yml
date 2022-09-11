@@ -1,0 +1,20 @@
+---
+- name: Deploy Media Services
+  hosts: all
+  gather_facts: False
+  become: yes
+  roles:
+    - sabnzbd
+    - qbittorrent
+    - prowlarr
+    - sonarr
+    - radarr
+    - lidarr
+    - readarr
+    - bazarr
+    - kavita
+    - ombi
+    - plex
+    - photoprism
+    - peertube
+    - tautulli

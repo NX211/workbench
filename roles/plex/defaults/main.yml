@@ -1,0 +1,5 @@
+---
+plex_version: "latest"
+plex_hostname: "plex"
+plex_port: "32400"
+plex_docker_image: "lscr.io/linuxserver/plex"

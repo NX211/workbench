@@ -1,0 +1,30 @@
+---
+- name: Ensure Redis Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/redis"
+    state: directory
+  tags: redis
+
+- name: Deploy Redis Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: redis
+    hostname: "{{redis_hostname}}"
+    image: "{{redis_docker_image}}:{{redis_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mounts:
+      - source: "/greytalon/apps/redis/"
+        target: /data/
+        type: bind
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    state: present
+  tags: redis

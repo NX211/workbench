@@ -1,0 +1,22 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data source=config//kavita.db"
+  },
+  "TokenKey": "{{kavita_tokenkey}}",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Information",
+      "Microsoft.Hosting.Lifetime": "Error",
+      "Hangfire": "Information",
+      "Microsoft.AspNetCore.Hosting.Internal.WebHost": "Information"
+    },
+    "File": {
+      "Path": "config//logs/kavita.log",
+      "Append": "True",
+      "FileSizeLimitBytes": 26214400,
+      "MaxRollingFiles": 2
+    }
+  },
+  "Port": {{kavita_port}}
+}

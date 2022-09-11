@@ -1,0 +1,57 @@
+---
+- name: Ensure Authelia Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{project_root_directory}}/authelia"
+    state: directory
+  tags: authelia
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{authelia_database}}"
+    database_user: "{{authelia_database_user}}"
+    database_password: "{{authelia_database_password}}"
+  tags: authelia
+  no_log: true
+
+- name: Ensure Authelia Configuration Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - {src: configuration.yml.j2,dest: "{{project_root_directory}}/authelia/configuration.yml"}
+    - {src: users.yml.j2,dest: "{{project_root_directory}}/authelia/users.yml"}
+  tags: authelia
+  no_log: true
+
+- name: Deploy Authelia Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: authelia
+    hostname: "{{authelia_hostname}}"
+    image: "{{authelia_docker_image}}:{{authelia_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: global
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.role == manager
+    mounts:
+      - source: "{{project_root_directory}}/authelia/"
+        target: /config/
+        type: bind
+    labels:
+      traefik.http.routers.authelia.rule: "Host(`login.{{project_tld}}`)"
+      traefik.http.routers.authelia.entrypoints: "websecure"
+      traefik.http.routers.authelia.tls: "true"
+      traefik.http.routers.authelia.service: "authelia"
+      traefik.http.routers.authelia.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.authelia.loadbalancer.server.port: "{{authelia_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: authelia

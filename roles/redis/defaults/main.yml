@@ -1,0 +1,3 @@
+---
+redis_version: "latest"
+redis_docker_image: "redis"

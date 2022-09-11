@@ -1,0 +1,85 @@
+http:
+  middlewares:
+    authelia:
+      forwardauth:
+        address: "http://authelia:9091/api/verify?rd=https://login.{{project_tld}}/"
+        trustForwardHeader: true
+        authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
+    authelia-basic:
+      forwardauth:
+        address: "http://{{authelia_hostname}}:{{authelia_port}}/api/verify?auth=basic"
+        trustForwardHeader: true
+        authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
+    default-headers:
+      headers:
+        referrerPolicy: no-referrer
+        forceSTSHeader: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+  routers:
+    homeassistant:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`hass.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "homeassistant"
+    nodered:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`nodered.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "nodered"
+    cups:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`print.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - authelia@file
+      service: "cups"
+    graylog:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`logs.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "graylog"
+  services:
+    homeassistant:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.200:8123/"
+    nodered:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.200:1880/"
+    cups:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.232:631/"
+    graylog:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.0.10:9000/"
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      sniStrict : true
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305

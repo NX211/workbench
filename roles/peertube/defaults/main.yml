@@ -1,0 +1,7 @@
+---
+peertube_version: "production-bullseye"
+peertube_hostname: "peertube"
+peertube_docker_image: "chocobozzz/peertube"
+peertube_port: "9000"
+deploy_peertube_config: false
+peertube_rtmp_port: "1935"

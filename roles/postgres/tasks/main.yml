@@ -1,0 +1,45 @@
+---
+- name: Ensure Postgres Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/postgres"
+    state: directory
+  tags: postgres
+
+- name: Deploy postgres Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: postgres
+    hostname: "{{postgres_hostname}}"
+    image: "{{postgres_docker_image}}:{{postgres_version}}"
+    env:
+      POSTGRES_PASSWORD: "{{postgres_root_password}}"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_INITDB_ARGS: "--auth-local=md5"
+    publish:
+      - published_port: "{{postgres_port}}"
+        target_port: "{{postgres_port}}" 
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    mounts:
+      - source: "/greytalon/apps/postgres/data/"
+        target: /var/lib/postgresql/data/pgdata/
+        type: bind
+    state: present
+  tags: postgres
+
+- name: Wait for Postgres to be up and running
+  when: inventory_hostname == groups['managers'][0]
+  wait_for:
+    host: "{{postgres_localhost}}"
+    port: "{{postgres_port}}"
+    delay: 15
+  tags: postgres

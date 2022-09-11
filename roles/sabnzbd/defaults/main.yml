@@ -1,0 +1,5 @@
+---
+sabnzbd_version: "latest"
+sabnzbd_hostname: "sabnzbd"
+sabnzbd_port: "8080"
+sabnzbd_docker_image: "ghcr.io/linuxserver/sabnzbd"

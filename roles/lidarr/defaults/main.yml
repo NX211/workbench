@@ -1,0 +1,11 @@
+---
+lidarr_version: "develop"
+amd_version: "latest"
+amvd_version: "latest"
+amd_hostname: "amd"
+amvd_hostname: "amvd"
+lidarr_hostname: "lidarr"
+lidarr_port: "8686"
+lidarr_docker_image: "ghcr.io/linuxserver/lidarr"
+amvd_docker_image: "randomninjaatk/amvd"
+amd_docker_image: "randomninjaatk/amd"

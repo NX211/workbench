@@ -1,0 +1,42 @@
+---
+- name: Install Docker Python library
+  when: inventory_hostname == groups['managers'][0]
+  apt:
+    name: python3-docker
+  tags: plausible
+
+- name: Ensure Plausible GeoIP Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: plausible-geoip
+    state: present
+  tags: plausible
+
+- name: Deploy Plausible GeoIP Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: plausible-geoip
+    hostname: "{{plausible_geoip_hostname}}"
+    image: "{{plausible_geoip_docker_image}}:{{plausible_geoip_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      GEOLITE2_COUNTRY_DB: "/geoip/GeoLite2-Country.mmdb"
+      GEOIPUPDATE_ACCOUNT_ID: "{{plausible_geoip_account_id}}"
+      GEOIPUPDATE_LICENSE_KEY: "{{plausible_geoip_license_key}}"
+      GEOIPUPDATE_EDITION_IDS: "GeoLite2-Country"
+      GEOIPUPDATE_FREQUENCY: "168"
+    placement:
+      constraints:
+        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+    replicas: 1
+    mounts:
+      - source: plausible-geoip
+        target: /usr/share/GeoIP/
+        type: volume
+    state: present
+  tags: plausible

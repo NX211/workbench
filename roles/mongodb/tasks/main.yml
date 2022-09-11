@@ -1,0 +1,38 @@
+---
+- name: Ensure MongoDB Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/mongodb"
+    state: directory
+  tags: mongodb
+
+- name: Deploy MongoDB Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: mongodb
+    hostname: "{{mongodb_hostname}}"
+    image: "{{mongodb_docker_image}}:{{mongodb_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    mounts:
+      - source: "/greytalon/apps/mongodb/"
+        target: /data/db/
+        type: bind
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    labels:
+      traefik.tcp.routers.mongodb.entrypoints: "mongodb"
+      traefik.tcp.routers.mongodb.rule: "HostSNI(`mongodb.{{project_tld}}`)"
+      traefik.tcp.routers.mongodb.tls: "true"
+      traefik.tcp.routers.mongodb.service: "mongodb"
+      traefik.tcp.routers.mongodb.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.tcp.services.mongodb.loadbalancer.server.port: "{{mongodb_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: mongodb

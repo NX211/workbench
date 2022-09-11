@@ -1,0 +1,76 @@
+---
+- name: Install Docker Python library
+  when: inventory_hostname == groups['media'][0]
+  apt:
+    name: python3-docker
+  tags: peertube
+
+- name: Ensure PeerTube Directories Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - "{{project_root_directory}}/peertube"
+    - "{{project_root_directory}}/peertube/config"
+    - "{{project_root_directory}}/peertube/data"
+  tags: peertube
+
+- name: Ensure PeerTube Volume Exist
+  when: inventory_hostname == groups['media'][0]
+  docker_volume:
+    name: peertube-assets
+    state: present
+  tags: peertube
+
+- name: Ensure PeerTube Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  template:
+    src: production.yaml.j2
+    dest: "{{project_root_directory}}/peertube/config/production.yaml"
+  tags: peertube
+  no_log: true
+
+- name: Deploy PeerTube Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: peertube
+    hostname: "{{peertube_hostname}}"
+    image: "{{peertube_docker_image}}:{{peertube_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    mounts:
+      - source: /blacktalon/apps/peertube/data/
+        target: /data/
+        type: bind
+      - source: /blacktalon/apps/peertube/config/
+        target: /config/
+        type: bind
+      - source: peertube-assets
+        target: /app/client/dist/
+        type: volume
+    labels:
+      traefik.http.routers.peertube.entrypoints: "websecure"
+      traefik.http.routers.peertube.rule: "Host(`{{peertube_tld}}`)"
+      traefik.http.routers.peertube.middlewares: "default-headers@file"
+      traefik.http.routers.peertube.tls: "true"
+      traefik.http.routers.peertube.service: "peertube"
+      traefik.http.routers.peertube.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.peertube.loadbalancer.server.port: "{{peertube_port}}"
+      traefik.tcp.routers.peertubertmp.entrypoints: "rtmp"
+      traefik.tcp.routers.peertubertmp.rule: "HostSNI(`{{peertube_tld}}`)"
+      traefik.tcp.routers.peertubertmp.tls: "true"
+      traefik.tcp.routers.peertubertmp.service: "peertubertmp"
+      traefik.tcp.routers.peertubertmp.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.tcp.services.peertubertmp.loadbalancer.server.port: "{{peertube_rtmp_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: peertube

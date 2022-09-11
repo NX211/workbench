@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include wallabag"
+      include_role:
+        name: "wallabag"

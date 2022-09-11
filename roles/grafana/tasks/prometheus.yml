@@ -1,0 +1,53 @@
+---
+- name: Ensure Prometheus Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: prometheus
+    state: present
+  tags: prometheus
+
+- name: Ensure Prometheus Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{project_root_directory}}/grafana/prometheus"
+    state: directory
+  tags: prometheus
+
+- name: Ensure Prometheus Configuration File Exist
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: prometheus.yml.j2
+    dest: "{{project_root_directory}}/grafana/prometheus/prometheus.yml"
+  no_log: true
+  tags: prometheus
+
+- name: Deploy Prometheus Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: prometheus
+    hostname: "{{prometheus_hostname}}"
+    image: "{{prometheus_docker_image}}:{{grafana_stack_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    command:
+      - "{{prometheus_command_one}}"
+      - "{{prometheus_command_two}}"
+      - "{{prometheus_command_three}}"
+      - "{{prometheus_command_four}}"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+    replicas: 1
+    mounts:
+      - source: /yellowtalon/apps/grafana/prometheus/
+        target: /etc/prometheus/
+        type: bind
+      - source: prometheus
+        target: /prometheus
+        type: volume
+    state: present
+  tags: prometheus

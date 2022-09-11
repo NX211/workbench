@@ -1,0 +1,5 @@
+---
+vault_docker_image: "vault"
+vault_version: "latest"
+vault_hostname: "vault"
+vault_port: "8200"

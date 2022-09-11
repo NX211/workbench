@@ -1,0 +1,5 @@
+---
+kutt_version: "latest"
+kutt_docker_image: "kutt/kutt"
+kutt_hostname: "kutt"
+kutt_port: "3000"

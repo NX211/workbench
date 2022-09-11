@@ -1,0 +1,6 @@
+---
+n8n_database: "n8n"
+n8n_database_user: "n8n"
+n8n_database_password: "{{vault_n8n_database_password}}"
+n8n_default_user: "{{vault_n8n_default_user}}"
+n8n_default_password: "{{vault_n8n_default_password}}"

@@ -1,0 +1,4 @@
+---
+bazarr_version: "latest"
+bazarr_hostname: "bazarr"
+bazarr_docker_image: "ghcr.io/linuxserver/bazarr"

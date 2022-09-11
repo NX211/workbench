@@ -1,0 +1,88 @@
+---
+- name: Ensure Paperless Data Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: paperless_data
+    state: present
+  tags: paperless
+
+- name: Ensure Paperless Media Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: paperless_media
+    state: present
+  tags: paperless
+
+- name: Ensure Paperless Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - /greytalon/apps/paperless
+    - /greytalon/apps/paperless/export
+    - /greytalon/apps/paperless/consume
+  tags: paperless
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{paperless_database}}"
+    database_user: "{{paperless_database_user}}"
+    database_password: "{{paperless_database_password}}"
+  tags: paperless
+  no_log: true
+
+- name: Deploy Paperless Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: paperless
+    hostname: "{{paperless_hostname}}"
+    image: "{{paperless_docker_image}}:{{paperless_version}}"
+    networks:
+      - "{{traefik_network}}"
+    env:
+      PAPERLESS_REDIS: "redis://{{redis_hostname}}:{{redis_port}}"
+      PAPERLESS_DBHOST: "{{postgres_hostname}}"
+      PAPERLESS_DBPORT: "{{postgres_port}}"
+      PAPERLESS_NAME: "{{paperless_database}}"
+      PAPERLESS_DBUSER: "{{paperless_database_user}}"
+      PAPERLESS_DBPASS: "{{paperless_database_password}}"
+      PAPERLESS_ADMIN_USER: "{{paperless_admin_username}}"
+      PAPERLESS_ADMIN_MAIL: "{{paperless_admin_email}}"
+      PAPERLESS_ADMIN_PASSWORD: "{{paperless_admin_password}}"
+      PAPERLESS_URL: "https://docs.{{project_tld}}"
+      PAPERLESS_SECRET_KEY: "{{paperless_secret_key}}"
+      PAPERLESS_TIME_ZONE: "{{default_timezone}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    mounts:
+      - source: paperless_data
+        target: /usr/src/paperless/data/
+        type: volume
+      - source: paperless_media
+        target: /usr/src/paperless/media/
+        type: volume
+      - source: /greytalon/apps/paperless/export/
+        target: /usr/src/paperless/export/
+        type: bind
+      - source: /greytalon/apps/paperless/consume/
+        target: /usr/src/paperless/consume/
+        type: bind
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    labels:
+      paperless.http.routers.paperless.entrypoints: "websecure"
+      paperless.http.routers.paperless.rule: "Host(`docs.{{project_tld}}`)"
+      paperless.http.routers.paperless.middlewares: "default-headers@file"
+      paperless.http.routers.paperless.tls: "true"
+      paperless.http.routers.paperless.service: "paperless"
+      paperless.http.routers.paperless.tls.certresolver: "{{default_certificate_resolver}}"
+      paperless.http.services.paperless.loadbalancer.server.port: "{{paperless_port}}"
+      paperless.enable: "true"
+    state: present
+  tags: paperless

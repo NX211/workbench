@@ -1,0 +1,73 @@
+---
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{plausible_database}}"
+    database_user: "{{plausible_database_user}}"
+    database_password: "{{plausible_database_password}}"
+  no_log: true
+  tags: plausible
+
+- name: Grant Privileges to Plausible User
+  when: inventory_hostname == groups['managers'][0]
+  community.postgresql.postgresql_user:
+    login_host: "{{postgres_localhost}}"
+    login_port: "{{postgres_port}}"
+    login_password: "{{postgres_root_password}}"
+    name: "{{plausible_database_user}}"
+    role_attr_flags: SUPERUSER
+  tags: plausible
+
+- import_tasks: "{{role_path}}/tasks/database.yml"
+  tags: plausible
+
+- import_tasks: "{{role_path}}/tasks/geoip.yml"
+  tags: plausible
+
+- name: Deploy Plausible Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: plausible
+    hostname: "{{plausible_hostname}}"
+    image: "{{plausible_docker_image}}:{{plausible_version}}"
+    command: "sh -c 'sleep 10 && /entrypoint.sh db migrate && /entrypoint.sh db init-admin && /entrypoint.sh run'"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      ADMIN_USER_EMAIL: "{{plausible_admin_email}}"
+      ADMIN_USER_NAME: "{{plausible_admin_username}}"
+      ADMIN_USER_PWD: "{{plausible_admin_password}}"
+      BASE_URL: "https://plausible.{{project_tld}}"
+      SECRET_KEY_BASE: "{{plausible_secret_key}}"
+      DATABASE_URL: "postgres://{{plausible_database_user}}:{{plausible_database_password}}@{{postgres_hostname}}/{{plausible_database}}"
+      CLICKHOUSE_DATABASE_URL: "http://plausible-db:8123/plausible_events_db"
+      MAILER_EMAIL: "{{email_user}}"
+      SMTP_HOST_ADDR: "{{email_host}}"
+      SMTP_HOST_PORT: "465"
+      SMTP_USER_NAME: "{{email_user}}"
+      SMTP_USER_PWD: "{{email_password}}"
+      SMTP_HOST_SSL_ENABLED: "true"
+      SMTP_RETRIES: "2"
+    placement:
+      constraints:
+        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+    replicas: 1
+    mounts:
+      - source: plausible-geoip
+        target: /geoip/
+        type: volume
+    labels:
+      traefik.http.routers.plausible.entrypoints: "websecure"
+      traefik.http.routers.plausible.rule: "Host(`plausible.{{project_tld}}`)"
+      traefik.http.routers.plausible.middlewares: "default-headers@file"
+      traefik.http.routers.plausible.tls: "true"
+      traefik.http.routers.plausible.service: "plausible"
+      traefik.http.routers.plausible.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.plausible.loadbalancer.server.port: "{{plausible_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: plausible

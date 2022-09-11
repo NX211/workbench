@@ -1,0 +1,4 @@
+---
+qbittorrent_webui_password: "{{vault_qbittorrent_webui_password}}"
+qbittorrent_webui_password_hash: "{{vault_qbittorrent_webui_password_hash}}"
+qbittorrent_cookie_cfuid: "{{vault_qbittorrent_cookie_cfuid}}"

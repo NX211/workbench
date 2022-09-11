@@ -1,0 +1,5 @@
+---
+- import_playbook: private_registry.yml
+- import_playbook: base_services.yml
+- import_playbook: core_services.yml
+- import_playbook: media_services.yml

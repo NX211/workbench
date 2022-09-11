@@ -1,0 +1,8 @@
+---
+guacamole_version: "latest"
+guacd_version: "latest"
+guacd_hostname: "guacd"
+guacamole_port: "8080"
+guacamole_hostname: "guacamole"
+guacd_docker_image: "ghcr.io/linuxserver/guacd"
+guacamole_docker_image: "guacamole/guacamole"

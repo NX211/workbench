@@ -1,0 +1,7 @@
+---
+sonarr_version: "develop"
+sonarr_hostname: "sonarr"
+sonarr_docker_image: "ghcr.io/linuxserver/sonarr"
+sonarr_anime_version: "develop"
+sonarr_anime_hostname: "sonarr_anime"
+sonarr_anime_docker_image: "ghcr.io/linuxserver/sonarr"

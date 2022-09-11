@@ -1,0 +1,5 @@
+---
+wallabag_version: latest
+wallabag_hostname: "wallabag"
+wallabag_port: "80"
+wallabag_docker_image: "wallabag/wallabag"

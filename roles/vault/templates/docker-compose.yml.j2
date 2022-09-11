@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+  vault:
+    image: "{{vault_docker_image}}:{{vault_version}}"
+    hostname: "{{vault_hostname}}"
+    networks:
+      - {{traefik_network}}
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config=/vault/config/local.json
+    volumes:
+      - /yellowtalon/apps/vault/logs:/vault/logs
+      - /yellowtalon/apps/vault/file:/vault/file
+      - /yellowtalon/apps/vault/config:/vault/config
+    deploy:
+      labels:
+        - "traefik.http.routers.vault.entrypoints=websecure"
+        - "traefik.http.routers.vault.rule=Host(`pki.{{project_tld}}`)"
+        - "traefik.http.routers.vault.tls=true"
+        - "traefik.http.routers.vault.middlewares=default-headers@file"
+        - "traefik.http.routers.vault.service=vault"
+        - "traefik.http.routers.vault.tls.certresolver={{default_certificate_resolver}}"
+        - "traefik.http.services.vault.loadbalancer.server.port={{vault_port}}"
+        - "traefik.enable=true"
+      mode: global
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  {{traefik_network}}:
+    external: true
+    name: {{traefik_network}}

@@ -1,0 +1,5 @@
+---
+omada_version: "latest"
+omada_hostname: "omada"
+omada_port: "8088"
+omada_docker_image: "mbentley/omada-controller"

@@ -1,0 +1,14 @@
+{
+  "backend": {
+    "file": {
+      "path": "/vault/file"
+    }
+  },
+  "listener": {
+    "tcp":{
+      "address": "0.0.0.0:{{vault_port}}",
+      "tls_disable": 1
+    }
+  },
+  "ui": true
+}

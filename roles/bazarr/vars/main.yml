@@ -1,0 +1,10 @@
+---
+bazarr_auth_username: "{{vault_bazarr_auth_username}}"
+bazarr_auth_password_hash: "{{vault_bazarr_auth_password_hash}}"
+bazarr_flask_secret_key: "{{vault_bazarr_flask_secret_key}}"
+opensubtitles_username: "{{vault_opensubtitles_username}}"
+opensubtitles_password: "{{vault_opensubtitles_password}}"
+opensubtitlescom_username: "{{vault_opensubtitlescom_username}}"
+opensubtitlescom_password_hash: "{{vault_opensubtitlescom_password_hash}}"
+subscene_username: "{{vault_subscene_username}}"
+subscene_password_hash: "{{vault_subscene_password_hash}}"

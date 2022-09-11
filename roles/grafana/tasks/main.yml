@@ -1,0 +1,63 @@
+---
+- import_tasks: "{{role_path}}/tasks/node_exporter.yml"
+  tags: grafana
+
+- import_tasks: "{{role_path}}/tasks/alert_manager.yml"
+  tags: grafana
+
+- import_tasks: "{{role_path}}/tasks/cadvisor.yml"
+  tags: grafana
+
+- import_tasks: "{{role_path}}/tasks/prometheus.yml"
+  tags: grafana
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{grafana_database}}"
+    database_user: "{{grafana_database_user}}"
+    database_password: "{{grafana_database_password}}"
+  tags: grafana
+  no_log: true
+
+- name: Deploy Grafana Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: grafana
+    hostname: "{{grafana_hostname}}"
+    image: "{{grafana_docker_image}}:{{grafana_stack_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    user: "{{grafana_uuid}}"
+    restart_config:
+      condition: on-failure
+    env:
+      GF_SERVER_ROOT_URL: "http://dashboard.{{project_tld}}"
+      GF_SECURITY_ADMIN_USER: "{{grafana_user}}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{grafana_user_password}}"
+      GF_DATABASE_HOST: "{{postgres_hostname}}:{{postgres_port}}"
+      GF_DATABASE_NAME: "{{grafana_database}}"
+      GF_DATABASE_TYPE: "postgres"
+      GF_DATABASE_PASSWORD: "{{grafana_database_password}}"
+      GF_DATABASE_USER: "{{grafana_database_user}}"
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_HOST: "{{email_host}}:{{email_port}}"
+      GF_SMTP_USER: "{{email_user}}"
+      GF_SMTP_PASSWORD: "{{email_password}}"
+      GF_SMTP_FROM_ADDRESS: "{{email_user}}"
+      GF_INSTALL_PLUGINS: "grafana-piechart-panel,redis-datasource,grafana-github-datasource,pue-solr-datasource"
+    placement:
+      constraints:
+        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+    replicas: 1
+    labels:
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.rule: "Host(`dashboard.{{project_tld}}`)"
+      traefik.http.routers.grafana.service: "grafana"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
+      traefik.enable: "true"
+    state: present
+  tags: grafana

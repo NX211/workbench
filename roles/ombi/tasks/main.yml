@@ -1,0 +1,43 @@
+---
+- name: Ensure Ombi Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/ombi"
+    state: directory
+  tags: ombi
+
+- name: Deploy Ombi Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: ombi
+    hostname: "{{ombi_hostname}}"
+    image: "{{ombi_docker_image}}:{{ombi_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/ombi/"
+        target: /config/
+        type: bind
+    labels:
+      traefik.http.routers.ombi.entrypoints: "websecure"
+      traefik.http.routers.ombi.rule: "Host(`ombi.{{media_tld}}`)"
+      traefik.http.routers.ombi.middlewares: "default-headers@file"
+      traefik.http.routers.ombi.tls: "true"
+      traefik.http.routers.ombi.service: "ombi"
+      traefik.http.routers.ombi.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.ombi.loadbalancer.server.port: "{{ombi_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: ombi

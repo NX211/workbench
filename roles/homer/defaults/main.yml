@@ -1,0 +1,5 @@
+---
+homer_version: "latest"
+homer_hostname: "homer"
+homer_port: "8080"
+homer_docker_image: "b4bz/homer"

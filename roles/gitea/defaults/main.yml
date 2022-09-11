@@ -1,0 +1,5 @@
+---
+gitea_version: "latest"
+gitea_hostname: "gitea"
+gitea_port: "3000"
+gitea_docker_image: "gitea/gitea"

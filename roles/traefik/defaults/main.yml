@@ -1,0 +1,6 @@
+---
+traefik_version: "v2.8"
+traefik_hostname: "traefik"
+traefik_docker_image: "traefik"
+traefik_http_port: "80"
+traefik_https_port: "443"

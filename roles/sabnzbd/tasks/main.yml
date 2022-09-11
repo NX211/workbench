@@ -1,0 +1,59 @@
+---
+- name: Ensure Sabnzbd Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/sabnzbd"
+    state: directory
+  tags: sabnzbd
+
+- name: Ensure Sabnzbd Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  template:
+    src: sabnzbd.ini.j2
+    dest: "{{project_root_directory}}/sabnzbd/sabnzbd.ini"
+  tags: sabnzbd
+  no_log: true
+
+- name: Deploy Sabnzbd Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: sabnzbd
+    hostname: "{{sabnzbd_hostname}}"
+    image: "{{sabnzbd_docker_image}}:{{sabnzbd_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:sabnzbd"
+      TP_THEME: "{{theme_park_default}}"
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/sabnzbd/"
+        target: /config/
+        type: bind
+      - source: "{{project_download_directory}}"
+        target: /media/downloads/
+        type: bind
+      - source: "{{project_download_directory}}/incomplete/"
+        target: /media/downloads/incomplete/
+        type: bind
+    labels:
+      traefik.http.routers.sabnzbd.entrypoints: "websecure"
+      traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{project_tld}}`)"
+      traefik.http.routers.sabnzbd.middlewares: "default-headers@file"
+      traefik.http.routers.sabnzbd.tls: "true"
+      traefik.http.routers.sabnzbd.service: "sabnzbd"
+      traefik.http.routers.sabnzbd.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.sabnzbd.loadbalancer.server.port: "{{sabnzbd_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: sabnzbd

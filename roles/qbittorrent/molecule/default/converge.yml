@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include qbittorrent"
+      include_role:
+        name: "qbittorrent"

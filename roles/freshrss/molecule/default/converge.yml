@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include freshrss"
+      include_role:
+        name: "freshrss"

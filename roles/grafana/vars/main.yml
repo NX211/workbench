@@ -1,0 +1,10 @@
+---
+grafana_user: "{{vault_grafana_user}}"
+grafana_user_password: "{{vault_grafana_user_password}}"
+grafana_database_user: "{{vault_grafana_database_user}}"
+grafana_database_password: "{{vault_grafana_database_password}}"
+grafana_database: "{{vault_grafana_database}}"
+prometheus_command_one: "--config.file=/etc/prometheus/prometheus.yml"
+prometheus_command_two: "--storage.tsdb.path=/prometheus"
+prometheus_command_three: "--web.console.libraries=/usr/share/prometheus/console_libraries"
+prometheus_command_four: "--web.console.templates=/usr/share/prometheus/consoles"

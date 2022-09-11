@@ -1,0 +1,47 @@
+---
+- name: Ensure RSS-Bridge Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/rssbridge"
+    state: directory
+  tags: freshrss
+
+- name: Ensure RSS-Bridge Configuration File Exist
+  when: inventory_hostname == groups['workers'][0]
+  template:
+    src: whitelist.txt.j2
+    dest: /greytalon/apps/rssbridge/whitelist.txt
+  tags: freshrss
+  no_log: true
+
+- name: Deploy RSS-Bridge Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: rssbridge
+    hostname: "{{freshrss_bridge_hostname}}"
+    image: "{{freshrss_bridge_docker_image}}:{{freshrss_bridge_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/rssbridge/whitelist.txt
+        target: /app/whitelist.txt
+        type: bind
+    labels:
+      traefik.http.routers.rssbridge.entrypoints: "websecure"
+      traefik.http.routers.rssbridge.rule: "Host(`rssbridge.{{project_tld}}`)"
+      traefik.http.routers.rssbridge.middlewares: "default-headers@file"
+      traefik.http.routers.rssbridge.tls: "true"
+      traefik.http.routers.rssbridge.service: "rssbridge"
+      traefik.http.routers.rssbridge.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.rssbridge.loadbalancer.server.port: "{{freshrss_bridge_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: freshrss

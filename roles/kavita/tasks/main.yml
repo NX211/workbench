@@ -1,0 +1,71 @@
+---
+- name: Ensure Kavita Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/kavita"
+    state: directory
+  tags: kavita
+
+- name: Ensure Media Directories Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - "{{project_media_directory}}/manga/"
+    - "{{project_media_directory}}/books/"
+    - "{{project_media_directory}}/comics/"
+  tags: kavita
+
+- name: Ensure Kavita Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  template:
+    src: appsettings.json.j2
+    dest: "{{project_root_directory}}/kavita/appsettings.json"
+  tags: kavita
+  no_log: true
+
+- name: Deploy Kavita Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: kavita
+    hostname: "{{kavita_hostname}}"
+    image: "{{kavita_docker_image}}:{{kavita_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/kavita/"
+        target: /kavita/config/
+        type: bind
+      - source: "{{project_media_directory}}/manga/"
+        target: /media/manga/
+        type: bind
+      - source: "{{project_media_directory}}/books/"
+        target: /media/books/
+        type: bind
+      - source: "{{project_media_directory}}/comics/"
+        target: /media/comics/
+        type: bind
+    labels:
+      traefik.http.routers.kavita.entrypoints: "websecure"
+      traefik.http.routers.kavita.rule: "Host(`kavita.{{project_tld}}`)"
+      traefik.http.routers.kavita.middlewares: "default-headers@file"
+      traefik.http.routers.kavita.tls: "true"
+      traefik.http.routers.kavita.service: "kavita"
+      traefik.http.routers.kavita.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.kavita.loadbalancer.server.port: "{{kavita_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: kavita

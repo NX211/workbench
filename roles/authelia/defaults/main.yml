@@ -1,0 +1,5 @@
+---
+authelia_version: "latest"
+authelia_hostname: "authelia"
+authelia_port: "9091"
+authelia_docker_image: "authelia/authelia"

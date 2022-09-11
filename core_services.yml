@@ -1,0 +1,16 @@
+---
+- name: Deploy Core Services
+  hosts: all
+  gather_facts: False
+  become: yes
+  roles:
+    - kutt
+    - wallabag
+    - freshrss
+    - xbrowsersync
+    - cyberchef
+    - guacamole
+    - paperless
+    - plausible
+    - grafana
+    - wiki.js

@@ -1,0 +1,8 @@
+---
+wallabag_server_name: "{{vault_wallabag_server_name}}"
+wallabag_database_user: "{{vault_wallabag_database_user}}"
+wallabag_database_password: "{{vault_wallabag_database_password}}"
+wallabag_database: "{{vault_wallabag_database}}"
+wallabag_admin_user: "{{default_username}}"
+wallabag_admin_password: "{{vault_wallabag_admin_password}}"
+wallabag_env_secret: "{{vault_wallabag_env_secret}}"

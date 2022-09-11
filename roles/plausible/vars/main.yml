@@ -1,0 +1,10 @@
+---
+plausible_database: "{{vault_plausible_database}}"
+plausible_database_user: "{{vault_plausible_database_user}}"
+plausible_database_password: "{{vault_plausible_database_password}}"
+plausible_admin_username: "{{vault_plausible_admin_username}}"
+plausible_admin_password: "{{vault_plausible_admin_password}}"
+plausible_admin_email: "{{vault_plausible_admin_email}}"
+plausible_secret_key: "{{vault_plausible_secret_key}}"
+plausible_geoip_account_id: "{{vault_plausible_geoip_account_id}}"
+plausible_geoip_license_key: "{{vault_plausible_geoip_license_key}}"

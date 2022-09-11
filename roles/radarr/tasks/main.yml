@@ -1,0 +1,62 @@
+---
+- name: Ensure Radarr Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/radarr"
+    state: directory
+  tags: radarr
+
+- name: Ensure Radarr Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  template:
+    src: config.xml.j2
+    dest: "{{project_root_directory}}/radarr/config.xml"
+  tags: radarr
+  no_log: true
+
+- name: Deploy Radarr Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: radarr
+    hostname: "{{radarr_hostname}}"
+    image: "{{radarr_docker_image}}:{{radarr_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:{{radarr_hostname}}"
+      TP_THEME: "{{theme_park_default}}"
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/radarr/"
+        target: /config/
+        type: bind
+      - source: "{{project_media_directory}}/movies/"
+        target: /media/movies/
+        type: bind
+      - source: "{{project_media_directory}}/kids/"
+        target: /media/kids/
+        type: bind
+      - source: "{{project_download_directory}}"
+        target: /media/downloads/
+        type: bind
+    labels:
+      traefik.http.routers.radarr.entrypoints: "websecure"
+      traefik.http.routers.radarr.rule: "Host(`radarr.{{project_tld}}`)"
+      traefik.http.routers.radarr.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.radarr.tls: "true"
+      traefik.http.routers.radarr.service: "radarr"
+      traefik.http.routers.radarr.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.radarr.loadbalancer.server.port: "{{radarr_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: radarr

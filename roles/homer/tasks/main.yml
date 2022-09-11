@@ -1,0 +1,76 @@
+---
+- name: Ensure Homer Directories Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{item}}"
+    state: directory
+  loop:
+    - "{{project_root_directory}}/homer"
+    - "{{project_root_directory}}/homer/icons"
+  tags: homer
+
+- name: Clone a github repository
+  when: inventory_hostname == groups['managers'][0]
+  git:
+    repo: https://github.com/NX211/homer-icons.git
+    dest: "{{project_root_directory}}/homer/tools"
+    clone: yes
+    update: yes
+  tags: homer
+
+- name: Ensure Homer Configuration Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: config.yml.j2
+    dest: "{{project_root_directory}}/homer/config.yml"
+  tags: homer
+  no_log: true
+
+- name: Ensure Homer Icons Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items:
+    - {src: android-chrome-192x192.png,dest: /yellowtalon/apps/homer/icons/android-chrome-192x192.png}
+    - {src: android-chrome-512x512.png,dest: /yellowtalon/apps/homer/icons/android-chrome-512x512.png}
+    - {src: apple-touch-icon.png,dest: /yellowtalon/apps/homer/icons/apple-touch-icon.png}
+    - {src: favicon-16x16.png,dest: /yellowtalon/apps/homer/icons/favicon-16x16.png}
+    - {src: favicon-32x32.png,dest: /yellowtalon/apps/homer/icons/favicon-32x32.png}
+    - {src: favicon.ico,dest: /yellowtalon/apps/homer/icons/favicon.ico}
+  tags: homer  
+  no_log: false
+
+- name: Deploy Homer Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: homer
+    hostname: "{{homer_hostname}}"
+    image: "{{homer_docker_image}}:{{homer_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: global
+    env:
+      UID: "911"
+      GID: "911"
+      INIT_ASSETS: "0"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.role == manager
+    mounts:
+      - source: /yellowtalon/apps/homer/
+        target: /www/assets/
+        type: bind
+    labels:
+      traefik.http.routers.homer.entrypoints: "websecure"
+      traefik.http.routers.homer.rule: "Host(`{{project_tld}}`,`www.{{project_tld}}`)"
+      traefik.http.routers.homer.middlewares: "default-headers@file"
+      traefik.http.routers.homer.tls: "true"
+      traefik.http.routers.homer.service: "homer"
+      traefik.http.routers.homer.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.homer.loadbalancer.server.port: "{{homer_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: homer

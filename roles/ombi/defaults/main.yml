@@ -1,0 +1,5 @@
+---
+ombi_version: "latest"
+ombi_hostname: "ombi"
+ombi_docker_image: "ghcr.io/linuxserver/ombi"
+ombi_port: "3579"

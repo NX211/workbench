@@ -1,0 +1,4 @@
+---
+SERVICE_NAME_version: "latest"
+SERVICE_NAME_hostname: "SERVICE_NAME"
+SERVICE_NAME_docker_image: ""

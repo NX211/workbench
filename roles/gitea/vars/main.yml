@@ -1,0 +1,9 @@
+---
+gitea_app_name: "{{vault_gitea_app_name}}"
+gitea_app_user: "{{vault_gitea_app_user}}"
+gitea_cookie_name: "{{vault_gitea_cookie_name}}"
+gitea_database_user: "{{vault_gitea_database_user}}"
+gitea_database_password: "{{vault_gitea_database_password}}"
+gitea_database: "{{vault_gitea_database}}"
+gitea_internal_security_token: "{{vault_gitea_internal_security_token}}"
+gitea_secret_key: "{{vault_gitea_secret_key}}"

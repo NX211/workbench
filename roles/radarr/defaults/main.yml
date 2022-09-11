@@ -1,0 +1,4 @@
+---
+radarr_version: "nightly"
+radarr_hostname: "radarr"
+radarr_docker_image: "ghcr.io/linuxserver/radarr"

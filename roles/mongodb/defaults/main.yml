@@ -1,0 +1,3 @@
+---
+mongodb_docker_image: "mongo"
+mongodb_version: "5.0.5"

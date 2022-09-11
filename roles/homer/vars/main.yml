@@ -1,0 +1,3 @@
+---
+homer_site_title: "{{vault_homer_site_title}}"
+homer_site_subtitle: "{{vault_homer_site_subtitle}}"

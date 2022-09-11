@@ -1,0 +1,30 @@
+---
+- name: Deploy Cyberchef Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: cyberchef
+    hostname: "{{cyberchef_hostname}}"
+    image: "{{cyberchef_docker_image}}:{{cyberchef_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+    replicas: 1
+    labels:
+      traefik.http.routers.cyberchef.entrypoints: "websecure"
+      traefik.http.routers.cyberchef.rule: "Host(`cyberchef.{{project_tld}}`)"
+      traefik.http.middlewares.cyberchef_plausible.plugin.rewritebody.rewrites.regex: "</head>"
+      traefik.http.middlewares.cyberchef_plausible.plugin.rewritebody.rewrites.replacement: "<script defer data-domain='cyberchef.authoritah.com' src='https://plausible.authoritah.com/js/plausible.js'></script></head>"
+      traefik.http.routers.cyberchef.middlewares: "default-headers@file,authelia@file,cyberchef_plausible"
+      traefik.http.routers.cyberchef.tls: "true"
+      traefik.http.routers.cyberchef.service: "cyberchef"
+      traefik.http.routers.cyberchef.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.cyberchef.loadbalancer.server.port: "{{cyberchef_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: cyberchef

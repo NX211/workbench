@@ -1,0 +1,7 @@
+---
+tdarr_version: latest
+tdarr_port: "8265"
+tdarr_hostname: "tdarr"
+tdarr_docker_image: "ghcr.io/haveagitgat/tdarr"
+tdarr_node_hostname: "tdarr_node"
+tdarr_node_docker_image: "ghcr.io/haveagitgat/tdarr_node"

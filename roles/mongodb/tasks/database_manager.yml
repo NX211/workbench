@@ -1,0 +1,15 @@
+---
+- name: Ensure MondoDB Databases are Present.
+  mongodb_user:
+    login_host: "{{mongodb_localhost}}"
+    login_port: "{{mongodb_port}}"
+    login_user: "{{mongo_initdb_root_username}}"
+    login_password: "{{mongo_initdb_root_password}}"
+    login_database: "admin"
+    database: "{{database_name}}"
+    name: "{{database_user}}"
+    password: "{{database_password}}"
+    roles: readWrite,dbAdmin,userAdmin
+    ssl: yes
+    state: present
+    update_password: on_create

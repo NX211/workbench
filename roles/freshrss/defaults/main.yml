@@ -1,0 +1,10 @@
+---
+freshrss_version: "latest"
+freshrss_bridge_version: "latest"
+freshrss_hostname: "freshrss"
+freshrss_port: "80"
+freshrss_bridge_port: "80"
+freshrss_bridge_hostname: "rssbridge"
+freshrss_docker_image: "ghcr.io/linuxserver/freshrss"
+freshrss_bridge_docker_image: "rssbridge/rss-bridge"
+deploy_freshrss_bridge_config: true

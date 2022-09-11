@@ -1,0 +1,53 @@
+---
+- name: Ensure Prowlarr Directory Exist
+  when: inventory_hostname == groups['media'][0]
+  file:
+    path: "{{project_root_directory}}/prowlarr"
+    state: directory
+  tags: prowlarr
+
+- name: Ensure Prowlarr Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  template:
+    src: config.xml.j2
+    dest: "{{project_root_directory}}/prowlarr/config.xml"
+  tags: prowlarr
+  no_log: true
+
+- name: Deploy Prowlarr Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: prowlarr
+    hostname: "{{prowlarr_hostname}}"
+    image: "{{prowlarr_docker_image}}:{{prowlarr_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == o777re5ggyfs6gvyau96cpm2b
+    replicas: 1
+    env:
+      PUID: "{{media_user}}"
+      PGID: "{{media_group}}"
+      TZ: "{{default_timezone}}"
+      DOCKER_MODS: "gilbn/theme.park:prowlarr"
+      TP_THEME: "{{theme_park_default}}"
+    mounts:
+      - source: "/blacktalon/apps/prowlarr/"
+        target: /config/
+        type: bind
+    labels:
+      traefik.http.routers.prowlarr.entrypoints: "websecure"
+      traefik.http.routers.prowlarr.rule: "Host(`prowlarr.{{project_tld}}`)"
+      traefik.http.routers.prowlarr.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.prowlarr.tls: "true"
+      traefik.http.routers.prowlarr.service: "prowlarr"
+      traefik.http.routers.prowlarr.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.prowlarr.loadbalancer.server.port: "{{prowlarr_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: prowlarr
