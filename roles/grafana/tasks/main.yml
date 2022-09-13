@@ -50,7 +50,7 @@
       GF_INSTALL_PLUGINS: "grafana-piechart-panel,redis-datasource,grafana-github-datasource,pue-solr-datasource"
     placement:
       constraints:
-        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+        - node.id == {{yellowtalon_node_id}}
     replicas: 1
     labels:
       traefik.http.routers.grafana.entrypoints: "websecure"

@@ -39,7 +39,7 @@
     - {src: favicon-32x32.png,dest: /yellowtalon/apps/homer/icons/favicon-32x32.png}
     - {src: favicon.ico,dest: /yellowtalon/apps/homer/icons/favicon.ico}
   tags: homer  
-  no_log: false
+  no_log: true
 
 - name: Deploy Homer Service
   when: inventory_hostname == groups['managers'][0]
@@ -58,7 +58,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.role == manager
+        - node.id == {{yellowtalon_node_id}}
     mounts:
       - source: /yellowtalon/apps/homer/
         target: /www/assets/

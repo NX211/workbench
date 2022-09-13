@@ -32,7 +32,7 @@
       GEOIPUPDATE_FREQUENCY: "168"
     placement:
       constraints:
-        - node.id == pbe2hzwp9iaay6qop5yhmhhl1
+        - node.id == {{yellowtalon_node_id}}
     replicas: 1
     mounts:
       - source: plausible-geoip

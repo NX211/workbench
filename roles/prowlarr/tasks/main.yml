@@ -28,7 +28,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == o777re5ggyfs6gvyau96cpm2b
+        - node.id == {{blacktalon_node_id}}
     replicas: 1
     env:
       PUID: "{{media_user}}"

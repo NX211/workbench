@@ -13,7 +13,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+        - node.id == {{greytalon_node_id}}
     replicas: 1
     env:
       PORTUS_MACHINE_FQDN_VALUE: "hub.{{git_tld}}"

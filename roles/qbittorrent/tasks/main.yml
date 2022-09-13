@@ -36,7 +36,7 @@
       WEBUI_PORT: "8090"
     placement:
       constraints:
-        - node.id == o777re5ggyfs6gvyau96cpm2b
+        - node.id == {{blacktalon_node_id}}
     replicas: 1
     publish:
       - published_port: "6881"

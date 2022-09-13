@@ -17,7 +17,7 @@
     database_user: "{{photoprism_database_user}}"
     database_password: "{{photoprism_database_password}}"
   tags: photoprism
-  no_log: false
+  no_log: true
 
 - name: Deploy Photoprism Service
   when: inventory_hostname == groups['managers'][0]
@@ -77,7 +77,7 @@
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"
     placement:
       constraints:
-        - node.id == o777re5ggyfs6gvyau96cpm2b
+        - node.id == {{blacktalon_node_id}}
     replicas: 1
     mounts:
       - source: /blacktalon/apps/photoprism/originals/

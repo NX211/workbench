@@ -28,7 +28,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.role == manager
+        - node.id == {{yellowtalon_node_id}}
     mounts:
       - source: "/yellowtalon/apps/xbrowsersync/settings.json"
         target: /usr/src/api/config/settings.json

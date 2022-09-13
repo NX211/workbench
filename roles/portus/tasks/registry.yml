@@ -32,7 +32,7 @@
           backoff: 1s
     placement:
       constraints:
-        - node.id == m1enhyjtwu2k7zvvjbgwv2e4s
+        - node.id == {{greytalon_node_id}}
     replicas: 1
     mounts:
       - source: /greytalon/apps/portus/registry/

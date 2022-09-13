@@ -40,7 +40,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.role == manager
+        - node.id == {{yellowtalon_node_id}}
     mounts:
       - source: "{{project_root_directory}}/authelia/"
         target: /config/

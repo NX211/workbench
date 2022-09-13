@@ -56,7 +56,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.role == manager
+        - node.id == {{yellowtalon_node_id}}
     mounts:
       - source: /yellowtalon/apps/traefik/traefik-conf.yml
         target: /traefik.yml
