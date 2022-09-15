@@ -1,0 +1,4 @@
+---
+elasticsearch_version: "7.17.6"
+elasticsearch_cluster_name: "cluster"
+elasticsearch_docker_image: "docker.elastic.co/elasticsearch/elasticsearch"

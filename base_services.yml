@@ -10,6 +10,7 @@
     - postgres
     - redis
     - mongodb
+    - elasticsearch
     - authelia
     - gitea
     - portus
