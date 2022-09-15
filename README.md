@@ -21,13 +21,11 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [xBrowserSync](https://www.xbrowsersync.org/) - Browser syncing as it should be: secure, anonymous and free
 - [Cyberchef](https://gchq.github.io/CyberChef/) - A web app for encryption, encoding, compression and data analysis
 - [Freshrss](https://freshrss.org/) - A free, self-hostable aggregator
-- [Grafana](https://grafana.com/) - The tool for beautiful monitoring and metric analytics & dashboards
 - [Plausible](https://plausible.io/) - Lightweight + Open Source Website Analytics Tool
 - [Guacamole](https://guacamole.apache.org/) - Clientless remote desktop gateway
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
 - [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
-- [Joplin](https://joplinapp.org/) - Open Source Note Taking and To-Do
 
 ## Media Service
 
