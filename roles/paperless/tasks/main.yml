@@ -17,6 +17,8 @@
   when: inventory_hostname == groups['workers'][0]
   file:
     path: "{{item}}"
+    owner: "paperless"
+    group: "paperless"
     state: directory
   loop:
     - /greytalon/apps/paperless
@@ -54,6 +56,8 @@
       PAPERLESS_URL: "https://docs.{{project_tld}}"
       PAPERLESS_SECRET_KEY: "{{paperless_secret_key}}"
       PAPERLESS_TIME_ZONE: "{{default_timezone}}"
+      USERMAP_UID: "{{paperless_user}}"
+      USERMAP_GID: "{{paperless_group}}"
     mode: replicated
     force_update: yes
     restart_config:
@@ -76,13 +80,12 @@
         - node.id == {{greytalon_node_id}}
     replicas: 1
     labels:
-      paperless.http.routers.paperless.entrypoints: "websecure"
-      paperless.http.routers.paperless.rule: "Host(`docs.{{project_tld}}`)"
-      paperless.http.routers.paperless.middlewares: "default-headers@file"
-      paperless.http.routers.paperless.tls: "true"
-      paperless.http.routers.paperless.service: "paperless"
-      paperless.http.routers.paperless.tls.certresolver: "{{default_certificate_resolver}}"
-      paperless.http.services.paperless.loadbalancer.server.port: "{{paperless_port}}"
-      paperless.enable: "true"
+      traefik.http.routers.paperless.entrypoints: "websecure"
+      traefik.http.routers.paperless.rule: "Host(`docs.{{project_tld}}`)"
+      traefik.http.routers.paperless.tls: "true"
+      traefik.http.routers.paperless.service: "paperless"
+      traefik.http.routers.paperless.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.paperless.loadbalancer.server.port: "{{paperless_port}}"
+      traefik.enable: "true"
     state: present
   tags: paperless
