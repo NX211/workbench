@@ -25,6 +25,8 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Guacamole](https://guacamole.apache.org/) - Clientless remote desktop gateway
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
 - [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
+- [Omada](https://www.tp-link.com/us/omada-sdn/) - TP-Link Omada Software Defined Networking
+- [Paperless](https://github.com/paperless-ngx) - Scan, Index and Archive all your Physical Documents
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
 
 ## Media Service
