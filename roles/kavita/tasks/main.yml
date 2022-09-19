@@ -1,20 +1,20 @@
 ---
-- name: Ensure Kavita Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/kavita"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/manga
+    - blacktalon/media/books
+    - blacktalon/media/comics
   tags: kavita
 
-- name: Ensure Media Directories Exist
+- name: Ensure Kavita Dataset Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{item}}"
-    state: directory
-  loop:
-    - "{{project_media_directory}}/manga/"
-    - "{{project_media_directory}}/books/"
-    - "{{project_media_directory}}/comics/"
+  community.general.zfs:
+    name: blacktalon/apps/kavita
+    state: present
   tags: kavita
 
 - name: Ensure Kavita Configuration Files Exist
