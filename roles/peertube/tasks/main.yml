@@ -1,8 +1,9 @@
 ---
-- name: Install Docker Python library
+- name: Ensure PeerTube Dataset Exist
   when: inventory_hostname == groups['media'][0]
-  apt:
-    name: python3-docker
+  community.general.zfs:
+    name: blacktalon/apps/peertube
+    state: present
   tags: peertube
 
 - name: Ensure PeerTube Directories Exist
@@ -11,7 +12,6 @@
     path: "{{item}}"
     state: directory
   loop:
-    - "{{project_root_directory}}/peertube"
     - "{{project_root_directory}}/peertube/config"
     - "{{project_root_directory}}/peertube/data"
   tags: peertube
