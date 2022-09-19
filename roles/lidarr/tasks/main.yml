@@ -1,16 +1,29 @@
 ---
-- name: Ensure Lidarr Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/lidarr"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/music
+    - blacktalon/media/music-videos
   tags: lidarr
 
-- name: Ensure Media Directory Exist
+- name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_media_directory}}/music"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/downloads/music
+    - blacktalon/media/downloads/music-videos
+  tags: lidarr
+
+- name: Ensure Lidarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/lidarr
+    state: present
   tags: lidarr
 
 - name: Ensure Lidarr Configuration Files Exist

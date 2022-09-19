@@ -1,11 +1,4 @@
 ---
-- name: Ensure Media Directory Exist
-  when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_media_directory}}/music"
-    state: directory
-  tags: lidarr
-
 - name: Deploy AMD Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
