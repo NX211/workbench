@@ -1,9 +1,23 @@
 ---
-- name: Ensure Radarr Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/radarr"
-    state: directory
+  community.general.zfs:
+    name: blacktalon/media/movies
+    state: present
+  tags: radarr
+
+- name: Ensure Media Download Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/media/downloads/movies
+    state: present
+  tags: radarr
+
+- name: Ensure Radarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/radarr
+    state: present
   tags: radarr
 
 - name: Ensure Radarr Configuration Files Exist
