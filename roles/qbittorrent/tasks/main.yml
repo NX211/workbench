@@ -1,9 +1,44 @@
 ---
-- name: Ensure qBittorrent Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/qbittorrent"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media
+    - blacktalon/media/anime
+    - blacktalon/media/audiobooks
+    - blacktalon/media/books
+    - blacktalon/media/comics
+    - blacktalon/media/kids
+    - blacktalon/media/movies
+    - blacktalon/media/music
+    - blacktalon/media/tv
+  tags: qbittorrent
+
+- name: Ensure Media Download Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/downloads
+    - blacktalon/media/downloads/incomplete
+    - blacktalon/media/downloads/anime
+    - blacktalon/media/downloads/audiobooks
+    - blacktalon/media/downloads/books
+    - blacktalon/media/downloads/comics
+    - blacktalon/media/downloads/kids
+    - blacktalon/media/downloads/movies
+    - blacktalon/media/downloads/music
+    - blacktalon/media/downloads/tv
+  tags: qbittorrent
+
+- name: Ensure qBittorrent Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/qbittorrent
+    state: present
   tags: qbittorrent
 
 - name: Ensure qBittorrent Configuration Files Exist
@@ -33,7 +68,7 @@
       DOCKER_MODS: "gilbn/theme.park:{{qbittorrent_hostname}}"
       TP_THEME: "{{theme_park_default}}"
       UMASK: "022"
-      WEBUI_PORT: "8090"
+      WEBUI_PORT: "{{qbittorrent_port}}"
     placement:
       constraints:
         - node.id == {{blacktalon_node_id}}
