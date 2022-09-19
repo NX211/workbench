@@ -24,7 +24,7 @@
     src: config.ini.j2
     dest: "{{project_root_directory}}/bazarr/config/config.ini"
   tags: bazarr
-  no_log: false
+  no_log: true
 
 - name: Deploy Bazarr Service
   when: inventory_hostname == groups['managers'][0]

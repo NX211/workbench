@@ -1,9 +1,44 @@
 ---
-- name: Ensure Sabnzbd Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/sabnzbd"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media
+    - blacktalon/media/anime
+    - blacktalon/media/audiobooks
+    - blacktalon/media/books
+    - blacktalon/media/comics
+    - blacktalon/media/kids
+    - blacktalon/media/movies
+    - blacktalon/media/music
+    - blacktalon/media/tv
+  tags: sabnzbd
+
+- name: Ensure Media Download Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/downloads
+    - blacktalon/media/downloads/incomplete
+    - blacktalon/media/downloads/anime
+    - blacktalon/media/downloads/audiobooks
+    - blacktalon/media/downloads/books
+    - blacktalon/media/downloads/comics
+    - blacktalon/media/downloads/kids
+    - blacktalon/media/downloads/movies
+    - blacktalon/media/downloads/music
+    - blacktalon/media/downloads/tv
+  tags: sabnzbd
+
+- name: Ensure Sabnzbd Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/sabnzbd
+    state: present
   tags: sabnzbd
 
 - name: Ensure Sabnzbd Configuration Files Exist
