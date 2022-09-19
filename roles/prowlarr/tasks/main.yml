@@ -1,9 +1,9 @@
 ---
-- name: Ensure Prowlarr Directory Exist
+- name: Ensure Prowlarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/prowlarr"
-    state: directory
+  community.general.zfs:
+    name: blacktalon/apps/prowlarr
+    state: present
   tags: prowlarr
 
 - name: Ensure Prowlarr Configuration Files Exist
