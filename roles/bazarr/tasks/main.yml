@@ -1,9 +1,21 @@
 ---
-- name: Ensure Bazarr Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/bazarr"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/movies
+    - blacktalon/media/tv
+    - blacktalon/media/kids
+    - blacktalon/media/anime
+  tags: bazarr
+
+- name: Ensure Bazarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/bazarr
+    state: present
   tags: bazarr
 
 - name: Ensure Bazarr Configuration Files Exist
@@ -12,7 +24,7 @@
     src: config.ini.j2
     dest: "{{project_root_directory}}/bazarr/config/config.ini"
   tags: bazarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Bazarr Service
   when: inventory_hostname == groups['managers'][0]

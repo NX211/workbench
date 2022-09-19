@@ -49,6 +49,7 @@ wanted_search_frequency = 3
 wanted_search_frequency_movie = 3
 subzero_mods = 
 dont_notify_manual_actions = False
+hi_extension = hi
 serie_default_language = ['en']
 serie_default_hi = False
 serie_default_forced = False
@@ -62,6 +63,16 @@ type = None
 username = {{bazarr_auth_username}}
 password = {{bazarr_auth_password_hash}}
 apikey = {{bazarr_api_key}}
+
+[cors]
+enabled = False
+
+[backup]
+folder = /config/backup
+retention = 31
+frequency = Weekly
+day = 6
+hour = 3
 
 [sonarr]
 ip = sonarr
@@ -79,6 +90,7 @@ excluded_tags = []
 excluded_series_types = []
 use_ffprobe_cache = True
 exclude_season_zero = False
+defer_search_signalr = False
 
 [radarr]
 ip = radarr
@@ -93,6 +105,7 @@ only_monitored = False
 movies_sync = 60
 excluded_tags = []
 use_ffprobe_cache = True
+defer_search_signalr = False
 
 [proxy]
 type = None
@@ -119,6 +132,8 @@ use_hash = True
 [addic7ed]
 username = 
 password = 
+cookies = 
+user_agent = 
 vip = False
 random_agents = True
 
@@ -174,13 +189,23 @@ password =
 [titulky]
 username = 
 password = 
-skip_wrong_fps = False
 approved_only = False
+skip_wrong_fps = False
 multithreading = True
 
 [embeddedsubtitles]
+included_codecs = []
+hi_fallback = False
+timeout = 600
+unknown_as_english = False
 include_ass = True
 include_srt = True
+
+[karagarga]
+username = 
+password = 
+f_username = 
+f_password = 
 
 [subsync]
 use_subsync = False
@@ -189,6 +214,7 @@ subsync_threshold = 90
 use_subsync_movie_threshold = False
 subsync_movie_threshold = 70
 debug = False
+force_audio = False
 
 [series_scores]
 hash = 359
