@@ -1,9 +1,29 @@
 ---
-- name: Ensure Readarr Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/readarr"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/audiobooks
+    - blacktalon/media/books
+  tags: readarr
+
+- name: Ensure Media Download Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/downloads/audiobooks
+    - blacktalon/media/downloads/books
+  tags: readarr
+
+- name: Ensure Readarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/readarr
+    state: present
   tags: readarr
 
 - name: Ensure Readarr Configuration Files Exist
