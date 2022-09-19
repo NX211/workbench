@@ -1,4 +1,11 @@
 ---
+- name: Ensure Photoprism Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/photoprism
+    state: present
+  tags: photoprism
+
 - name: Ensure Photoprism Directories Exist
   when: inventory_hostname == groups['media'][0]
   file:
@@ -33,7 +40,7 @@
       condition: on-failure
     env:
       PHOTOPRISM_URL: "https://{{photo_tld}}"
-      PHOTOPRISM_SITE_TITLE: "PhotoPrism"
+      PHOTOPRISM_SITE_TITLE: "Authoritah Photos"
       PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
