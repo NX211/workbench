@@ -1,9 +1,23 @@
 ---
-- name: Ensure Plex Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/plex"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/anime
+    - blacktalon/media/audiobooks
+    - blacktalon/media/kids
+    - blacktalon/media/movies
+    - blacktalon/media/music
+    - blacktalon/media/tv
+  tags: plex
+
+- name: Ensure Plex Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/plex
+    state: present
   tags: plex
 
 - name: Deploy Plex Service
@@ -22,7 +36,7 @@
       PUID: "{{media_user}}"
       PGID: "{{media_group}}"
       VERSION: "docker"
-      PLEX_CLAIM: "claim-jDYyznmvMJsu92tZqmeW"
+      PLEX_CLAIM: "{{plex_claim_token}}"
     placement:
       constraints:
         - node.id == {{blacktalon_node_id}}
@@ -45,6 +59,9 @@
         type: bind
       - source: "{{project_media_directory}}/music/"
         target: /music/
+        type: bind
+      - source: "{{project_media_directory}}/audiobooks/"
+        target: /audiobooks/
         type: bind
     labels:
       traefik.http.routers.plex.entrypoints: "websecure"
