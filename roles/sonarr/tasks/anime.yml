@@ -1,12 +1,26 @@
 ---
-- name: Ensure Sonarr Anime Directory Exist
+- name: Ensure Anime Media Dataset Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/sonarr2"
-    state: directory
+  community.general.zfs:
+    name: blacktalon/media/anime
+    state: present
   tags: sonarr
 
-- name: Ensure Sonarr Configuration Files Exist
+- name: Ensure Anime Media Download Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/media/downloads/anime
+    state: present
+  tags: sonarr
+
+- name: Ensure Sonarr Anime Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/sonarr2
+    state: present
+  tags: sonarr
+
+- name: Ensure Sonarr Anime Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
   template:
     src: config-anime.xml.j2

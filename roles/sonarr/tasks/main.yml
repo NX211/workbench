@@ -1,9 +1,29 @@
 ---
-- name: Ensure Sonarr Directory Exist
+- name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
-  file:
-    path: "{{project_root_directory}}/sonarr"
-    state: directory
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/kids
+    - blacktalon/media/tv
+  tags: sonarr
+
+- name: Ensure Media Download Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: "{{item}}"
+    state: present
+  loop:
+    - blacktalon/media/downloads/kids
+    - blacktalon/media/downloads/tv
+  tags: sonarr
+
+- name: Ensure Sonarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/sonarr
+    state: present
   tags: sonarr
 
 - name: Ensure Sonarr Configuration Files Exist
@@ -12,7 +32,7 @@
     src: config.xml.j2
     dest: "{{project_root_directory}}/sonarr/config.xml"
   tags: sonarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Sonarr Service
   when: inventory_hostname == groups['managers'][0]
