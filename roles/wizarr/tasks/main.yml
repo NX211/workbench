@@ -1,0 +1,42 @@
+---
+- name: Ensure Wizarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/wizarr
+    state: present
+  tags: wizarr
+
+- name: Deploy Wizarr Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: wizarr
+    hostname: "{{wizarr_hostname}}"
+    image: "{{wizarr_docker_image}}:{{wizarr_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      APP_URL: "https://join.{{media_tld}}"
+      DISABLE_BUILTIN_AUTH: "true"
+    placement:
+      constraints:
+        - node.id == {{blacktalon_node_id}}
+    replicas: 1
+    mounts:
+      - source: /blacktalon/apps/wizarr/
+        target: /data/database/
+        type: bind
+    labels:
+      traefik.http.routers.wizarr.entrypoints: "websecure"
+      traefik.http.routers.wizarr.rule: "Host(`join.{{media_tld}}`)"
+      traefik.http.routers.wizarr.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.wizarr.tls: "true"
+      traefik.http.routers.wizarr.service: "wizarr"
+      traefik.http.routers.wizarr.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.wizarr.loadbalancer.server.port: "{{wizarr_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: wizarr
