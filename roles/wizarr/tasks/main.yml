@@ -20,7 +20,7 @@
       condition: on-failure
     env:
       APP_URL: "https://join.{{media_tld}}"
-      DISABLE_BUILTIN_AUTH: "true"
+      DISABLE_BUILTIN_AUTH: "false"
     placement:
       constraints:
         - node.id == {{blacktalon_node_id}}
@@ -32,7 +32,7 @@
     labels:
       traefik.http.routers.wizarr.entrypoints: "websecure"
       traefik.http.routers.wizarr.rule: "Host(`join.{{media_tld}}`)"
-      traefik.http.routers.wizarr.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.wizarr.middlewares: "default-headers@file"
       traefik.http.routers.wizarr.tls: "true"
       traefik.http.routers.wizarr.service: "wizarr"
       traefik.http.routers.wizarr.tls.certresolver: "{{default_certificate_resolver}}"
