@@ -54,6 +54,14 @@ http:
       middlewares:
         - default-headers@file
       service: "graylog"
+    grafana:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`grafana.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "grafana"
   services:
     homeassistant:
       loadBalancer:
@@ -70,7 +78,11 @@ http:
     graylog:
       loadBalancer:
         servers:
-          - url: "http://10.10.0.10:9000/"
+          - url: "http://10.20.0.230:9000/"
+    grafana:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.230:3000/"
 tls:
   options:
     default:

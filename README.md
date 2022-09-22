@@ -12,9 +12,13 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Vault](https://github.com/hashicorp/vault) - Certificate Authority and Automated Certificate Management
 - [Traefik](https://containo.us/traefik/) - The Cloud Native Edge Router
 - [Gitea](https://gitea.io/en-us/) - Community Managed lightweight code hosting solution written in Go
+- [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
 - [Jenkins](https://jenkins.io/) -  Free and Open Source Automation Server
 - [Portus](https://port.us.org/) - Next Generation Docker Registry
+- [n8n](https://n8n.io/) - The workflow Automation Platform That Doesn't Box You In
 - [Homer](https://github.com/bastienwirtz/homer/) - A very simple static homepage for your server
+- [Elasticsearch](https://www.elastic.co/elasticsearch/) - A Distributed, RESTful Search + Analytics Engine
+- [Authelia](https://www.authelia.com/) - An Open-Source Authentication + Authorization Server
 
 ## Core Services
 
@@ -24,10 +28,10 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Plausible](https://plausible.io/) - Lightweight + Open Source Website Analytics Tool
 - [Guacamole](https://guacamole.apache.org/) - Clientless remote desktop gateway
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
-- [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
 - [Omada](https://www.tp-link.com/us/omada-sdn/) - TP-Link Omada Software Defined Networking
 - [Paperless](https://github.com/paperless-ngx) - Scan, Index and Archive all your Physical Documents
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
+- [Wiki.js](https://js.wiki/) - The Most Powerful + Extensible Open Source Wiki Software
 
 ## Media Service
 
@@ -40,6 +44,8 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [AMD](https://github.com/RandomNinjaAtk/docker-amd) - Lidarr companion for downloading Music
 - [AMVD](https://github.com/RandomNinjaAtk/docker-amvd) - Lidarr companion for downloading and tagging Music Videos
 - [Beets](https://beets.io/) - Organize your music collection once and for all
+- [Photoprism](https://photoprism.app/) - AI-Powered Photos App for the Decentralized Web
+- [Peertube](https://joinpeertube.org/) - Free Software to Take Back Control of your Videos
 - [Readarr](https://github.com/Readarr/Readarr/) - Readarr is a eBook collection manager for Usenet and BitTorrent users
 - [Bazarr](https://github.com/morpheus65535/bazarr/) - Bazarr is a companion application to Sonarr and Radarr that manages and downloads subtitles
 - [Tdarr](https://github.com/HaveAGitGat/Tdarr/) - Audio/Video library analytics + transcode automation using FFmpeg/HandBrake + video health checking
@@ -47,3 +53,4 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Kavita](https://github.com/Kareadita/Kavita) - Cross platform reading server
 - [Ombi](https://ombi.io/) - Want a movie or TV show on Jellyfin use Ombi
 - [Tautulli](https://tautulli.com/) - Monitor your Plex Media Server
+- [Wizarr](https://github.com/Wizarrrr/wizarr) - Manage Plex Invites + Onboarding
