@@ -26,6 +26,8 @@
   tags: authelia
   no_log: true
 
+# Generate new user password hash docker run authelia/authelia:latest authelia hash-password -- 'password'
+
 - name: Deploy Authelia Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:

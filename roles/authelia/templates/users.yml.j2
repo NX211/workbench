@@ -7,3 +7,11 @@ users:
       - admin
       - media
       - print
+
+  {{authelia_user_2_username}}:
+    displayname: "{{authelia_user_2_display_name}}"
+    password: "{{authelia_user_2_password}}"
+    email: {{authelia_user_2_email}}
+    groups:
+      - media
+      - print
