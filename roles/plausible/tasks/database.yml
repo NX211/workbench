@@ -55,3 +55,5 @@
         type: bind
     state: present
   tags: plausible
+
+# If plausible_events_db missing error run docker exec -it <containerid> clickhouse-client & create database plausible_events_db; to recreate it
