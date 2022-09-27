@@ -12,7 +12,7 @@
 - name: Clone a github repository
   when: inventory_hostname == groups['managers'][0]
   git:
-    repo: https://github.com/NX211/homer-icons.git
+    repo: "{{homer_git_repository_url}}"
     dest: "{{project_root_directory}}/homer/tools"
     clone: yes
     update: yes
@@ -51,8 +51,9 @@
       - "{{traefik_network}}"
     mode: global
     env:
-      UID: "911"
-      GID: "911"
+      UID: "{{homer_uid}}"
+      GID: "{{homer_gid}}"
+      PORT: "{{homer_port}}"
       INIT_ASSETS: "0"
     restart_config:
       condition: on-failure

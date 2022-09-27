@@ -1,3 +1,6 @@
 ---
+homer_uid: "{{vault_homer_uid}}"
+homer_gid: "{{vault_homer_gid}}"
 homer_site_title: "{{vault_homer_site_title}}"
 homer_site_subtitle: "{{vault_homer_site_subtitle}}"
+homer_git_repository_url: "{{vault_homer_git_repository_url}}"
