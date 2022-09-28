@@ -84,7 +84,7 @@
     labels:
       traefik.http.routers.sabnzbd.entrypoints: "websecure"
       traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{project_tld}}`)"
-      traefik.http.routers.sabnzbd.middlewares: "default-headers@file"
+      traefik.http.routers.sabnzbd.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sabnzbd.tls: "true"
       traefik.http.routers.sabnzbd.service: "sabnzbd"
       traefik.http.routers.sabnzbd.tls.certresolver: "{{default_certificate_resolver}}"
