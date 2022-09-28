@@ -89,7 +89,7 @@
     labels:
       traefik.http.routers.qbittorrent.entrypoints: "websecure"
       traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{project_tld}}`)"
-      traefik.http.routers.qbittorrent.middlewares: "default-headers@file"
+      traefik.http.routers.qbittorrent.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.qbittorrent.tls: "true"
       traefik.http.routers.qbittorrent.service: "qbittorrent"
       traefik.http.routers.qbittorrent.tls.certresolver: "{{default_certificate_resolver}}"

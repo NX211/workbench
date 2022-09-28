@@ -67,6 +67,10 @@ access_control:
     policy: two_factor
     subject:
     - "group:media"
+  - domain: qbittorrent.{{project_tld}}
+    policy: two_factor
+    subject:
+    - "group:media"
   - domain: bazarr.{{project_tld}}
     policy: two_factor
     subject:
