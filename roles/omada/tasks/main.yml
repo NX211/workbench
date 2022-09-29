@@ -61,7 +61,15 @@
       traefik.http.routers.omada.tls: "true"
       traefik.http.routers.omada.service: "omada"
       traefik.http.routers.omada.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.omada.loadbalancer.server.port: "{{omada_port}}"
+      traefik.http.services.omada.loadbalancer.server.port: "{{omada_secure_port}}"
+      traefik.http.middlewares.omada-middlewares.chain.middlewares: "omada-redirect,omada-headers"
+      traefik.http.middlewares.omada-headers.headers.customrequestheaders.Host: "omada.{{project_tld}}:8043"
+      traefik.http.middlewares.omada-headers.headers.customresponseheaders.Host: "omada.{{project_tld}}"
+      traefik.http.middlewares.omada-redirect.redirectregex.regex: "^https:\\/\\/([^\\/]+)\\/?$$"
+      traefik.http.middlewares.omada-redirect.redirectregex.replacement: "https://$$1/login"
+      traefik.http.routers.omada.middlewares: "omada-middlewares"
+      traefik.http.services.omada.loadbalancer.server.scheme: "https"
+      traefik.http.services.omada.loadbalancer.passhostheader: "true"
       traefik.enable: "true"
     state: present
   tags: omada
