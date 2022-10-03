@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include harbor"
-      include_role:
-        name: "harbor"
