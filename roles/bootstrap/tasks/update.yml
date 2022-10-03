@@ -1,0 +1,14 @@
+- name: Update apt and Install Required System Packages
+  apt:
+    pkg:
+      - curl
+      - vim
+      - git
+      - ufw
+      - python3-pip
+      - python3-psycopg2
+      - python3-jsondiff
+      - python3-docker
+      - zfsutils-linux
+    state: latest
+    update_cache: true

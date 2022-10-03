@@ -66,7 +66,7 @@
       traefik.http.middlewares.omada-headers.headers.customrequestheaders.Host: "omada.{{project_tld}}:8043"
       traefik.http.middlewares.omada-headers.headers.customresponseheaders.Host: "omada.{{project_tld}}"
       traefik.http.middlewares.omada-redirect.redirectregex.regex: "^https:\\/\\/([^\\/]+)\\/?$$"
-      traefik.http.middlewares.omada-redirect.redirectregex.replacement: "https://$$1/login"
+      traefik.http.middlewares.omada-redirect.redirectregex.replacement: "https://omada.{{project_tld}}/login"
       traefik.http.routers.omada.middlewares: "omada-middlewares"
       traefik.http.services.omada.loadbalancer.server.scheme: "https"
       traefik.http.services.omada.loadbalancer.passhostheader: "true"

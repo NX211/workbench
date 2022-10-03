@@ -1,0 +1,2 @@
+---
+harbor_database_password: "{{vault_harbor_database_password}}"

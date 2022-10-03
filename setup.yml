@@ -1,0 +1,7 @@
+---
+- name: Bootstrap Server Environment
+  hosts: all
+  gather_facts: False
+  become: yes
+  roles:
+    - bootstrap

@@ -1,0 +1,12 @@
+[managers]
+yellowtalon ansible_port=22 ansible_host=10.20.0.240
+
+
+[workers]
+greytalon ansible_port=22 ansible_host=10.20.0.210
+blacktalon ansible_port=22 ansible_host=10.20.0.250
+
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=ansible

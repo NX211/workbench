@@ -1,0 +1,15 @@
+---
+- name: Check if Swarm is Already Initialized
+  shell: docker node ls
+  register: swarm_status
+  ignore_errors: true
+  tags: swarm
+
+- name: Add Managers to the Swarm
+  docker_swarm:
+    state: join
+    advertise_addr: "{{ hostvars['swarm-manager']['ansible_default_ipv4']['address'] }}"
+    join_token: "{{ hostvars['swarm-manager']['manager_token']['stdout'] }}"
+    remote_addrs: "{{ hostvars['swarm-manager']['ansible_default_ipv4']['address'] }}:2377"
+  when: swarm_status.rc != 0
+  tags: swarm

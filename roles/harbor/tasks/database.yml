@@ -1,0 +1,32 @@
+---
+- name: Ensure Harbor Database Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  file:
+    path: "{{project_root_directory}}/harbor/database"
+    state: directory
+  tags: harbor
+
+- name: Deploy Harbor Database Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: database
+    hostname: "{{database_hostname}}"
+    image: "{{database_docker_image}}:{{harbor_version}}"
+    networks:
+      - "{{traefik_network}}"
+    env:
+      POSTGRES_PASSWORD: "{{harbor_database_password}}"
+    mounts:
+      - source: "/greytalon/apps/harbor/database/"
+        target: /var/lib/postgresql/data/
+        type: bind
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{greytalon_node_id}}
+    replicas: 1
+    state: present
+  tags: harbor
