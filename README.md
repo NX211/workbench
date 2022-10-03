@@ -14,7 +14,7 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Gitea](https://gitea.io/en-us/) - Community Managed lightweight code hosting solution written in Go
 - [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
 - [Jenkins](https://jenkins.io/) -  Free and Open Source Automation Server
-- [Portus](https://port.us.org/) - Next Generation Docker Registry
+- [Harbor](https://goharbor.io/) - Next Generation Docker Registry
 - [n8n](https://n8n.io/) - The workflow Automation Platform That Doesn't Box You In
 - [Homer](https://github.com/bastienwirtz/homer/) - A very simple static homepage for your server
 - [Elasticsearch](https://www.elastic.co/elasticsearch/) - A Distributed, RESTful Search + Analytics Engine

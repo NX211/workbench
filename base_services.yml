@@ -13,7 +13,7 @@
     - elasticsearch
     - authelia
     - gitea
-    - portus
+    - harbor
     - jenkins
     - n8n
     - minio
