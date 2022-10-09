@@ -1,0 +1,4 @@
+---
+mailrise_port: "8025"
+mailrise_version: "latest"
+mailrise_docker_image: "yoryan/mailrise"

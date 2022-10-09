@@ -12,6 +12,7 @@
     - mongodb
     - elasticsearch
     - authelia
+    - mailrise
     - gitea
     - portus
     - jenkins

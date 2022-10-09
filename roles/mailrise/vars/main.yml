@@ -1,0 +1,5 @@
+---
+matrix_notifications_user: "{{vault_matrix_notifications_user}}"
+matrix_notifications_password: "{{vault_matrix_notifications_password}}"
+matrix_notifications_room_id: "{{vault_matrix_notifications_room_id}}"
+matrix_notifications_url: "{{vault_matrix_notifications_url}}"
