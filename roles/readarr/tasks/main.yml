@@ -1,22 +1,16 @@
 ---
-- name: Ensure Media Datasets Exist
+- name: Ensure Readarr Media Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: blacktalon/media/audiobooks
     state: present
-  loop:
-    - blacktalon/media/audiobooks
-    - blacktalon/media/books
   tags: readarr
 
-- name: Ensure Media Download Datasets Exist
+- name: Ensure Readarr Media Download Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: blacktalon/media/downloads/audiobooks
     state: present
-  loop:
-    - blacktalon/media/downloads/audiobooks
-    - blacktalon/media/downloads/books
   tags: readarr
 
 - name: Ensure Readarr Dataset Exist
@@ -62,9 +56,6 @@
         type: bind
       - source: "{{project_media_directory}}/audiobooks/"
         target: /media/audiobooks/
-        type: bind
-      - source: "{{project_media_directory}}/books/"
-        target: /media/books/
         type: bind
       - source: "{{project_download_directory}}"
         target: /media/downloads/
