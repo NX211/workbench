@@ -41,8 +41,8 @@
     env:
       PHOTOPRISM_URL: "https://{{photo_tld}}"
       PHOTOPRISM_SITE_TITLE: "Authoritah Photos"
-      PHOTOPRISM_SITE_CAPTION: "Browse Your Life"
-      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_CAPTION: "Authoritah Photos"
+      PHOTOPRISM_SITE_DESCRIPTION: "Self-Hosted Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
       PHOTOPRISM_DEBUG: "false"
       PHOTOPRISM_PUBLIC: "false"
@@ -53,7 +53,8 @@
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_APP_NAME: "Authoritah Photo"
       PHOTOPRISM_APP_ICON: "https://www.{{project_tld}}/assets/tools/png/badge.png"
-      PHOTOPRISM_APP_IMPRINT: "Copyright &copy;{{project_tld}}"
+      PHOTOPRISM_WALLPAPER_URI: "https://www.authoritah.com/assets/icons/background.jpg"
+      PHOTOPRISM_APP_IMPRINT: "2022 {{project_tld}}"
       PHOTOPRISM_APP_IMPRINT_URL: "https://www.{{project_tld}}/legal"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
       PHOTOPRISM_HTTP_PORT: "{{photoprism_port}}"
@@ -82,6 +83,7 @@
       PHOTOPRISM_DISABLE_PLACES: "false"
       PHOTOPRISM_DISABLE_EXIFTOOL: "false"  
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"
+      PHOTOPRISM_DEFAULT_LOCALE: "en"
     placement:
       constraints:
         - node.id == {{blacktalon_node_id}}
