@@ -1,28 +1,53 @@
 ---
+- name: Ensure Authelia Directories Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{ item }}"
+    mode: 0644
+    state: directory
+  loop:
+    - "{{ project_root_directory }}/authelia"
+    - "{{ project_root_directory }}/authelia/assets"
+  tags: authelia
+
 - name: Ensure Authelia Directory Exist
   when: inventory_hostname == groups['managers'][0]
   file:
-    path: "{{project_root_directory}}/authelia"
+    path: "{{ project_root_directory }}/authelia"
+    mode: 0644
     state: directory
   tags: authelia
+
+- name: Ensure Authelia Icons Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+  with_items:
+    - "{src: logo.png,dest: /yellowtalon/apps/authelia/assets/logo.png}"
+    - "{src: favicon.ico,dest: /yellowtalon/apps/authelia/assets/favicon.ico}"
+  tags: authelia
+  no_log: true
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
-    database_name: "{{authelia_database}}"
-    database_user: "{{authelia_database_user}}"
-    database_password: "{{authelia_database_password}}"
+    database_name: "{{ authelia_database }}"
+    database_user: "{{ authelia_database_user }}"
+    database_password: "{{ authelia_database_password }}"
   tags: authelia
   no_log: true
 
 - name: Ensure Authelia Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
   template:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
   with_items:
-    - {src: configuration.yml.j2,dest: "{{project_root_directory}}/authelia/configuration.yml"}
-    - {src: users.yml.j2,dest: "{{project_root_directory}}/authelia/users.yml"}
+    - "{src: configuration.yml.j2,dest: {{ project_root_directory }}/authelia/configuration.yml}"
+    - "{src: users.yml.j2,dest: {{ project_root_directory }}/authelia/users.yml}"
   tags: authelia
   no_log: true
 
@@ -32,28 +57,28 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: authelia
-    hostname: "{{authelia_hostname}}"
-    image: "{{authelia_docker_image}}:{{authelia_version}}"
+    hostname: "{{ authelia_hostname }}"
+    image: "{{ authelia_docker_image }}:{{ authelia_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: global
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{yellowtalon_node_id}}
+        - node.id == {{ yellowtalon_node_id }}
     mounts:
-      - source: "{{project_root_directory}}/authelia/"
+      - source: "{{ project_root_directory }}/authelia/"
         target: /config/
         type: bind
     labels:
-      traefik.http.routers.authelia.rule: "Host(`login.{{project_tld}}`)"
+      traefik.http.routers.authelia.rule: "Host(`login.{{ project_tld }}`)"
       traefik.http.routers.authelia.entrypoints: "websecure"
       traefik.http.routers.authelia.tls: "true"
       traefik.http.routers.authelia.service: "authelia"
-      traefik.http.routers.authelia.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.authelia.loadbalancer.server.port: "{{authelia_port}}"
+      traefik.http.routers.authelia.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.authelia.loadbalancer.server.port: "{{ authelia_port }}"
       traefik.enable: "true"
     state: present
   tags: authelia
