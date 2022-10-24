@@ -17,6 +17,7 @@
     networks:
       - "{{ traefik_network }}"
     mode: global
+    command: [sh, -c, "yes | ./listmonk --install && ./listmonk"]
     env:
       TZ: "{{ default_timezone }}"
       LISTMONK_app__address: "0.0.0.0:{{ listmonk_port }}"
