@@ -1,21 +1,4 @@
 ---
-- name: Ensure Listmonk Directory Exist
-  when: inventory_hostname == groups['managers'][0]
-  file:
-    path: "{{ project_root_directory }}/listmonk"
-    mode: 0644
-    state: directory
-  tags: listmonk
-
-- name: Ensure Listmonk Configuration Files Exist
-  when: inventory_hostname == groups['managers'][0]
-  template:
-    src: config.toml.j2
-    mode: 0644
-    dest: "{{ project_root_directory }}/listmonk/config.toml"
-  tags: listmonk
-  no_log: true
-
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
@@ -37,15 +20,20 @@
     command: [sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml"]
     env:
       TZ: "{{ default_timezone }}"
+      LISTMONK_app__address: "0.0.0.0:{{ listmonk_port }}"
+      LISTMONK_app__admin_username: "{{ listmonk_admin_username }}"
+      LISTMONK_app__admin_password: "{{ listmonk_admin_password }}"
+      LISTMONK_db__host: "{{ postgres_hostname }}"
+      LISTMONK_db__port: "{{ postgres_port }}"
+      LISTMONK_db__user: "{{ listmonk_database_user }}"
+      LISTMONK_db__password: "{{ listmonk_database_password }}"
+      LISTMONK_db__database: "{{ listmonk_database }}"
+      LISTMONK_db__ssl_mode: "disable"
     restart_config:
       condition: on-failure
     placement:
       constraints:
         - node.id == {{ yellowtalon_node_id }}
-    mounts:
-      - source: /yellowtalon/apps/listmonk/config.toml
-        target: /listmonk/config.toml
-        type: bind
     labels:
       traefik.http.routers.listmonk.entrypoints: "websecure"
       traefik.http.routers.listmonk.rule: "Host(`listmonk.{{ project_tld }}`)"
