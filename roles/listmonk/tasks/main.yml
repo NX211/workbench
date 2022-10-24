@@ -1,0 +1,59 @@
+---
+- name: Ensure Listmonk Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  file:
+    path: "{{ project_root_directory }}/listmonk"
+    mode: 0644
+    state: directory
+  tags: listmonk
+
+- name: Ensure Listmonk Configuration Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  template:
+    src: config.toml.j2
+    mode: 0644
+    dest: "{{ project_root_directory }}/listmonk/config.toml"
+  tags: listmonk
+  no_log: true
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ listmonk_database }}"
+    database_user: "{{ listmonk_database_user }}"
+    database_password: "{{ listmonk_database_password }}"
+  tags: listmonk
+  no_log: true
+
+- name: Deploy Listmonk Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: listmonk
+    hostname: "{{ listmonk_hostname }}"
+    image: "{{ listmonk_docker_image }}:{{ listmonk_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: global
+    command: [sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml"]
+    env:
+      TZ: "{{ default_timezone }}"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ yellowtalon_node_id }}
+    mounts:
+      - source: /yellowtalon/apps/listmonk/
+        target: /listmonk/config.toml
+        type: bind
+    labels:
+      traefik.http.routers.listmonk.entrypoints: "websecure"
+      traefik.http.routers.prowlarr.rule: "Host(`listmonk.{{ project_tld }}`)"
+      traefik.http.routers.listmonk.middlewares: "default-headers@file"
+      traefik.http.routers.listmonk.tls: "true"
+      traefik.http.routers.listmonk.service: "listmonk"
+      traefik.http.routers.listmonk.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.listmonk.loadbalancer.server.port: "{{ listmonk_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: listmonk

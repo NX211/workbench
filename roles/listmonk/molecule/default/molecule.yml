@@ -3,15 +3,11 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
 platforms:
-  - name: instance
-    image: docker-ubuntu2004-ansible
+  - name: ubuntu-20.04
+    image: ubuntu:20.04
     pre_build_image: true
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
 verifier:
   name: ansible

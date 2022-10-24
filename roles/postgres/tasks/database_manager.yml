@@ -1,19 +1,19 @@
 ---
 - name: Ensure PostgreSQL Databases are Present.
   postgresql_db:
-    login_host: "{{postgres_localhost}}"
-    login_port: "{{postgres_port}}"
-    login_user: "{{postgres_root_user}}"
-    login_password: "{{postgres_root_password}}"
-    name: "{{database_name}}"
+    login_host: "{{ postgres_localhost }}"
+    login_port: "{{ postgres_port }}"
+    login_user: "{{ postgres_root_user }}"
+    login_password: "{{ postgres_root_password }}"
+    name: "{{ database_name }}"
     state: "present"
 
 - name: Ensure PostgreSQL Users are Present.
   postgresql_user:
-    login_host: "{{postgres_localhost}}"
-    login_port: "{{postgres_port}}"
-    login_user: "{{postgres_root_user}}"
-    login_password: "{{postgres_root_password}}"
-    name: "{{database_user}}"
-    password: "{{database_password}}"
+    login_host: "{{ postgres_localhost }}"
+    login_port: "{{ postgres_port }}"
+    login_user: "{{ postgres_root_user }}"
+    login_password: "{{ postgres_root_password }}"
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
     state: "present"

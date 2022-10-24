@@ -1,0 +1,5 @@
+---
+listmonk_version: "latest"
+listmonk_hostname: "listmonk"
+listmonk_port: "9000"
+listmonk_docker_image: "listmonk/listmonk"
