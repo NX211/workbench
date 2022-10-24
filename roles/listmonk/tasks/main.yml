@@ -43,7 +43,7 @@
       constraints:
         - node.id == {{ yellowtalon_node_id }}
     mounts:
-      - source: /yellowtalon/apps/listmonk/
+      - source: /yellowtalon/apps/listmonk/config.toml
         target: /listmonk/config.toml
         type: bind
     labels:
