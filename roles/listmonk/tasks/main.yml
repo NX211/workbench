@@ -48,7 +48,7 @@
         type: bind
     labels:
       traefik.http.routers.listmonk.entrypoints: "websecure"
-      traefik.http.routers.prowlarr.rule: "Host(`listmonk.{{ project_tld }}`)"
+      traefik.http.routers.listmonk.rule: "Host(`listmonk.{{ project_tld }}`)"
       traefik.http.routers.listmonk.middlewares: "default-headers@file"
       traefik.http.routers.listmonk.tls: "true"
       traefik.http.routers.listmonk.service: "listmonk"
