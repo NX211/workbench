@@ -2,18 +2,19 @@
 - name: Ensure Homer Directories Exist
   when: inventory_hostname == groups['managers'][0]
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     state: directory
+    mode: 0644
   loop:
-    - "{{project_root_directory}}/homer"
-    - "{{project_root_directory}}/homer/icons"
+    - "{{ project_root_directory }}/homer"
+    - "{{ project_root_directory }}/homer/icons"
   tags: homer
 
 - name: Clone a github repository
   when: inventory_hostname == groups['managers'][0]
   git:
-    repo: "{{homer_git_repository_url}}"
-    dest: "{{project_root_directory}}/homer/tools"
+    repo: "{{ homer_git_repository_url }}"
+    dest: "{{ project_root_directory }}/homer/tools"
     clone: yes
     update: yes
   tags: homer
@@ -22,22 +23,24 @@
   when: inventory_hostname == groups['managers'][0]
   template:
     src: config.yml.j2
-    dest: "{{project_root_directory}}/homer/config.yml"
+    dest: "{{ project_root_directory }}/homer/config.yml"
+    mode: 0644
   tags: homer
   no_log: true
 
 - name: Ensure Homer Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
   copy:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
   with_items:
-    - {src: android-chrome-192x192.png,dest: /yellowtalon/apps/homer/icons/android-chrome-192x192.png}
-    - {src: android-chrome-512x512.png,dest: /yellowtalon/apps/homer/icons/android-chrome-512x512.png}
-    - {src: apple-touch-icon.png,dest: /yellowtalon/apps/homer/icons/apple-touch-icon.png}
-    - {src: favicon-16x16.png,dest: /yellowtalon/apps/homer/icons/favicon-16x16.png}
-    - {src: favicon-32x32.png,dest: /yellowtalon/apps/homer/icons/favicon-32x32.png}
-    - {src: favicon.ico,dest: /yellowtalon/apps/homer/icons/favicon.ico}
+    - { src: android-chrome-192x192.png, dest: "{{ project_root_directory }}/homer/icons/android-chrome-192x192.png" }
+    - { src: android-chrome-512x512.png, dest: "{{ project_root_directory }}/homer/icons/android-chrome-512x512.png" }
+    - { src: apple-touch-icon.png, dest: "{{ project_root_directory }}/homer/icons/apple-touch-icon.png" }
+    - { src: favicon-16x16.png, dest: "{{ project_root_directory }}/homer/icons/favicon-16x16.png" }
+    - { src: favicon-32x32.png, dest: "{{ project_root_directory }}/homer/icons/favicon-32x32.png" }
+    - { src: favicon.ico, dest: "{{ project_root_directory }}/homer/icons/favicon.ico" }
   tags: homer  
   no_log: true
 
@@ -45,33 +48,33 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: homer
-    hostname: "{{homer_hostname}}"
-    image: "{{homer_docker_image}}:{{homer_version}}"
+    hostname: "{{ homer_hostname }}"
+    image: "{{ homer_docker_image }}:{{ homer_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: global
     env:
-      UID: "{{homer_uid}}"
-      GID: "{{homer_gid}}"
-      PORT: "{{homer_port}}"
+      UID: "{{ homer_uid }}"
+      GID: "{{ homer_gid }}"
+      PORT: "{{ homer_port }}"
       INIT_ASSETS: "0"
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{yellowtalon_node_id}}
+        - node.id == {{ yellowtalon_node_id }}
     mounts:
-      - source: /yellowtalon/apps/homer/
+      - source: "{{ project_root_directory }}/homer/"
         target: /www/assets/
         type: bind
     labels:
       traefik.http.routers.homer.entrypoints: "websecure"
-      traefik.http.routers.homer.rule: "Host(`{{project_tld}}`,`www.{{project_tld}}`)"
+      traefik.http.routers.homer.rule: "Host(`{{ project_tld }}`,`www.{{ project_tld }}`)"
       traefik.http.routers.homer.middlewares: "default-headers@file"
       traefik.http.routers.homer.tls: "true"
       traefik.http.routers.homer.service: "homer"
-      traefik.http.routers.homer.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.homer.loadbalancer.server.port: "{{homer_port}}"
+      traefik.http.routers.homer.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.homer.loadbalancer.server.port: "{{ homer_port }}"
       traefik.enable: "true"
     state: present
   tags: homer

@@ -2,19 +2,19 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
-    - blacktalon/media/movies
-    - blacktalon/media/tv
-    - blacktalon/media/kids
-    - blacktalon/media/anime
+    - "{{ project_media_directory }}/movies"
+    - "{{ project_media_directory }}/tv"
+    - "{{ project_media_directory }}/kids"
+    - "{{ project_media_directory }}/anime"
   tags: bazarr
 
 - name: Ensure Bazarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: blacktalon/apps/bazarr
+    name: "{{ project_root_directory }}/bazarr"
     state: present
   tags: bazarr
 
@@ -22,7 +22,8 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config.ini.j2
-    dest: "{{project_root_directory}}/bazarr/config/config.ini"
+    mode: 0644
+    dest: "{{ project_root_directory }}/bazarr/config/config.ini"
   tags: bazarr
   no_log: true
 
@@ -30,50 +31,50 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: bazarr
-    hostname: "{{bazarr_hostname}}"
-    image: "{{bazarr_docker_image}}:{{bazarr_version}}"
+    hostname: "{{ bazarr_hostname }}"
+    image: "{{ bazarr_docker_image }}:{{ bazarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{bazarr_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ bazarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
-      - source: /blacktalon/apps/bazarr/
+      - source: "{{ project_root_directory }}/bazarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/movies/"
+      - source: "{{ project_media_directory }}/movies/"
         target: /media/movies/
         type: bind
-      - source: "{{project_media_directory}}/tv/"
+      - source: "{{ project_media_directory }}/tv/"
         target: /media/tv/
         type: bind
-      - source: "{{project_media_directory}}/kids/"
+      - source: "{{ project_media_directory }}/kids/"
         target: /media/kids/
         type: bind
-      - source: "{{project_media_directory}}/anime/"
+      - source: "{{ project_media_directory }}/anime/"
         target: /media/anime/
         type: bind
     labels:
       traefik.http.routers.bazarr.entrypoints: "websecure"
-      traefik.http.routers.bazarr.rule: "Host(`bazarr.{{project_tld}}`)"
+      traefik.http.routers.bazarr.rule: "Host(`bazarr.{{ project_tld }}`)"
       traefik.http.middlewares.bazarr_plausible.plugin.rewritebody.rewrites.regex: "</head>"
-      traefik.http.middlewares.bazarr_plausible.plugin.rewritebody.rewrites.replacement: "<script defer data-domain='bazarr.{{project_tld}}' src='https://plausible.{{project_tld}}/js/plausible.js'></script></head>"
+      traefik.http.middlewares.bazarr_plausible.plugin.rewritebody.rewrites.replacement: "<script defer data-domain='bazarr.{{ project_tld }}' src='https://plausible.{{ project_tld }}/js/plausible.js'></script></head>"
       traefik.http.routers.bazarr.middlewares: "default-headers@file,authelia@file,bazarr_plausible"
       traefik.http.routers.bazarr.tls: "true"
       traefik.http.routers.bazarr.service: "bazarr"
-      traefik.http.routers.bazarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.bazarr.loadbalancer.server.port: "{{bazarr_port}}"
+      traefik.http.routers.bazarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.bazarr.loadbalancer.server.port: "{{ bazarr_port }}"
       traefik.enable: "true"
     state: present
   tags: bazarr

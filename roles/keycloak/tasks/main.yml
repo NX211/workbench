@@ -1,0 +1,46 @@
+---
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  vars:
+    database_name: "{{ keycloak_database }}"
+    database_user: "{{ keycloak_database_user }}"
+    database_password: "{{ keycloak_database_password }}"
+  tags: keycloak
+
+- name: Create Keycloak Docker Container
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: keycloak
+    image: "{{ keycloak_docker_image }}:{{ keycloak_version }}"
+    pull: yes
+    hostname: "{{ keycloak_hostname }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.role == manager
+    replicas: 1
+    env:
+      DB_VENDOR: "postgres"
+      DB_ADDR: "{{ postgres_hostname }}"
+      DB_PORT: "{{ postgres_port }}"
+      DB_DATABASE: "{{ keycloak_database }}"
+      DB_USER: "{{ keycloak_database_user }}"
+      DB_PASSWORD: "{{ keycloak_database_password }}"
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_HOSTNAME: "sso.{{ project_tld }}"
+      KEYCLOAK_USER: "{{ keycloak_user }}"
+      KEYCLOAK_PASSWORD: "{{ keycloak_user_password }}"
+    labels:
+      traefik.http.routers.keycloak.rule: "Host(`sso.{{ project_tld }}`)"
+      traefik.http.routers.keycloak.entrypoints: "websecure"
+      traefik.http.routers.keycloak.tls: "true"
+      traefik.http.routers.keycloak.service: "keycloak"
+      traefik.http.routers.keycloak.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.keycloak.loadbalancer.server.port: "{{ keycloak_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: keycloak

@@ -10,28 +10,28 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: elasticsearch
-    hostname: "{{elasticsearch_hostname}}"
-    image: "{{elasticsearch_docker_image}}:{{elasticsearch_version}}"
+    hostname: "{{ elasticsearch_hostname }}"
+    image: "{{ elasticsearch_docker_image }}:{{ elasticsearch_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: global
     env:
-      cluster.name: "{{elasticsearch_cluster_name}}"
-      node.name: "{{elasticsearch_hostname}}"
+      cluster.name: "{{ elasticsearch_cluster_name }}"
+      node.name: "{{ elasticsearch_hostname }}"
       discovery.type: "single-node"
       bootstrap.memory_lock: "true"
       network.host: "0.0.0.0"
       transport.host: "0.0.0.0"
       xpack.license.self_generated.type: "trial"
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      ELASTIC_USERNAME: "{{elasticsearch_username}}"
-      ELASTIC_PASSWORD: "{{elasticsearch_password}}"
+      ELASTIC_USERNAME: "{{ elasticsearch_username }}"
+      ELASTIC_PASSWORD: "{{ elasticsearch_password }}"
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{yellowtalon_node_id}}
+        - node.id == {{ yellowtalon_node_id }}
     mounts:
       - source: elasticsearch_data
         target: /usr/share/elasticsearch/data/

@@ -2,16 +2,17 @@
 - name: Ensure Gitea Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/gitea"
+    path: "{{ project_root_directory }}/gitea"
+    mode: 0644
     state: directory
   tags: gitea
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
-    database_name: "{{gitea_database}}"
-    database_user: "{{gitea_database_user}}"
-    database_password: "{{gitea_database_password}}"
+    database_name: "{{ gitea_database }}"
+    database_user: "{{ gitea_database_user }}"
+    database_password: "{{ gitea_database_password }}"
   tags: gitea
   no_log: true
 
@@ -19,10 +20,10 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: gitea
-    hostname: "{{gitea_hostname}}"
-    image: "{{gitea_docker_image}}:{{gitea_version}}"
+    hostname: "{{ gitea_hostname }}"
+    image: "{{ gitea_docker_image }}:{{ gitea_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     publish:
@@ -31,61 +32,61 @@
     restart_config:
       condition: on-failure
     env:
-      GITEA__DEFAULT__APP_NAME: "{{gitea_app_name}}"
-      GITEA__DEFAULT__RUN_USER: "{{gitea_app_user}}"
+      GITEA__DEFAULT__APP_NAME: "{{ gitea_app_name }}"
+      GITEA__DEFAULT__RUN_USER: "{{ gitea_app_user }}"
       GITEA__DEFAULT__RUN_MODE: "prod"
       GITEA__repository.upload__ALLOWED_TYPES: ".zip,text/plain,image/*"
       GITEA__repository.release__ALLOWED_TYPES: ".zip,text/plain,image/*"
       GITEA__repository.upload__FILE_MAX_SIZE: "5"
       GITEA__repository.upload__MAX_FILES: "10"
       GITEA__server__PROTOCOL: "http"
-      GITEA__server__DOMAIN: "{{git_tld}}"
+      GITEA__server__DOMAIN: "{{ git_tld }}"
       GITEA__server__HTTP_ADDR: "0.0.0.0"
-      GITEA__server__HTTP_PORT: "{{gitea_port}}"
-      GITEA__server__SSH_DOMAIN: "{{git_tld}}"
+      GITEA__server__HTTP_PORT: "{{ gitea_port }}"
+      GITEA__server__SSH_DOMAIN: "{{ git_tld }}"
       GITEA__server__SSH_PORT: "22"
-      GITEA__security__INTERNAL_TOKEN: "{{gitea_internal_security_token}}"
-      GITEA__security__SECRET_KEY: "{{gitea_secret_key}}"
+      GITEA__security__INTERNAL_TOKEN: "{{ gitea_internal_security_token }}"
+      GITEA__security__SECRET_KEY: "{{ gitea_secret_key }}"
       GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: "*"
       GITEA__database__DB_TYPE: "postgres"
-      GITEA__database__HOST: "{{postgres_hostname}}:{{postgres_port}}"
-      GITEA__database__NAME: "{{gitea_database}}"
-      GITEA__database__USER: "{{gitea_database_user}}"
-      GITEA__database__PASSWD: "{{gitea_database_password}}"
+      GITEA__database__HOST: "{{ postgres_hostname }}:{{ postgres_port }}"
+      GITEA__database__NAME: "{{ gitea_database }}"
+      GITEA__database__USER: "{{ gitea_database_user }}"
+      GITEA__database__PASSWD: "{{ gitea_database_password }}"
       GITEA__database__SSL_MODE: "disable"
       GITEA__mailer__ENABLED: "true"
       GITEA__mailer__IS_TLS_ENABLED: "true"
       GITEA__mailer__MAILER_TYPE: "smtp"
-      GITEA__mailer__HOST: "{{email_host}}:465"
-      GITEA__mailer__USER: "{{email_user}}"
-      GITEA__mailer__PASSWD: "{{email_password}}"
-      GITEA__mailer__FROM: "{{email_user}}"
+      GITEA__mailer__HOST: "{{ email_host }}:465"
+      GITEA__mailer__USER: "{{ email_user }}"
+      GITEA__mailer__PASSWD: "{{ email_password }}"
+      GITEA__mailer__FROM: "{{ email_user }}"
       GITEA__session__PROVIDER: "redis"
-      GITEA__session__PROVIDER_CONFIG: "network=tcp,addr={{redis_hostname}}:{{redis_port}},db=0,pool_size=100,idle_timeout=180"
-      GITEA__session__COOKIE_NAME: "{{gitea_cookie_name}}"
+      GITEA__session__PROVIDER_CONFIG: "network=tcp,addr={{ redis_hostname }}:{{ redis_port }},db=0,pool_size=100,idle_timeout=180"
+      GITEA__session__COOKIE_NAME: "{{ gitea_cookie_name }}"
       GITEA__session__COOKIE_SECURE: "false"
       GITEA__cache__ENABLED: "true"
       GITEA__cache__ADAPTER: "redis"
-      GITEA__cache__HOST: "network=tcp,addr={{redis_hostname}}:{{redis_port}},db=0,pool_size=100,idle_timeout=180"
+      GITEA__cache__HOST: "network=tcp,addr={{ redis_hostname }}:{{ redis_port }},db=0,pool_size=100,idle_timeout=180"
       GITEA_CUSTOM: "/data/gitea"
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: /greytalon/apps/gitea/
+      - source: "{{ project_root_directory }}/gitea/"
         target: /data/
         type: bind
     labels:
       traefik.http.routers.gitea.entrypoints: "websecure"
-      traefik.http.routers.gitea.rule: "Host(`{{git_tld}}`)"
+      traefik.http.routers.gitea.rule: "Host(`{{ git_tld }}`)"
       traefik.http.middlewares.gitea_rewrite_theme.plugin.rewritebody.rewrites.regex: "</head>"
-      traefik.http.middlewares.gitea_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/gitea/{{theme_park_default}}.css></head>"
+      traefik.http.middlewares.gitea_rewrite_theme.plugin.rewritebody.rewrites.replacement: "<link rel=stylesheet type=text/css href=https://gilbn.github.io/theme.park/CSS/themes/gitea/{{ theme_park_default }}.css></head>"
       traefik.http.routers.gitea.middlewares: "default-headers@file,gitea_rewrite_theme"
       traefik.http.routers.gitea.tls: "true"
       traefik.http.routers.gitea.service: "gitea"
-      traefik.http.routers.gitea.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.gitea.loadbalancer.server.port: "{{gitea_port}}"
+      traefik.http.routers.gitea.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.gitea.loadbalancer.server.port: "{{ gitea_port }}"
       traefik.enable: "true"
     state: present
   tags: gitea

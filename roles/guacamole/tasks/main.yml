@@ -2,16 +2,17 @@
 - name: Ensure Guacamole Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/guacamole"
+    path: "{{ project_root_directory }}/guacamole"
+    mode: 0644
     state: directory
   tags: guacamole
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
-    database_name: "{{guacamole_database}}"
-    database_user: "{{guacamole_database_user}}"
-    database_password: "{{guacamole_database_password}}"
+    database_name: "{{ guacamole_database }}"
+    database_user: "{{ guacamole_database_user }}"
+    database_password: "{{ guacamole_database_password }}"
   tags: guacamole
   no_log: true
 
@@ -19,17 +20,17 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: guacd
-    hostname: "{{guacd_hostname}}"
-    image: "{{guacd_docker_image}}:{{guacd_version}}"
+    hostname: "{{ guacd_hostname }}"
+    image: "{{ guacd_docker_image }}:{{ guacd_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     state: present
   tags: guacamole
@@ -39,43 +40,43 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: guacamole
-    hostname: "{{guacamole_hostname}}"
-    image: "{{guacamole_docker_image}}:{{guacamole_version}}"
+    hostname: "{{ guacamole_hostname }}"
+    image: "{{ guacamole_docker_image }}:{{ guacamole_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     env:
       DOCKER_MODS: "gilbn/theme.park:guacamole"
-      TP_THEME: "{{theme_park_default}}"
+      TP_THEME: "{{ theme_park_default }}"
       JAVA_OPTS: "-Dserver.use-forward-headers=true"
-      GUACD_HOSTNAME: "{{guacd_hostname}}"
+      GUACD_HOSTNAME: "{{ guacd_hostname }}"
       GUACAMOLE_HOME: "/etc/guacamole"
-      POSTGRES_HOSTNAME: "{{postgres_hostname}}"
-      POSTGRES_PORT: "{{postgres_port}}"
-      POSTGRES_DATABASE: "{{guacamole_database}}"
-      POSTGRES_USER: "{{guacamole_database_user}}"
-      POSTGRES_PASSWORD: "{{guacamole_database_password}}"
+      POSTGRES_HOSTNAME: "{{ postgres_hostname }}"
+      POSTGRES_PORT: "{{ postgres_port }}"
+      POSTGRES_DATABASE: "{{ guacamole_database }}"
+      POSTGRES_USER: "{{ guacamole_database_user }}"
+      POSTGRES_PASSWORD: "{{ guacamole_database_password }}"
       TOTP_ENABLED: "true"
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
-    replicas: 1
+        - node.id == {{ greytalon_node_id }}
+    replicas: 1 
     mounts:
-      - source: /greytalon/apps/guacamole/
+      - source: "{{ project_root_directory }}/guacamole/"
         target: /etc/guacamole/
         type: bind
     labels:
       traefik.http.routers.guacamole.entrypoints: "websecure"
-      traefik.http.routers.guacamole.rule: "Host(`guac.{{project_tld}}`)"
+      traefik.http.routers.guacamole.rule: "Host(`guac.{{ project_tld }}`)"
       traefik.http.middlewares.guacamole-prefix.addPrefix.prefix: "/guacamole"
       traefik.http.routers.guacamole.middlewares: "default-headers@file,guacamole-prefix"
       traefik.http.routers.guacamole.tls: "true"
       traefik.http.routers.guacamole.service: "guacamole"
-      traefik.http.routers.guacamole.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.guacamole.loadbalancer.server.port: "{{guacamole_port}}"
+      traefik.http.routers.guacamole.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.guacamole.loadbalancer.server.port: "{{ guacamole_port }}"
       traefik.enable: "true"
     state: present
   tags: guacamole

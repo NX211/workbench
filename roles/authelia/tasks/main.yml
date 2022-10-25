@@ -10,14 +10,6 @@
     - "{{ project_root_directory }}/authelia/assets"
   tags: authelia
 
-- name: Ensure Authelia Directory Exist
-  when: inventory_hostname == groups['managers'][0]
-  file:
-    path: "{{ project_root_directory }}/authelia"
-    mode: 0644
-    state: directory
-  tags: authelia
-
 - name: Ensure Authelia Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
   copy:
@@ -25,8 +17,8 @@
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - "{src: logo.png,dest: /yellowtalon/apps/authelia/assets/logo.png}"
-    - "{src: favicon.ico,dest: /yellowtalon/apps/authelia/assets/favicon.ico}"
+    - { src: logo.png, dest: "{{ project_root_directory }}/authelia/assets/logo.png" }
+    - { src: favicon.ico, dest: "{{ project_root_directory }}/authelia/assets/favicon.ico" }
   tags: authelia
   no_log: true
 
@@ -46,8 +38,8 @@
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - "{src: configuration.yml.j2,dest: {{ project_root_directory }}/authelia/configuration.yml}"
-    - "{src: users.yml.j2,dest: {{ project_root_directory }}/authelia/users.yml}"
+    - { src: configuration.yml.j2, dest: "{{ project_root_directory }}/authelia/configuration.yml" }
+    - { src: users.yml.j2', dest: "{{ project_root_directory }}/authelia/users.yml" }
   tags: authelia
   no_log: true
 

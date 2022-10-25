@@ -2,7 +2,8 @@
 - name: Ensure FreshRSS Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/freshrss"
+    path: "{{ project_root_directory }}/freshrss"
+    mode: 0644
     state: directory
   tags: freshrss
 
@@ -10,38 +11,38 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: freshrss
-    hostname: "{{freshrss_hostname}}"
-    image: "{{freshrss_docker_image}}:{{freshrss_version}}"
+    hostname: "{{ freshrss_hostname }}"
+    image: "{{ freshrss_docker_image }}:{{ freshrss_version }}"
     env:
-      POSTGRES_DB: "{{freshrss_database}}"
-      POSTGRES_USER: "{{freshrss_database_user}}"
-      POSTGRES_PASSWORD: "{{freshrss_database_password}}"
+      POSTGRES_DB: "{{ freshrss_database }}"
+      POSTGRES_USER: "{{ freshrss_database_user }}"
+      POSTGRES_PASSWORD: "{{ freshrss_database_password }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: /greytalon/apps/freshrss/
+      - source: "{{ project_root_directory }}/freshrss/"
         target: /config/
         type: bind
     labels:
       traefik.http.routers.freshrss.entrypoints: "websecure"
-      traefik.http.routers.freshrss.rule: "Host(`rss.{{project_tld}}`)"
+      traefik.http.routers.freshrss.rule: "Host(`rss.{{ project_tld }}`)"
       traefik.http.routers.freshrss.middlewares: "default-headers@file"
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.service: "freshrss"
-      traefik.http.routers.freshrss.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.freshrss.loadbalancer.server.port: "{{freshrss_port}}"
+      traefik.http.routers.freshrss.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.freshrss.loadbalancer.server.port: "{{ freshrss_port }}"
       traefik.enable: "true"
     state: present
   tags: freshrss
 
-- import_tasks: "{{role_path}}/tasks/bridge.yml"
+- import_tasks: "{{ role_path }}/tasks/bridge.yml"
   tags:
     - freshrss
