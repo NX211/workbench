@@ -1,5 +1,7 @@
 ---
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Create Keycloak Database
+  import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ keycloak_database }}"
     database_user: "{{ keycloak_database_user }}"
@@ -11,32 +13,31 @@
   community.docker.docker_swarm_service:
     name: keycloak
     image: "{{ keycloak_docker_image }}:{{ keycloak_version }}"
-    pull: yes
     hostname: "{{ keycloak_hostname }}"
     networks:
       - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
+    command: "/opt/keycloak/bin/kc.sh start --optimized"
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.role == manager
+        - node.id == {{ yellowtalon_node_id }}
     replicas: 1
     env:
-      DB_VENDOR: "postgres"
-      DB_ADDR: "{{ postgres_hostname }}"
-      DB_PORT: "{{ postgres_port }}"
-      DB_DATABASE: "{{ keycloak_database }}"
-      DB_USER: "{{ keycloak_database_user }}"
-      DB_PASSWORD: "{{ keycloak_database_password }}"
-      PROXY_ADDRESS_FORWARDING: "true"
-      KEYCLOAK_HOSTNAME: "sso.{{ project_tld }}"
-      KEYCLOAK_USER: "{{ keycloak_user }}"
-      KEYCLOAK_PASSWORD: "{{ keycloak_user_password }}"
+      KC_DB: "postgres"
+      KC_DB_URL: "jdbc:postgresql://{{ postgres_hostname }}:{{ postgres_port }}/{{ keycloak_database }}"
+      KC_DB_USERNAME: "{{ keycloak_database_user }}"
+      KC_DB_PASSWORD: "{{ keycloak_database_password }}"
+      KC_HOSTNAME: "sso.{{ project_tld }}"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: "passthrough"
+      KEYCLOAK_ADMIN: "{{ keycloak_user }}"
+      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_user_password }}"
     labels:
-      traefik.http.routers.keycloak.rule: "Host(`sso.{{ project_tld }}`)"
       traefik.http.routers.keycloak.entrypoints: "websecure"
+      traefik.http.routers.keycloak.rule: "Host(`sso.{{ project_tld }}`)"
       traefik.http.routers.keycloak.tls: "true"
       traefik.http.routers.keycloak.service: "keycloak"
       traefik.http.routers.keycloak.tls.certresolver: "{{ default_certificate_resolver }}"
