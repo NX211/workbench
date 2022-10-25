@@ -4,7 +4,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 0644
+    mode: 0755
   loop:
     - "{{ project_root_directory }}/homer"
     - "{{ project_root_directory }}/homer/icons"
@@ -24,7 +24,7 @@
   template:
     src: config.yml.j2
     dest: "{{ project_root_directory }}/homer/config.yml"
-    mode: 0644
+    mode: 0755
   tags: homer
   no_log: true
 
@@ -33,7 +33,7 @@
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: 0755
   with_items:
     - { src: android-chrome-192x192.png, dest: "{{ project_root_directory }}/homer/icons/android-chrome-192x192.png" }
     - { src: android-chrome-512x512.png, dest: "{{ project_root_directory }}/homer/icons/android-chrome-512x512.png" }
