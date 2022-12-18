@@ -33,7 +33,7 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: "{{ project_root_directory }}/rssbridge/whitelist.txt"
+      - source: /greytalon/apps/rssbridge/whitelist.txt
         target: /app/whitelist.txt
         type: bind
     labels:

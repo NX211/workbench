@@ -65,7 +65,7 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1 
     mounts:
-      - source: "{{ project_root_directory }}/guacamole/"
+      - source: /greytalon/apps/guacamole/
         target: /etc/guacamole/
         type: bind
     labels:

@@ -74,7 +74,7 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: "{{ project_root_directory }}/gitea/"
+      - source: /greytalon/apps/gitea/
         target: /data/
         type: bind
     labels:

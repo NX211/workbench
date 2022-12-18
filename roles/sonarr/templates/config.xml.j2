@@ -1,16 +1,18 @@
 <Config>
   <LogLevel>info</LogLevel>
-  <Port>8989</Port>
+  <Port>{{sonarr_port}}</Port>
   <UrlBase></UrlBase>
   <BindAddress>*</BindAddress>
   <SslPort>{{sonarr_port}}</SslPort>
   <EnableSsl>False</EnableSsl>
   <ApiKey>{{sonarr_api_key}}</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
-  <Branch>develop</Branch>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
+  <Branch>{{sonarr_version}}</Branch>
   <LaunchBrowser>True</LaunchBrowser>
-  <SslCertHash></SslCertHash>
   <UpdateMechanism>Docker</UpdateMechanism>
   <UpdateAutomatically>False</UpdateAutomatically>
   <InstanceName>Sonarr</InstanceName>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
 </Config>

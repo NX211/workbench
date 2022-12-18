@@ -39,7 +39,7 @@
     mode: 0644
   with_items:
     - { src: configuration.yml.j2, dest: "{{ project_root_directory }}/authelia/configuration.yml" }
-    - { src: users.yml.j2', dest: "{{ project_root_directory }}/authelia/users.yml" }
+    - { src: users.yml.j2, dest: "{{ project_root_directory }}/authelia/users.yml" }
   tags: authelia
   no_log: true
 

@@ -6,9 +6,12 @@
   <UrlBase></UrlBase>
   <BindAddress>*</BindAddress>
   <ApiKey>{{sonarr_anime_api_key}}</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
   <UpdateMechanism>Docker</UpdateMechanism>
   <LaunchBrowser>True</LaunchBrowser>
-  <Branch>develop</Branch>
-  <SslCertHash></SslCertHash>
+  <Branch>{{sonarr_anime_version}}</Branch>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
+  <InstanceName>Sonarr</InstanceName>
+  <SslCertPath></SslCertPath>
+  <SslCertPassword></SslCertPassword>
 </Config>

@@ -5,16 +5,16 @@
     name: "{{ item }}"
     state: present
   loop:
-    - "{{ project_media_directory }}/movies"
-    - "{{ project_media_directory }}/tv"
-    - "{{ project_media_directory }}/kids"
-    - "{{ project_media_directory }}/anime"
+    - blacktalon/media/movies
+    - blacktalon/media/tv
+    - blacktalon/media/kids
+    - blacktalon/media/anime
   tags: bazarr
 
 - name: Ensure Bazarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{ project_root_directory }}/bazarr"
+    name: blacktalon/apps/bazarr
     state: present
   tags: bazarr
 
@@ -50,7 +50,7 @@
         - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
-      - source: "{{ project_root_directory }}/bazarr/"
+      - source: /blacktalon/apps/bazarr/
         target: /config/
         type: bind
       - source: "{{ project_media_directory }}/movies/"
