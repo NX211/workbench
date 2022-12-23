@@ -1,11 +1,10 @@
 ---
-- name: Ensure Guacamole Directory Exist
-  when: inventory_hostname == groups['workers'][0]
-  file:
-    path: "{{ project_root_directory }}/guacamole"
-    mode: 0644
-    state: directory
-  tags: guacamole
+- name: Ensure Guacamole Extension Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: guacamole_extension
+    state: present
+  tags: elasticsearch
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
@@ -35,7 +34,6 @@
     state: present
   tags: guacamole
 
-
 - name: Deploy Guacamole Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -63,16 +61,18 @@
     placement:
       constraints:
         - node.id == {{ greytalon_node_id }}
-    replicas: 1 
+    replicas: 1
     mounts:
-      - source: /greytalon/apps/guacamole/
+      - source: guacamole_extension
         target: /etc/guacamole/
-        type: bind
+        type: volume
     labels:
       traefik.http.routers.guacamole.entrypoints: "websecure"
       traefik.http.routers.guacamole.rule: "Host(`guac.{{ project_tld }}`)"
       traefik.http.middlewares.guacamole-prefix.addPrefix.prefix: "/guacamole"
-      traefik.http.routers.guacamole.middlewares: "default-headers@file,guacamole-prefix"
+      traefik.http.middlewares.guacamole_themepark.plugin.traefik-themepark.app: "guacamole"
+      traefik.http.middlewares.guacamole_themepark.plugin.traefik-themepark.theme: "{{ theme_park_default }}"
+      traefik.http.routers.guacamole.middlewares: "default-headers@file,guacamole-prefix,guacamole_themepark"
       traefik.http.routers.guacamole.tls: "true"
       traefik.http.routers.guacamole.service: "guacamole"
       traefik.http.routers.guacamole.tls.certresolver: "{{ default_certificate_resolver }}"
