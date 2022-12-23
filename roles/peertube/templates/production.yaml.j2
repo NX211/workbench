@@ -8,6 +8,11 @@ webserver:
   hostname: '{{peertube_tld}}'
   port: 443
 
+# Secrets you need to generate the first time you run PeerTube
+secrets:
+  # Generate one using `openssl rand -hex 32`
+  peertube: '{{peertube_secret}}'
+
 rates_limit:
   api:
     # 50 attempts in 10 seconds
@@ -90,6 +95,57 @@ storage:
   # If the file exists, peertube will serve it
   # If not, peertube will fallback to the default fil
   client_overrides: '../data/peertube/storage/client-overrides/'
+
+static_files:
+  # Require and check user authentication when accessing private files (internal/private video files)
+  private_files_require_auth: true
+
+object_storage:
+  enabled: false
+
+  # Without protocol, will default to HTTPS
+  endpoint: '' # 's3.amazonaws.com' or 's3.fr-par.scw.cloud' for example
+
+  region: 'us-east-1'
+
+  upload_acl:
+    # Set this ACL on each uploaded object of public/unlisted videos
+    public: 'public-read'
+    # Set this ACL on each uploaded object of private/internal videos
+    # PeerTube can proxify requests to private objects so your users can access them
+    private: 'private'
+
+  proxy:
+    # If private files (private/internal video files) have a private ACL, users can't access directly the ressource
+    # PeerTube can proxify requests between your object storage service and your users
+    # If you disable PeerTube proxy, ensure you use your own proxy that is able to access the private files
+    # Or you can also set a public ACL for private files in object storage if you don't want to use a proxy
+    proxify_private_files: true
+
+  credentials:
+    # You can also use AWS_ACCESS_KEY_ID env variable
+    access_key_id: ''
+    # You can also use AWS_SECRET_ACCESS_KEY env variable
+    secret_access_key: ''
+
+  # Maximum amount to upload in one request to object storage
+  max_upload_part: 100MB
+
+  streaming_playlists:
+    bucket_name: 'streaming-playlists'
+
+    # Allows setting all buckets to the same value but with a different prefix
+    prefix: '' # Example: 'streaming-playlists:'
+
+    # Base url for object URL generation, scheme and host will be replaced by this URL
+    # Useful when you want to use a CDN/external proxy
+    base_url: '' # Example: 'https://mirror.example.com'
+
+  # Same settings but for webtorrent videos
+  videos:
+    bucket_name: 'videos'
+    prefix: ''
+    base_url: ''
 
 log:
   level: 'info' # debug/info/warning/error
