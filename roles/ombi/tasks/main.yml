@@ -10,21 +10,21 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: ombi
-    hostname: "{{ombi_hostname}}"
-    image: "{{ombi_docker_image}}:{{ombi_version}}"
+    hostname: "{{ ombi_hostname }}"
+    image: "{{ ombi_docker_image }}:{{ ombi_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/ombi/"
@@ -32,12 +32,12 @@
         type: bind
     labels:
       traefik.http.routers.ombi.entrypoints: "websecure"
-      traefik.http.routers.ombi.rule: "Host(`ombi.{{media_tld}}`)"
+      traefik.http.routers.ombi.rule: "Host(`ombi.{{ media_tld }}`)"
       traefik.http.routers.ombi.middlewares: "default-headers@file"
       traefik.http.routers.ombi.tls: "true"
       traefik.http.routers.ombi.service: "ombi"
-      traefik.http.routers.ombi.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.ombi.loadbalancer.server.port: "{{ombi_port}}"
+      traefik.http.routers.ombi.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.ombi.loadbalancer.server.port: "{{ ombi_port }}"
       traefik.enable: "true"
     state: present
   tags: ombi
