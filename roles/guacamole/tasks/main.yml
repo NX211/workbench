@@ -4,7 +4,7 @@
   docker_volume:
     name: guacamole_extension
     state: present
-  tags: elasticsearch
+  tags: guacamole
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
