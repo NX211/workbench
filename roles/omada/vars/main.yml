@@ -1,3 +1,0 @@
----
-omada_user: "{{vault_omada_user}}"
-omada_group: "{{vault_omada_group}}"

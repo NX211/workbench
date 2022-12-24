@@ -28,7 +28,6 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Plausible](https://plausible.io/) - Lightweight + Open Source Website Analytics Tool
 - [Guacamole](https://guacamole.apache.org/) - Clientless remote desktop gateway
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
-- [Omada](https://www.tp-link.com/us/omada-sdn/) - TP-Link Omada Software Defined Networking
 - [Paperless](https://github.com/paperless-ngx) - Scan, Index and Archive all your Physical Documents
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
 - [Wiki.js](https://js.wiki/) - The Most Powerful + Extensible Open Source Wiki Software

@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include omada"
-      include_role:
-        name: "omada"
