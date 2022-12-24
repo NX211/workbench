@@ -1,11 +1,26 @@
 ---
-- name: Ensure FreshRSS Directory Exist
-  when: inventory_hostname == groups['workers'][0]
-  file:
-    path: "{{ project_root_directory }}/freshrss"
-    mode: 0644
-    state: directory
+- name: Ensure Freshrss Data Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: freshrss_data
+    state: present
   tags: freshrss
+
+- name: Ensure Freshrss Extensions Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  docker_volume:
+    name: freshrss_extensions
+    state: present
+  tags: freshrss
+
+- import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ freshrss_database }}"
+    database_user: "{{ freshrss_database_user }}"
+    database_password: "{{ freshrss_database_password }}"
+  tags: freshrss
+  no_log: true
 
 - name: Deploy Freshrss Service
   when: inventory_hostname == groups['managers'][0]
@@ -14,9 +29,16 @@
     hostname: "{{ freshrss_hostname }}"
     image: "{{ freshrss_docker_image }}:{{ freshrss_version }}"
     env:
-      POSTGRES_DB: "{{ freshrss_database }}"
-      POSTGRES_USER: "{{ freshrss_database_user }}"
-      POSTGRES_PASSWORD: "{{ freshrss_database_password }}"
+      BASE_URL: "https://rss.{{ project_tld }}"
+      PUBLISHED_PORT: "80"
+      TZ: "{{ default_timezone }}"
+      DB_HOST: "{{ postgres_hostname }}"
+      DB_BASE: "{{ freshrss_database }}"
+      DB_USER: "{{ freshrss_database_user }}"
+      DB_PASSWORD: "{{ freshrss_database_password }}"
+      ADMIN_EMAIL: "{{ freshrss_admin_email }}"
+      ADMIN_PASSWORD: "{{ freshrss_admin_password }}"
+      ADMIN_API_PASSWORD: "{{ freshrss_api_password }}"
     networks:
       - "{{ traefik_network }}"
     mode: replicated
@@ -28,9 +50,12 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: /greytalon/apps/freshrss/
-        target: /config/
-        type: bind
+      - source: freshrss_data
+        target: /var/www/FreshRSS/data/
+        type: volume
+      - source: freshrss_extensions
+        target: /var/www/FreshRSS/extensions/
+        type: volume
     labels:
       traefik.http.routers.freshrss.entrypoints: "websecure"
       traefik.http.routers.freshrss.rule: "Host(`rss.{{ project_tld }}`)"
