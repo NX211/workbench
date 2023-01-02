@@ -1,5 +1,5 @@
 ---
-lidarr_version: "develop"
+lidarr_version: "latest"
 amd_version: "latest"
 amvd_version: "latest"
 amd_hostname: "amd"
