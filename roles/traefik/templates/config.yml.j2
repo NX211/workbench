@@ -51,8 +51,6 @@ http:
         - "websecure"
       rule: "Host(`logs.{{project_tld}}`)"
       tls: {}
-      middlewares:
-        - default-headers@file
       service: "graylog"
     grafana:
       entryPoints:
