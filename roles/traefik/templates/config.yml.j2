@@ -62,6 +62,14 @@ http:
       middlewares:
         - default-headers@file
       service: "grafana"
+    omada:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`omada.{{project_tld}}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "omada"
   services:
     homeassistant:
       loadBalancer:
@@ -83,6 +91,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.230:3000/"
+    omada:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.0.252/"
 tls:
   options:
     default:
