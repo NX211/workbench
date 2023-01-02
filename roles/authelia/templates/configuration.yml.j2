@@ -1,6 +1,6 @@
 server:
   host: 0.0.0.0
-  port: {{authelia_port}}
+  port: {{ authelia_port }}
   path: ""
   read_buffer_size: 4096
   write_buffer_size: 4096
@@ -16,7 +16,7 @@ access_control:
     networks:
     - 10.0.0.0/8
   rules:
-  - domain: "*.{{project_tld}}"
+  - domain: "*.{{ project_tld }}"
     policy: bypass
     resources:
     - "^/api/.*$"
@@ -27,59 +27,55 @@ access_control:
     - "^/agent.*$"
     - "^/control.*$"
     - "^/meshrelay.*$"
-  - domain: api.{{project_tld}}
+  - domain: api.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:admin"
-  - domain: cyberchef.{{project_tld}}
+  - domain: cyberchef.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:admin"
-  - domain: sonarr.{{project_tld}}
+  - domain: sonarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: sonarr2.{{project_tld}}
+  - domain: sonarr2.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: radarr.{{project_tld}}
+  - domain: radarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: lidarr.{{project_tld}}
+  - domain: lidarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: readarr.{{project_tld}}
+  - domain: readarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: prowlarr.{{project_tld}}
+  - domain: prowlarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: sabnzbd.{{project_tld}}
+  - domain: sabnzbd.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: qbittorrent.{{project_tld}}
+  - domain: qbittorrent.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: qbittorrent.{{project_tld}}
+  - domain: qbittorrent.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: bazarr.{{project_tld}}
+  - domain: bazarr.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
-  - domain: print.{{project_tld}}
-    policy: two_factor
-    subject:
-    - "group:print"
-  - domain: sabnzbd.{{project_tld}}
+  - domain: sabnzbd.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
