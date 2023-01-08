@@ -1,6 +1,0 @@
----
-keycloak_database: "keycloak"
-keycloak_database_user: "keycloak"
-keycloak_database_password: "{{ vault_keycloak_database_password }}"
-keycloak_user: "{{ vault_keycloak_user }}"
-keycloak_user_password: "{{ vault_keycloak_user_password }}"

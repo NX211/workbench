@@ -1,5 +1,0 @@
----
-keycloak_version: "latest"
-keycloak_hostname: "keycloak"
-keycloak_port: "8080"
-keycloak_docker_image: "quay.io/keycloak/keycloak"
