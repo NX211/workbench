@@ -55,7 +55,7 @@ http:
     grafana:
       entryPoints:
         - "websecure"
-      rule: "Host(`grafana.{{project_tld}}`)"
+      rule: "Host(`dashboard.{{project_tld}}`)"
       tls: {}
       middlewares:
         - default-headers@file
