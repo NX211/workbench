@@ -1,5 +1,0 @@
----
-wikijs_version: "latest"
-wikijs_docker_image: "ghcr.io/requarks/wiki"
-wikijs_hostname: "wikijs"
-wikijs_port: "3000"

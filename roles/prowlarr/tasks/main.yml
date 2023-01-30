@@ -1,4 +1,8 @@
 ---
+- import_tasks: "{{role_path}}/tasks/flaresolverr.yml"
+  tags:
+    - prowlarr
+
 - name: Ensure Prowlarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:

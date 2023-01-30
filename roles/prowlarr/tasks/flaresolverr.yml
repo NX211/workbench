@@ -1,0 +1,27 @@
+---
+- name: Deploy FlareSolverr Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: flaresolverr
+    hostname: "{{flaresolverr_hostname}}"
+    image: "{{flaresolverr_docker_image}}:{{flaresolverr_version}}"
+    networks:
+      - "{{traefik_network}}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{blacktalon_node_id}}
+    replicas: 1
+    env:
+      HOST: "0.0.0.0"
+      PORT: "{{flaresolverr_port}}"
+      BROWSER_TIMEOUT: "60000"
+      LOG_LEVEL: "info"
+      LOG_HTML: "false"
+      CAPTCHA_SOLVER: "none"
+      TZ: "{{default_timezone}}"
+    state: present
+  tags: flaresolverr

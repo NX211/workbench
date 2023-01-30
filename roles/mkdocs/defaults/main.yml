@@ -1,0 +1,5 @@
+---
+mkdocs_version: "latest"
+mkdocs_docker_image: "mkdocs/mkdocs"
+mkdocs_hostname: "mkdocs"
+mkdocs_port: "3000"

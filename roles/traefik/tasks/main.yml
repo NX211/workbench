@@ -86,6 +86,8 @@
       traefik.http.routers.wildcard.tls.domains[4].sans: "*.{{peertube_tld}}"
       traefik.http.routers.wildcard.tls.domains[5].main: "{{photo_tld}}"
       traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{photo_tld}}"
+      traefik.http.routers.wildcard.tls.domains[6].main: "dimondyucas.com"
+      traefik.http.routers.wildcard.tls.domains[6].sans: "*.dimondyucas.com"
       traefik.http.services.dummy-svc.loadbalancer.server.port: "9999"
       traefik.enable: "true"
     state: present

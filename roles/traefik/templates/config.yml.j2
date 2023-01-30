@@ -46,6 +46,14 @@ http:
       middlewares:
         - authelia@file
       service: "cups"
+    dimondyucas:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`dimondyucas.com`,`www.dimondyucas.com`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "dimondyucas"
     graylog:
       entryPoints:
         - "websecure"
@@ -68,6 +76,12 @@ http:
       middlewares:
         - default-headers@file
       service: "omada"
+    proxmox:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`pve.{{project_tld}}`)"
+      tls: {}
+      service: "proxmox"
   services:
     homeassistant:
       loadBalancer:
@@ -81,6 +95,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.232:631/"
+    dimondyucas:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.109:80/"
     graylog:
       loadBalancer:
         servers:
@@ -93,6 +111,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.10.0.252/"
+    proxmox:
+      loadBalancer:
+        servers:
+          - url: "https://10.20.0.205:8006/"
 tls:
   options:
     default:

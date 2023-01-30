@@ -2,7 +2,8 @@
 - name: Ensure Tdarr Directory Exist
   when: inventory_hostname == groups['media'][0]
   file:
-    path: "{{project_root_directory}}/tdarr"
+    path: "{{ project_root_directory }}/tdarr"
+    mode: 0644
     state: directory
   tags: tdarr
 
@@ -22,10 +23,10 @@
   tags: tdarr
 
 - name: Create Tdarr Docker Compose File
-  when: inventory_hostname == groups['managers'][0]
+  when: inventory_hostname == groups['media'][0]
   template:
     src: docker-compose.yml.j2
-    dest: "{{project_root_directory}}/tdarr/docker-compose.yml"
+    dest: "{{ project_root_directory }}/tdarr/docker-compose.yml"
     mode: 0775
   tags: tdarr
 
@@ -35,5 +36,5 @@
     state: present
     name: tdarr
     compose:
-      - "{{project_root_directory}}/tdarr/docker-compose.yml"
+      - "{{ project_root_directory }}/tdarr/docker-compose.yml"
   tags: tdarr

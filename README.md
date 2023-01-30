@@ -30,7 +30,7 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
 - [Paperless](https://github.com/paperless-ngx) - Scan, Index and Archive all your Physical Documents
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
-- [Wiki.js](https://js.wiki/) - The Most Powerful + Extensible Open Source Wiki Software
+- [MkDocs](https://js.wiki/) - Fast, Simple + Downright Gorgeous Static Site Generator
 
 ## Media Service
 

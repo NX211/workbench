@@ -1,0 +1,53 @@
+---
+- name: Deploy MkDocs Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: mkdocs
+    hostname: "{{mkdocs_hostname}}"
+    image: "{{mkdocs_docker_image}}:{{mkdocs_version}}"
+    networks:
+      - "{{traefik_network}}"
+    env:
+      SITE_NAME: "{{mkdocs_site_name}}"
+      DEFAULT_DOMAIN: "{{mkdocs_tld}}"
+      PORT: "{{mkdocs_port}}"
+      LINK_LENGTH: "6"
+      DB_HOST: "{{postgres_hostname}}"
+      DB_NAME: "{{mkdocs_database}}"
+      DB_USER: "{{mkdocs_database_user}}"
+      DB_PASSWORD: "{{mkdocs_database_password}}"
+      ADMIN_EMAILS: "{{project_notification_email}}"
+      REPORT_EMAIL: "abuse@{{project_tld}}"
+      CONTACT_EMAIL: "contact@{{project_tld}}"
+      JWT_SECRET: "{{mkdocs_jwt_secret}}"
+      REDIS_HOST: "{{redis_hostname}}"
+      REDIS_PORT: "{{redis_port}}"
+      MAIL_HOST: "{{email_host}}"
+      MAIL_PORT: "465"
+      MAIL_SECURE: "true"
+      MAIL_USER: "{{email_user}}"
+      MAIL_FROM: "{{email_user}}"
+      MAIL_PASSWORD: "{{email_password}}"
+      RECAPTCHA_SITE_KEY: ""
+      RECAPTCHA_SECRET_KEY: ""
+      DISALLOW_ANONYMOUS_LINKS: "true"
+      DISALLOW_REGISTRATION: "true"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{greytalon_node_id}}
+    replicas: 1
+    labels:
+      traefik.http.routers.mkdocs.entrypoints: "websecure"
+      traefik.http.routers.mkdocs.rule: "Host(`{{mkdocs_tld}}`)"
+      traefik.http.routers.mkdocs.middlewares: "default-headers@file"
+      traefik.http.routers.mkdocs.tls: "true"
+      traefik.http.routers.mkdocs.service: "mkdocs"
+      traefik.http.routers.mkdocs.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.services.mkdocs.loadbalancer.server.port: "{{mkdocs_port}}"
+      traefik.enable: "true"
+    state: present
+  tags: mkdocs
