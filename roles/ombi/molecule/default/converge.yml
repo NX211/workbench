@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include ombi"
-      include_role:
-        name: "ombi"

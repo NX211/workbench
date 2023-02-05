@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include readarr"
-      include_role:
-        name: "readarr"

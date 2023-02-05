@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include tautulli"
-      include_role:
-        name: "tautulli"

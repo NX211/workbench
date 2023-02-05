@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include guacamole"
-      include_role:
-        name: "guacamole"

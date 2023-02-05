@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include mkdocs"
-      include_role:
-        name: "mkdocs"

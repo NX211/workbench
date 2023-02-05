@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include paperless"
-      include_role:
-        name: "paperless"

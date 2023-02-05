@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include peertube"
-      include_role:
-        name: "peertube"
