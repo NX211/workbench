@@ -42,7 +42,7 @@
     replicas: 1
     labels:
       traefik.http.routers.mkdocs.entrypoints: "websecure"
-      traefik.http.routers.mkdocs.rule: "Host(`{{ mkdocs_tld }}`)"
+      traefik.http.routers.mkdocs.rule: "Host(`wiki.{{ project_tld }}`)"
       traefik.http.routers.mkdocs.middlewares: "default-headers@file"
       traefik.http.routers.mkdocs.tls: "true"
       traefik.http.routers.mkdocs.service: "mkdocs"
