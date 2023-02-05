@@ -8,8 +8,9 @@
 
 - name: Ensure PeerTube Directories Exist
   when: inventory_hostname == groups['media'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
+    mode: 0644
     state: directory
   loop:
     - "{{ project_root_directory }}/peertube/config"
@@ -18,15 +19,16 @@
 
 - name: Ensure PeerTube Volume Exist
   when: inventory_hostname == groups['media'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: peertube-assets
     state: present
   tags: peertube
 
 - name: Ensure PeerTube Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: production.yaml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/peertube/config/production.yaml"
   tags: peertube
   no_log: true

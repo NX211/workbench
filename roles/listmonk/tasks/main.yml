@@ -1,5 +1,6 @@
 ---
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Listmonk Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ listmonk_database }}"
@@ -25,7 +26,7 @@
       LISTMONK_app__admin_password: "{{ listmonk_admin_password }}"
       LISTMONK_db__host: "{{ postgres_hostname }}"
       LISTMONK_db__port: "{{ postgres_port }}"
-      LISTMONK_db__user: "{{ listmonk_database_user  }}"
+      LISTMONK_db__user: "{{ listmonk_database_user }}"
       LISTMONK_db__password: "{{ listmonk_database_password }}"
       LISTMONK_db__database: "{{ listmonk_database }}"
       LISTMONK_db__ssl_mode: "disable"

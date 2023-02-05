@@ -1,5 +1,6 @@
 ---
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure n8n Databases Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ n8n_database }}"

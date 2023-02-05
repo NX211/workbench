@@ -28,8 +28,9 @@
 
 - name: Ensure Lidarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: config.xml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/lidarr/config.xml"
   tags: lidarr
   no_log: true
@@ -78,10 +79,12 @@
     state: present
   tags: lidarr
 
-- import_tasks: "{{ role_path }}/tasks/amd.yml"
+- name: Import Automated Music Downloader
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/amd.yml"
   tags:
     - lidarr
 
-- import_tasks: "{{ role_path }}/tasks/amvd.yml"
+- name: Import Automated Music Video Downloader
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/amvd.yml"
   tags:
     - lidarr

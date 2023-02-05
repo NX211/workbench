@@ -43,8 +43,9 @@
 
 - name: Ensure qBittorrent Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: qBittorrent.conf.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/qbittorrent/qBittorrent.conf"
   tags: qbittorrent
   no_log: true

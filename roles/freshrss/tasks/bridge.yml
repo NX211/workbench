@@ -1,7 +1,7 @@
 ---
 - name: Ensure RSS-Bridge Directory Exist
   when: inventory_hostname == groups['workers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/rssbridge"
     mode: 0644
     state: directory
@@ -9,7 +9,7 @@
 
 - name: Ensure RSS-Bridge Configuration File Exist
   when: inventory_hostname == groups['workers'][0]
-  template:
+  ansible.builtin.template:
     src: whitelist.txt.j2
     dest: "{{ project_root_directory }}/rssbridge/whitelist.txt"
     mode: 0644

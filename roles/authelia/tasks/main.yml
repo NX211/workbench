@@ -1,7 +1,7 @@
 ---
 - name: Ensure Authelia Directories Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     mode: 0644
     state: directory
@@ -12,7 +12,7 @@
 
 - name: Ensure Authelia Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: 0644
@@ -22,7 +22,8 @@
   tags: authelia
   no_log: true
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Authelia Database exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ authelia_database }}"
@@ -33,7 +34,7 @@
 
 - name: Ensure Authelia Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: 0644

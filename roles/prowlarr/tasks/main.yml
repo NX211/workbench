@@ -1,5 +1,6 @@
 ---
-- import_tasks: "{{ role_path }}/tasks/flaresolverr.yml"
+- name: Import Flaresolverr Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/flaresolverr.yml"
   tags:
     - prowlarr
 
@@ -12,8 +13,9 @@
 
 - name: Ensure Prowlarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: config.xml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/prowlarr/config.xml"
   tags: prowlarr
   no_log: true

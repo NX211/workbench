@@ -28,8 +28,9 @@
 
 - name: Ensure Sonarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: config.xml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/sonarr/config.xml"
   tags: sonarr
   no_log: true
@@ -81,6 +82,7 @@
     state: present
   tags: sonarr
 
-- import_tasks: "{{ role_path }}/tasks/anime.yml"
+- name: Import Ansible Anime Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/anime.yml"
   tags:
     - sonarr

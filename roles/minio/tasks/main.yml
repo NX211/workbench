@@ -1,20 +1,20 @@
 ---
 - name: Install Docker Python library
   when: inventory_hostname == groups['workers'][0]
-  apt:
+  ansible.builtin.apt:
     name: python3-docker
   tags: minio
 
 - name: Ensure Minio Volume Exist
   when: inventory_hostname == groups['workers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: minio-config
     state: present
   tags: minio
 
 - name: Ensure Minio Volume Exist
   when: inventory_hostname == groups['workers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: minio-data
     state: present
   tags: minio

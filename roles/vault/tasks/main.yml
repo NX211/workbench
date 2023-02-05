@@ -1,8 +1,9 @@
 ---
 - name: Ensure Vault Directories Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
+    mode: 0644
     state: directory
   loop:
     - /yellowtalon/apps/vault/config
@@ -12,15 +13,16 @@
 
 - name: Ensure Vault Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: vaultconfig.json.j2
+    mode: 0644
     dest: /yellowtalon/apps/vault/config/local.json
   tags: vault
   no_log: true
 
 - name: Create Vault Docker Compose File
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ project_root_directory }}/vault/docker-compose.yml"
     mode: 0775
@@ -28,7 +30,7 @@
 
 - name: Deploy Vault from Compose File
   when: inventory_hostname == groups['managers'][0]
-  docker_stack:
+  community.docker.docker_stack:
     state: present
     name: vault
     compose:

@@ -1,7 +1,7 @@
 ---
 - name: Ensure Elasticsearch Data Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: elasticsearch_data
     state: present
   tags: elasticsearch

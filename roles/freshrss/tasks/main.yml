@@ -1,19 +1,20 @@
 ---
-- name: Ensure Freshrss Data Volume Exist
+- name: Ensure FreshRSS Data Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: freshrss_data
     state: present
   tags: freshrss
 
-- name: Ensure Freshrss Extensions Volume Exist
+- name: Ensure FreshRSS Extensions Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: freshrss_extensions
     state: present
   tags: freshrss
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure FreshRSS Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ freshrss_database }}"
@@ -22,7 +23,7 @@
   tags: freshrss
   no_log: true
 
-- name: Deploy Freshrss Service
+- name: Deploy FreshRSS Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: freshrss
@@ -68,6 +69,7 @@
     state: present
   tags: freshrss
 
-- import_tasks: "{{ role_path }}/tasks/bridge.yml"
+- name: Import FreshRSS Bridge Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/bridge.yml"
   tags:
     - freshrss

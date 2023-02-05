@@ -43,8 +43,9 @@
 
 - name: Ensure Sabnzbd Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: sabnzbd.ini.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/sabnzbd/sabnzbd.ini"
   tags: sabnzbd
   no_log: true

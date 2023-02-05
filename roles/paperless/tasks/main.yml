@@ -1,22 +1,23 @@
 ---
 - name: Ensure Paperless Data Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: paperless_data
     state: present
   tags: paperless
 
 - name: Ensure Paperless Media Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: paperless_media
     state: present
   tags: paperless
 
 - name: Ensure Paperless Directories Exist
   when: inventory_hostname == groups['workers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
+    mode: 0644
     owner: "paperless"
     group: "paperless"
     state: directory
@@ -26,7 +27,8 @@
     - /greytalon/apps/paperless/consume
   tags: paperless
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Paperless Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ paperless_database }}"

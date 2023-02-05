@@ -1,6 +1,6 @@
 ---
 - name: Ensure MondoDB Databases are Present.
-  mongodb_user:
+  community.mongodb.mongodb_user:
     login_host: "{{ mongodb_localhost }}"
     login_port: "{{ mongodb_port }}"
     login_user: "{{ mongo_initdb_root_username }}"

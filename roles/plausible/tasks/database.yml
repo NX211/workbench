@@ -1,27 +1,29 @@
 ---
 - name: Ensure Plausible Database Directory Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/plausible/clickhouse"
+    mode: 0644
     state: directory
   tags: plausible
 
 - name: Ensure Plausible Database Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: plausible-data
     state: present
   tags: plausible
 
 - name: Ensure Plausible Database Files Exist
   when: inventory_hostname == groups['managers'][0]
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.src }}"
+    mode: 0644
     dest: "{{ item.dest }}"
   with_items:
-    - {src: clickhouse-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml"}
-    - {src: docker-related-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml"}
-    - {src: clickhouse-user-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml"}
+    - {src: clickhouse-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml"}
+    - {src: docker-related-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml"}
+    - {src: clickhouse-user-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml"}
   tags: plausible
 
 - name: Deploy Plausible Database Service

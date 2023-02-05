@@ -1,19 +1,22 @@
 ---
-- import_tasks: "{{ role_path }}/tasks/clair.yml"
+- name: Import Clair Database Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/clair.yml"
   tags:
     - portus
 
 - name: Ensure Portus Directory Exist
   when: inventory_hostname == groups['workers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/portus"
+    mode: 0644
     state: directory
   tags: portus
 
 - name: Ensure Portus Configuration Files Exist
   when: inventory_hostname == groups['workers'][0]
-  template:
+  ansible.builtin.template:
     src: clair-config.yml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/portus/clair/clair-config.yml"
   tags: portus
   no_log: true
@@ -84,10 +87,12 @@
     state: present
   tags: portus
 
-- import_tasks: "{{ role_path }}/tasks/registry.yml"
+- name: Import Docker Registry Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/registry.yml"
   tags:
     - portus
 
-- import_tasks: "{{ role_path }}/tasks/background.yml"
+- name: Import Portus Backgroud Service Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/background.yml"
   tags:
     - portus

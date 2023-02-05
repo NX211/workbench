@@ -1,7 +1,7 @@
 ---
 - name: Ensure Homer Directories Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0755
@@ -12,7 +12,7 @@
 
 - name: Clone a github repository
   when: inventory_hostname == groups['managers'][0]
-  git:
+  ansible.builtin.git:
     repo: "{{ homer_git_repository_url }}"
     dest: "{{ project_root_directory }}/homer/tools"
     clone: yes
@@ -21,7 +21,7 @@
 
 - name: Ensure Homer Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: config.yml.j2
     dest: "{{ project_root_directory }}/homer/config.yml"
     mode: 0755
@@ -30,7 +30,7 @@
 
 - name: Ensure Homer Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: 0755

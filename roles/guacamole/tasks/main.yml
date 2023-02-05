@@ -1,12 +1,13 @@
 ---
 - name: Ensure Guacamole Extension Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: guacamole_extension
     state: present
   tags: guacamole
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Guacamole Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ guacamole_database }}"

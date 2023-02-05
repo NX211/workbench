@@ -1,13 +1,13 @@
 ---
 - name: Install Docker Python library
   when: inventory_hostname == groups['managers'][0]
-  apt:
+  ansible.builtin.apt:
     name: python3-docker
   tags: plausible
 
 - name: Ensure Plausible GeoIP Volume Exist
   when: inventory_hostname == groups['managers'][0]
-  docker_volume:
+  community.docker.docker_volume:
     name: plausible-geoip
     state: present
   tags: plausible

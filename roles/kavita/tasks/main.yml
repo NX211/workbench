@@ -19,8 +19,9 @@
 
 - name: Ensure Kavita Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: appsettings.json.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/kavita/appsettings.json"
   tags: kavita
   no_log: true

@@ -1,13 +1,14 @@
 ---
 - name: Ensure Gitea Directory Exist
   when: inventory_hostname == groups['workers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/gitea"
     mode: 0755
     state: directory
   tags: gitea
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Gitea Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ gitea_database }}"
@@ -49,7 +50,7 @@
       GITEA__security__SECRET_KEY: "{{ gitea_secret_key }}"
       GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: "*"
       GITEA__database__DB_TYPE: "postgres"
-      GITEA__database__HOST: "{{ postgres_hostname }}:{{  postgres_port }}"
+      GITEA__database__HOST: "{{ postgres_hostname }}:{{ postgres_port }}"
       GITEA__database__NAME: "{{ gitea_database }}"
       GITEA__database__USER: "{{ gitea_database_user }}"
       GITEA__database__PASSWD: "{{ gitea_database_password }}"

@@ -1,15 +1,17 @@
 ---
 - name: Ensure Mailrise Directory Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/mailrise/"
+    mode: 0644
     state: directory
   tags: mailrise
 
 - name: Ensure Mailrise Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: mailrise.conf.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/mailrise/mailrise.conf"
   tags: mailrise
   no_log: true

@@ -1,8 +1,9 @@
 ---
 - name: Ensure Traefik Directories Exist
   when: inventory_hostname == groups['managers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
+    mode: 0644
     state: directory
   loop:
     - /yellowtalon/apps/traefik
@@ -11,7 +12,7 @@
 
 - name: Ensure Acme File Exists
   when: inventory_hostname == groups['managers'][0]
-  copy:
+  ansible.builtin.copy:
     content: ""
     dest: /yellowtalon/apps/traefik/letsencrypt/acme.json
     force: no
@@ -22,12 +23,13 @@
 
 - name: Ensure Teaefik Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}"
+    mode: 0644
     dest: "{{ item.dest }}"
   with_items:
-    - {src: config.yml.j2,dest: /yellowtalon/apps/traefik/config.yml}
-    - {src: traefik-conf.yml.j2,dest: /yellowtalon/apps/traefik/traefik-conf.yml}
+    - {src: config.yml.j2, dest: /yellowtalon/apps/traefik/config.yml}
+    - {src: traefik-conf.yml.j2, dest: /yellowtalon/apps/traefik/traefik-conf.yml}
   tags: traefik
   no_log: true
 

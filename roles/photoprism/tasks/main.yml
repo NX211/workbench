@@ -8,8 +8,9 @@
 
 - name: Ensure Photoprism Directories Exist
   when: inventory_hostname == groups['media'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
+    mode: 0644
     state: directory
   loop:
     - "{{ project_root_directory }}/photoprism/originals"
@@ -17,7 +18,8 @@
     - "{{ project_root_directory }}/photoprism/data"
   tags: photoprism
 
-- import_tasks: roles/postgres/tasks/database_manager.yml
+- name: Ensure Photoprism Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     database_name: "{{ photoprism_database }}"

@@ -22,8 +22,9 @@
 
 - name: Ensure Sonarr Anime Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
-  template:
+  ansible.builtin.template:
     src: config-anime.xml.j2
+    mode: 0644
     dest: "{{ project_root_directory }}/sonarr2/config.xml"
   tags: sonarr
   no_log: true

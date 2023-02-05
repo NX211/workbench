@@ -1,8 +1,9 @@
 ---
 - name: Ensure Postgres Directory Exist
   when: inventory_hostname == groups['workers'][0]
-  file:
+  ansible.builtin.file:
     path: "{{ project_root_directory }}/postgres"
+    mode: 0644
     state: directory
   tags: postgres
 
@@ -38,7 +39,7 @@
 
 - name: Wait for Postgres to be up and running
   when: inventory_hostname == groups['managers'][0]
-  wait_for:
+  ansible.builtin.wait_for:
     host: "{{ postgres_localhost }}"
     port: "{{ postgres_port }}"
     delay: 15
