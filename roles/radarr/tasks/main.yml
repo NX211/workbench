@@ -27,7 +27,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/radarr/config.xml"
   tags: radarr
-  no_log: false
+  no_log: true
 
 - name: Deploy Radarr Service
   when: inventory_hostname == groups['managers'][0]

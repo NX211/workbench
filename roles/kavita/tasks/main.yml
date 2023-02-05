@@ -24,7 +24,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/kavita/appsettings.json"
   tags: kavita
-  no_log: false
+  no_log: true
 
 - name: Deploy Kavita Service
   when: inventory_hostname == groups['managers'][0]

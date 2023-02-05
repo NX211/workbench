@@ -35,7 +35,7 @@
     database_user: "{{ paperless_database_user }}"
     database_password: "{{ paperless_database_password }}"
   tags: paperless
-  no_log: false
+  no_log: true
 
 - name: Deploy Paperless Service
   when: inventory_hostname == groups['managers'][0]

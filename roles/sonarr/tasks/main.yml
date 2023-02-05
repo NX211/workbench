@@ -33,7 +33,7 @@
     mode: 0770
     dest: "{{ project_root_directory }}/sonarr/config.xml"
   tags: sonarr
-  no_log: false
+  no_log: true
 
 - name: Deploy Sonarr Service
   when: inventory_hostname == groups['managers'][0]

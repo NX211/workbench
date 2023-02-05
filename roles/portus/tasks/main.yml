@@ -19,7 +19,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/portus/clair/clair-config.yml"
   tags: portus
-  no_log: false
+  no_log: true
 
 - name: Deploy Portus Service
   when: inventory_hostname == groups['managers'][0]

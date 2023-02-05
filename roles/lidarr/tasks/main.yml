@@ -33,7 +33,7 @@
     mode: 0777
     dest: "{{ project_root_directory }}/lidarr/config.xml"
   tags: lidarr
-  no_log: false
+  no_log: true
 
 - name: Deploy Lidarr Service
   when: inventory_hostname == groups['managers'][0]

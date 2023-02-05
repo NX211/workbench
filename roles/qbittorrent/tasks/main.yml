@@ -48,7 +48,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/qbittorrent/qBittorrent.conf"
   tags: qbittorrent
-  no_log: false
+  no_log: true
 
 - name: Deploy qBittorrent Service
   when: inventory_hostname == groups['managers'][0]

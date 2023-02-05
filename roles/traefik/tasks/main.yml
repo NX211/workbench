@@ -18,7 +18,7 @@
     force: no
     owner: root
     mode: 0600
-  no_log: false
+  no_log: true
   tags: traefik
 
 - name: Ensure Teaefik Configuration Files Exist
@@ -31,7 +31,7 @@
     - {src: config.yml.j2, dest: /yellowtalon/apps/traefik/config.yml}
     - {src: traefik-conf.yml.j2, dest: /yellowtalon/apps/traefik/traefik-conf.yml}
   tags: traefik
-  no_log: false
+  no_log: true
 
 - name: Deploy Traefik Service
   when: inventory_hostname == groups['managers'][0]

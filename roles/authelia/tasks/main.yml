@@ -20,7 +20,7 @@
     - { src: logo.png, dest: "{{ project_root_directory }}/authelia/assets/logo.png" }
     - { src: favicon.ico, dest: "{{ project_root_directory }}/authelia/assets/favicon.ico" }
   tags: authelia
-  no_log: false
+  no_log: true
 
 - name: Ensure Authelia Database exist
   ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
@@ -30,7 +30,7 @@
     database_user: "{{ authelia_database_user }}"
     database_password: "{{ authelia_database_password }}"
   tags: authelia
-  no_log: false
+  no_log: true
 
 - name: Ensure Authelia Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
@@ -42,7 +42,7 @@
     - { src: configuration.yml.j2, dest: "{{ project_root_directory }}/authelia/configuration.yml" }
     - { src: users.yml.j2, dest: "{{ project_root_directory }}/authelia/users.yml" }
   tags: authelia
-  no_log: false
+  no_log: true
 
 # Generate new user password hash docker run authelia/authelia:latest authelia hash-password -- 'password'
 

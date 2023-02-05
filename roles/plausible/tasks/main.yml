@@ -6,7 +6,7 @@
     database_name: "{{ plausible_database }}"
     database_user: "{{ plausible_database_user }}"
     database_password: "{{ plausible_database_password }}"
-  no_log: false
+  no_log: true
   tags: plausible
 
 - name: Grant Privileges to Plausible User
