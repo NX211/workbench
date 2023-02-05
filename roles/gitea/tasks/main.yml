@@ -15,7 +15,7 @@
     database_user: "{{ gitea_database_user }}"
     database_password: "{{ gitea_database_password }}"
   tags: gitea
-  no_log: true
+  no_log: false
 
 - name: Deploy Gitea Service
   when: inventory_hostname == groups['managers'][0]

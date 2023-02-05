@@ -14,7 +14,7 @@
     database_user: "{{ guacamole_database_user }}"
     database_password: "{{ guacamole_database_password }}"
   tags: guacamole
-  no_log: true
+  no_log: false
 
 - name: Deploy guacd Service
   when: inventory_hostname == groups['managers'][0]

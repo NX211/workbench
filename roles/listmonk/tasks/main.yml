@@ -7,7 +7,7 @@
     database_user: "{{ listmonk_database_user }}"
     database_password: "{{ listmonk_database_password }}"
   tags: listmonk
-  no_log: true
+  no_log: false
 
 - name: Deploy Listmonk Service
   when: inventory_hostname == groups['managers'][0]

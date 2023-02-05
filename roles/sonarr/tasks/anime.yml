@@ -27,7 +27,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/sonarr2/config.xml"
   tags: sonarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Sonarr Anime Service
   when: inventory_hostname == groups['managers'][0]

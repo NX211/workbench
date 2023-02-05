@@ -25,7 +25,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/bazarr/config/config.ini"
   tags: bazarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Bazarr Service
   when: inventory_hostname == groups['managers'][0]

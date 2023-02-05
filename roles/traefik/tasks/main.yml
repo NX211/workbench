@@ -3,7 +3,7 @@
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.file:
     path: "{{ item }}"
-    mode: 0644
+    mode: 0755
     state: directory
   loop:
     - /yellowtalon/apps/traefik
@@ -18,7 +18,7 @@
     force: no
     owner: root
     mode: 0600
-  no_log: true
+  no_log: false
   tags: traefik
 
 - name: Ensure Teaefik Configuration Files Exist
@@ -31,7 +31,7 @@
     - {src: config.yml.j2, dest: /yellowtalon/apps/traefik/config.yml}
     - {src: traefik-conf.yml.j2, dest: /yellowtalon/apps/traefik/traefik-conf.yml}
   tags: traefik
-  no_log: true
+  no_log: false
 
 - name: Deploy Traefik Service
   when: inventory_hostname == groups['managers'][0]

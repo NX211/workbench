@@ -14,7 +14,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/mailrise/mailrise.conf"
   tags: mailrise
-  no_log: true
+  no_log: false
 
 - name: Deploy Mailrise Service
   when: inventory_hostname == groups['managers'][0]

@@ -30,10 +30,10 @@
   when: inventory_hostname == groups['media'][0]
   ansible.builtin.template:
     src: config.xml.j2
-    mode: 0644
+    mode: 0777
     dest: "{{ project_root_directory }}/lidarr/config.xml"
   tags: lidarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Lidarr Service
   when: inventory_hostname == groups['managers'][0]

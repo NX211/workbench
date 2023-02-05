@@ -14,7 +14,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/xbrowsersync/settings.json"
   tags: xbrowsersync
-  no_log: true
+  no_log: false
 
 - name: Deploy xBrowserSync Service
   when: inventory_hostname == groups['managers'][0]

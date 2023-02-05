@@ -18,7 +18,7 @@
     mode: 0644
     dest: /yellowtalon/apps/vault/config/local.json
   tags: vault
-  no_log: true
+  no_log: false
 
 - name: Create Vault Docker Compose File
   when: inventory_hostname == groups['managers'][0]

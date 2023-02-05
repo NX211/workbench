@@ -48,7 +48,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/sabnzbd/sabnzbd.ini"
   tags: sabnzbd
-  no_log: true
+  no_log: false
 
 - name: Deploy Sabnzbd Service
   when: inventory_hostname == groups['managers'][0]

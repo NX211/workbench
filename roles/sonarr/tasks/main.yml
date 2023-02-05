@@ -30,10 +30,10 @@
   when: inventory_hostname == groups['media'][0]
   ansible.builtin.template:
     src: config.xml.j2
-    mode: 0644
+    mode: 0770
     dest: "{{ project_root_directory }}/sonarr/config.xml"
   tags: sonarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Sonarr Service
   when: inventory_hostname == groups['managers'][0]

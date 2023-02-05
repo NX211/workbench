@@ -27,7 +27,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/readarr/config.xml"
   tags: readarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Readarr Service
   when: inventory_hostname == groups['managers'][0]

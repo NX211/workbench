@@ -26,7 +26,7 @@
     dest: "{{ project_root_directory }}/homer/config.yml"
     mode: 0755
   tags: homer
-  no_log: true
+  no_log: false
 
 - name: Ensure Homer Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
@@ -42,7 +42,7 @@
     - { src: favicon-32x32.png, dest: "{{ project_root_directory }}/homer/icons/favicon-32x32.png" }
     - { src: favicon.ico, dest: "{{ project_root_directory }}/homer/icons/favicon.ico" }
   tags: homer
-  no_log: true
+  no_log: false
 
 - name: Deploy Homer Service
   when: inventory_hostname == groups['managers'][0]

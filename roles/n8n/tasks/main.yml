@@ -7,7 +7,7 @@
     database_user: "{{ n8n_database_user }}"
     database_password: "{{ n8n_database_password }}"
   tags: n8n
-  no_log: true
+  no_log: false
 
 - name: Deploy n8n Service
   when: inventory_hostname == groups['managers'][0]
