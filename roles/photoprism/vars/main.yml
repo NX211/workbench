@@ -1,5 +1,5 @@
 ---
-photoprism_admin_password: "{{vault_photoprism_admin_password}}"
-photoprism_database_user: "{{vault_photoprism_database_user}}"
-photoprism_database_password: "{{vault_photoprism_database_password}}"
-photoprism_database: "{{vault_photoprism_database}}"
+photoprism_admin_password: "{{ vault_photoprism_admin_password }}"
+photoprism_database_user: "{{ vault_photoprism_database_user }}"
+photoprism_database_password: "{{ vault_photoprism_database_password }}"
+photoprism_database: "{{ vault_photoprism_database }}"

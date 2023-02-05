@@ -3,13 +3,13 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: amd
-    hostname: "{{amd_hostname}}"
-    image: "{{amd_docker_image}}:{{amd_version}}"
+    hostname: "{{ amd_hostname }}"
+    image: "{{ amd_docker_image }}:{{ amd_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
       AUTOSTART: "true"
       LIST: "both"
       DOWNLOADMODE: "wanted"
@@ -25,21 +25,21 @@
       FilePermissions: "666"
       MBRAINZMIRROR: "https://musicbrainz.org"
       MBRATELIMIT: "1"
-      LidarrUrl: "{{lidarr_url}}"
-      LidarrAPIkey: "{{lidarr_api_key}}"
-      ARL_TOKEN: "{{lidarr_arl_token}}"
+      LidarrUrl: "{{ lidarr_url }}"
+      LidarrAPIkey: "{{ lidarr_api_key }}"
+      ARL_TOKEN: "{{ lidarr_arl_token }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     mounts:
       - source: "/blacktalon/apps/lidarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/music/"
+      - source: "{{ project_media_directory }}/music/"
         target: /downloads-amd/
         type: bind
     replicas: 1

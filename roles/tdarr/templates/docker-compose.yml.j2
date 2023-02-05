@@ -2,19 +2,19 @@ version: '3.4'
 
 services:
   tdarr:
-    image: "{{tdarr_docker_image}}:{{tdarr_version}}"
+    image: "{{ tdarr_docker_image }}:{{ tdarr_version }}"
     environment:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
       webUIPort: "8265"
       serverPort: "8266"
       serverIP: "0.0.0.0"
-    hostname: "{{tdarr_hostname}}"
+    hostname: "{{ tdarr_hostname }}"
     networks:
-      - {{traefik_network}}
-    ports:  
-      - 8266:8266  
+      - {{ traefik_network }}
+    ports:
+      - 8266:8266
       - 8267:8267
     volumes:
       - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
@@ -24,24 +24,24 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.http.routers.tdarr.entrypoints=websecure"
-      - "traefik.http.routers.tdarr.rule=Host(`tdarr.{{project_tld}}`)"
+      - "traefik.http.routers.tdarr.rule=Host(`tdarr.{{ project_tld }}`)"
       - "traefik.http.routers.tdarr.tls=true"
       - "traefik.http.routers.tdarr.middlewares=default-headers@file"
       - "traefik.http.routers.tdarr.service=tdarr"
-      - "traefik.http.routers.tdarr.tls.certresolver={{default_certificate_resolver}}"
+      - "traefik.http.routers.tdarr.tls.certresolver={{ default_certificate_resolver }}"
       - "traefik.http.services.tdarr.loadbalancer.server.port=8265"
       - "traefik.enable=true"
   tdarrnode:
-    image: "haveagitgat/tdarr_node:{{tdarr_version}}"
+    image: "haveagitgat/tdarr_node:{{ tdarr_version }}"
     environment:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
       nodeID: "MainNode"
       serverPort: "8266"
       serverIP: "0.0.0.0"
       nodeIP: "0.0.0.0"
-    hostname: {{tdarr_node_hostname}}
+    hostname: {{ tdarr_node_hostname }}
     network_mode: service:tdarr
     volumes:
       - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
@@ -55,6 +55,6 @@ volumes:
     external: true
 
 networks:
-  {{traefik_network}}:
+  {{ traefik_network }}:
     external: true
-      name: {{traefik_network}}
+      name: {{ traefik_network }}

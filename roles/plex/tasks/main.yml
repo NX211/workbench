@@ -2,7 +2,7 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/anime
@@ -24,53 +24,53 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: plex
-    hostname: "{{plex_hostname}}"
-    image: "{{plex_docker_image}}:{{plex_version}}"
+    hostname: "{{ plex_hostname }}"
+    image: "{{ plex_docker_image }}:{{ plex_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
       VERSION: "docker"
-      PLEX_CLAIM: "{{plex_claim_token}}"
+      PLEX_CLAIM: "{{ plex_claim_token }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/plex/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/movies/"
+      - source: "{{ project_media_directory }}/movies/"
         target: /movies/
         type: bind
-      - source: "{{project_media_directory}}/tv/"
+      - source: "{{ project_media_directory }}/tv/"
         target: /tv/
         type: bind
-      - source: "{{project_media_directory}}/kids/"
+      - source: "{{ project_media_directory }}/kids/"
         target: /kids/
         type: bind
-      - source: "{{project_media_directory}}/anime/"
+      - source: "{{ project_media_directory }}/anime/"
         target: /anime/
         type: bind
-      - source: "{{project_media_directory}}/music/"
+      - source: "{{ project_media_directory }}/music/"
         target: /music/
         type: bind
-      - source: "{{project_media_directory}}/audiobooks/"
+      - source: "{{ project_media_directory }}/audiobooks/"
         target: /audiobooks/
         type: bind
     labels:
       traefik.http.routers.plex.entrypoints: "websecure"
-      traefik.http.routers.plex.rule: "Host(`{{media_tld}}`)"
+      traefik.http.routers.plex.rule: "Host(`{{ media_tld }}`)"
       traefik.http.routers.plex.middlewares: "default-headers@file"
       traefik.http.routers.plex.tls: "true"
       traefik.http.routers.plex.service: "plex"
-      traefik.http.routers.plex.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.plex.loadbalancer.server.port: "{{plex_port}}"
+      traefik.http.routers.plex.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.plex.loadbalancer.server.port: "{{ plex_port }}"
       traefik.enable: "true"
     state: present
   tags: plex

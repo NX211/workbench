@@ -2,7 +2,7 @@
 - name: Ensure Plausible Database Directory Exist
   when: inventory_hostname == groups['managers'][0]
   file:
-    path: "{{project_root_directory}}/plausible/clickhouse"
+    path: "{{ project_root_directory }}/plausible/clickhouse"
     state: directory
   tags: plausible
 
@@ -16,41 +16,41 @@
 - name: Ensure Plausible Database Files Exist
   when: inventory_hostname == groups['managers'][0]
   copy:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - {src: clickhouse-config.xml,dest: "{{project_root_directory}}/plausible/clickhouse/clickhouse-config.xml"}
-    - {src: docker-related-config.xml,dest: "{{project_root_directory}}/plausible/clickhouse/docker-related-config.xml"}
-    - {src: clickhouse-user-config.xml,dest: "{{project_root_directory}}/plausible/clickhouse/clickhouse-user-config.xml"}
+    - {src: clickhouse-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml"}
+    - {src: docker-related-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml"}
+    - {src: clickhouse-user-config.xml,dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml"}
   tags: plausible
 
 - name: Deploy Plausible Database Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: plausible-db
-    hostname: "{{plausible_db_hostname}}"
-    image: "{{plausible_db_docker_image}}:{{plausible_db_version}}"
+    hostname: "{{ plausible_db_hostname }}"
+    image: "{{ plausible_db_docker_image }}:{{ plausible_db_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{yellowtalon_node_id}}
+        - node.id == {{ yellowtalon_node_id }}
     replicas: 1
     mounts:
       - source: plausible-data
         target: /var/lib/clickhouse/
         type: volume
-      - source: "{{project_root_directory}}/plausible/clickhouse/clickhouse-config.xml"
+      - source: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml"
         target: /etc/clickhouse-server/config.d/logging.xml
         type: bind
-      - source: "{{project_root_directory}}/plausible/clickhouse/docker-related-config.xml"
+      - source: "{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml"
         target: /etc/clickhouse-server/config.d/docker_related_config.xml
         type: bind
-      - source: "{{project_root_directory}}/plausible/clickhouse/clickhouse-user-config.xml"
+      - source: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml"
         target: /etc/clickhouse-server/users.d/logging.xml
         type: bind
     state: present

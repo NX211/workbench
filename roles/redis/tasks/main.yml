@@ -2,7 +2,7 @@
 - name: Ensure Redis Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/redis"
+    path: "{{ project_root_directory }}/redis"
     state: directory
   tags: redis
 
@@ -10,10 +10,10 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: redis
-    hostname: "{{redis_hostname}}"
-    image: "{{redis_docker_image}}:{{redis_version}}"
+    hostname: "{{ redis_hostname }}"
+    image: "{{ redis_docker_image }}:{{ redis_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mounts:
       - source: "/greytalon/apps/redis/"
         target: /data/
@@ -24,7 +24,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     state: present
   tags: redis

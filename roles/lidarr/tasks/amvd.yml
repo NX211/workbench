@@ -3,13 +3,13 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: amvd
-    hostname: "{{amvd_hostname}}"
-    image: "{{amvd_docker_image}}:{{amvd_version}}"
+    hostname: "{{ amvd_hostname }}"
+    image: "{{ amvd_docker_image }}:{{ amvd_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
       AUTOSTART: "true"
       RequireVideoMatch: "true"
       subtitlelanguage: "en"
@@ -18,20 +18,20 @@
       FilePermissions: "644"
       MBRAINZMIRROR: "https://musicbrainz.org"
       MBRATELIMIT: "1"
-      LidarrUrl: "{{lidarr_url}}"
-      LidarrAPIkey: "{{lidarr_api_key}}"
+      LidarrUrl: "{{ lidarr_url }}"
+      LidarrAPIkey: "{{ lidarr_api_key }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     mounts:
       - source: "/blacktalon/apps/lidarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/music-videos/"
+      - source: "{{ project_media_directory }}/music-videos/"
         target: /downloads-amvd/
         type: bind
     replicas: 1

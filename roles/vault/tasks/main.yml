@@ -2,7 +2,7 @@
 - name: Ensure Vault Directories Exist
   when: inventory_hostname == groups['managers'][0]
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     state: directory
   loop:
     - /yellowtalon/apps/vault/config
@@ -22,7 +22,7 @@
   when: inventory_hostname == groups['managers'][0]
   template:
     src: docker-compose.yml.j2
-    dest: "{{project_root_directory}}/vault/docker-compose.yml"
+    dest: "{{ project_root_directory }}/vault/docker-compose.yml"
     mode: 0775
   tags: vault
 
@@ -32,5 +32,5 @@
     state: present
     name: vault
     compose:
-      - "{{project_root_directory}}/vault/docker-compose.yml"
+      - "{{ project_root_directory }}/vault/docker-compose.yml"
   tags: vault

@@ -41,7 +41,7 @@
     - { src: favicon-16x16.png, dest: "{{ project_root_directory }}/homer/icons/favicon-16x16.png" }
     - { src: favicon-32x32.png, dest: "{{ project_root_directory }}/homer/icons/favicon-32x32.png" }
     - { src: favicon.ico, dest: "{{ project_root_directory }}/homer/icons/favicon.ico" }
-  tags: homer  
+  tags: homer
   no_log: true
 
 - name: Deploy Homer Service

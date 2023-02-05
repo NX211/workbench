@@ -1,2 +1,2 @@
 ---
-dreamhost_token: "{{vault_dreamhost_token}}"
+dreamhost_token: "{{ vault_dreamhost_token }}"

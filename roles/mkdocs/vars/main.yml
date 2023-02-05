@@ -1,6 +1,6 @@
 ---
-mkdocs_site_name: "{{vault_mkdocs_site_name}}"
-mkdocs_database_user: "{{vault_mkdocs_database_user}}"
-mkdocs_database_password: "{{vault_mkdocs_database_password}}"
-mkdocs_database: "{{vault_mkdocs_database}}"
-mkdocs_jwt_secret: "{{vault_mkdocs_jwt_secret}}"
+mkdocs_site_name: "{{ vault_mkdocs_site_name }}"
+mkdocs_database_user: "{{ vault_mkdocs_database_user }}"
+mkdocs_database_password: "{{ vault_mkdocs_database_password }}"
+mkdocs_database: "{{ vault_mkdocs_database }}"
+mkdocs_jwt_secret: "{{ vault_mkdocs_jwt_secret }}"

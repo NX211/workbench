@@ -17,7 +17,7 @@ AutoDeleteAddedTorrentFile=IfAdded
 Accepted=true
 
 [Network]
-Cookies="__cfduid={{qbittorrent_cookie_cfuid}}; HttpOnly; expires=Sun, 16-Aug-2020 15:28:38 GMT; domain=.geolite.maxmind.com; path=/"
+Cookies="__cfduid={{ qbittorrent_cookie_cfuid }}; HttpOnly; expires=Sun, 16-Aug-2020 15:28:38 GMT; domain=.geolite.maxmind.com; path=/"
 
 [Preferences]
 Advanced\RecheckOnCompletion=false
@@ -44,13 +44,13 @@ DynDNS\Service=0
 DynDNS\Username=
 General\Locale=en
 General\UseRandomPort=false
-MailNotification\email={{mailrise_general_notifications_email}}
+MailNotification\email={{ mailrise_general_notifications_email }}
 MailNotification\enabled=false
 MailNotification\password=
 MailNotification\req_auth=false
 MailNotification\req_ssl=false
-MailNotification\sender={{mailrise_general_notifications_email}}
-MailNotification\smtp_server={{mailrise_hostname}}
+MailNotification\sender={{ mailrise_general_notifications_email }}
+MailNotification\smtp_server={{ mailrise_hostname }}
 MailNotification\username=
 Queueing\MaxActiveDownloads=5
 WebUI\Address=*
@@ -66,9 +66,9 @@ WebUI\CustomHTTPHeaders= \ content-security-policy: default-src 'self'; style-sr
 WebUI\CustomHTTPHeadersEnabled=true
 WebUI\HostHeaderValidation=true
 WebUI\LocalHostAuth=true
-WebUI\Password_PBKDF2="{{qbittorrent_webui_password}}"
-WebUI\Password_ha1={{qbittorrent_webui_password_hash}}
-WebUI\Port={{qbittorrent_port}}
+WebUI\Password_PBKDF2="{{ qbittorrent_webui_password }}"
+WebUI\Password_ha1={{ qbittorrent_webui_password_hash }}
+WebUI\Port={{ qbittorrent_port }}
 WebUI\RootFolder=/themepark
 WebUI\ServerDomains=*
 WebUI\SessionTimeout=3600

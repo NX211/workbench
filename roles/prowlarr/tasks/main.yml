@@ -1,5 +1,5 @@
 ---
-- import_tasks: "{{role_path}}/tasks/flaresolverr.yml"
+- import_tasks: "{{ role_path }}/tasks/flaresolverr.yml"
   tags:
     - prowlarr
 
@@ -14,7 +14,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config.xml.j2
-    dest: "{{project_root_directory}}/prowlarr/config.xml"
+    dest: "{{ project_root_directory }}/prowlarr/config.xml"
   tags: prowlarr
   no_log: true
 
@@ -22,36 +22,36 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: prowlarr
-    hostname: "{{prowlarr_hostname}}"
-    image: "{{prowlarr_docker_image}}:{{prowlarr_version}}"
+    hostname: "{{ prowlarr_hostname }}"
+    image: "{{ prowlarr_docker_image }}:{{ prowlarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
       DOCKER_MODS: "gilbn/theme.park:prowlarr"
-      TP_THEME: "{{theme_park_default}}"
+      TP_THEME: "{{ theme_park_default }}"
     mounts:
       - source: "/blacktalon/apps/prowlarr/"
         target: /config/
         type: bind
     labels:
       traefik.http.routers.prowlarr.entrypoints: "websecure"
-      traefik.http.routers.prowlarr.rule: "Host(`prowlarr.{{project_tld}}`)"
+      traefik.http.routers.prowlarr.rule: "Host(`prowlarr.{{ project_tld }}`)"
       traefik.http.routers.prowlarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.prowlarr.tls: "true"
       traefik.http.routers.prowlarr.service: "prowlarr"
-      traefik.http.routers.prowlarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.prowlarr.loadbalancer.server.port: "{{prowlarr_port}}"
+      traefik.http.routers.prowlarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.prowlarr.loadbalancer.server.port: "{{ prowlarr_port }}"
       traefik.enable: "true"
     state: present
   tags: prowlarr

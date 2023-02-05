@@ -2,7 +2,7 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/kids
@@ -12,7 +12,7 @@
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/downloads/kids
@@ -30,7 +30,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config.xml.j2
-    dest: "{{project_root_directory}}/sonarr/config.xml"
+    dest: "{{ project_root_directory }}/sonarr/config.xml"
   tags: sonarr
   no_log: true
 
@@ -38,49 +38,49 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: sonarr
-    hostname: "{{sonarr_hostname}}"
-    image: "{{sonarr_docker_image}}:{{sonarr_version}}"
+    hostname: "{{ sonarr_hostname }}"
+    image: "{{ sonarr_docker_image }}:{{ sonarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{sonarr_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ sonarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/sonarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/tv/"
+      - source: "{{ project_media_directory }}/tv/"
         target: /media/tv/
         type: bind
-      - source: "{{project_media_directory}}/kids/"
+      - source: "{{ project_media_directory }}/kids/"
         target: /media/kids/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
     labels:
       traefik.http.routers.sonarr.entrypoints: "websecure"
-      traefik.http.routers.sonarr.rule: "Host(`sonarr.{{project_tld}}`)"
+      traefik.http.routers.sonarr.rule: "Host(`sonarr.{{ project_tld }}`)"
       traefik.http.routers.sonarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sonarr.tls: "true"
       traefik.http.routers.sonarr.service: "sonarr"
-      traefik.http.routers.sonarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.sonarr.loadbalancer.server.port: "{{sonarr_port}}"
+      traefik.http.routers.sonarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.sonarr.loadbalancer.server.port: "{{ sonarr_port }}"
       traefik.enable: "true"
     state: present
   tags: sonarr
 
-- import_tasks: "{{role_path}}/tasks/anime.yml"
+- import_tasks: "{{ role_path }}/tasks/anime.yml"
   tags:
     - sonarr

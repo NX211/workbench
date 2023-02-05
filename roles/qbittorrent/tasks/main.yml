@@ -2,7 +2,7 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media
@@ -19,7 +19,7 @@
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/downloads
@@ -45,7 +45,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: qBittorrent.conf.j2
-    dest: "{{project_root_directory}}/qbittorrent/qBittorrent.conf"
+    dest: "{{ project_root_directory }}/qbittorrent/qBittorrent.conf"
   tags: qbittorrent
   no_log: true
 
@@ -53,25 +53,25 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: qbittorrent
-    hostname: "{{qbittorrent_hostname}}"
-    image: "{{qbittorrent_docker_image}}:{{qbittorrent_version}}"
+    hostname: "{{ qbittorrent_hostname }}"
+    image: "{{ qbittorrent_docker_image }}:{{ qbittorrent_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{qbittorrent_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ qbittorrent_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
       UMASK: "022"
-      WEBUI_PORT: "{{qbittorrent_port}}"
+      WEBUI_PORT: "{{ qbittorrent_port }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     publish:
       - published_port: "6881"
@@ -83,17 +83,17 @@
       - source: "/blacktalon/apps/qbittorrent/"
         target: /config/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
     labels:
       traefik.http.routers.qbittorrent.entrypoints: "websecure"
-      traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{project_tld}}`)"
+      traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{ project_tld }}`)"
       traefik.http.routers.qbittorrent.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.qbittorrent.tls: "true"
       traefik.http.routers.qbittorrent.service: "qbittorrent"
-      traefik.http.routers.qbittorrent.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.qbittorrent.loadbalancer.server.port: "{{qbittorrent_port}}"
+      traefik.http.routers.qbittorrent.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.qbittorrent.loadbalancer.server.port: "{{ qbittorrent_port }}"
       traefik.enable: "true"
     state: present
   tags: qbittorrent

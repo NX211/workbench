@@ -1,2 +1,2 @@
 ---
-plex_claim_token: "{{vault_plex_claim_token}}"
+plex_claim_token: "{{ vault_plex_claim_token }}"

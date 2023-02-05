@@ -2,7 +2,7 @@
 - name: Ensure jenkins Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/jenkins"
+    path: "{{ project_root_directory }}/jenkins"
     state: directory
   tags: jenkins
 
@@ -10,17 +10,17 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: jenkins
-    hostname: "{{jenkins_hostname}}"
-    image: "{{jenkins_docker_image}}:{{jenkins_version}}"
+    hostname: "{{ jenkins_hostname }}"
+    image: "{{ jenkins_docker_image }}:{{ jenkins_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
       - source: /greytalon/apps/jenkins/
@@ -28,11 +28,11 @@
         type: bind
     labels:
       traefik.http.routers.jenkins.entrypoints: "websecure"
-      traefik.http.routers.jenkins.rule: "Host(`ci.{{git_tld}}`)"
+      traefik.http.routers.jenkins.rule: "Host(`ci.{{ git_tld }}`)"
       traefik.http.routers.jenkins.tls: "true"
       traefik.http.routers.jenkins.service: "jenkins"
-      traefik.http.routers.jenkins.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.jenkins.loadbalancer.server.port: "{{jenkins_port}}"
+      traefik.http.routers.jenkins.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.jenkins.loadbalancer.server.port: "{{ jenkins_port }}"
       traefik.enable: "true"
     state: present
   tags: jenkins

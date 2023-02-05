@@ -23,25 +23,25 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: minio
-    hostname: "{{minio_hostname}}"
-    image: "{{minio_docker_image}}:{{minio_version}}"
+    hostname: "{{ minio_hostname }}"
+    image: "{{ minio_docker_image }}:{{ minio_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     command: "server /data --console-address :9001"
     restart_config:
       condition: on-failure
     env:
-      MINIO_SERVER_URL: "https://s3.{{project_tld}}"
-      MINIO_BROWSER_REDIRECT_URL: "https://minio.{{project_tld}}"
-      MINIO_SITE_NAME: "{{minio_site_name}}"
-      MINIO_SITE_REGION: "{{minio_site_region}}"
-      MINIO_ROOT_USER: "{{minio_access_key}}"
-      MINIO_ROOT_PASSWORD: "{{minio_secret_key}}"
+      MINIO_SERVER_URL: "https://s3.{{ project_tld }}"
+      MINIO_BROWSER_REDIRECT_URL: "https://minio.{{ project_tld }}"
+      MINIO_SITE_NAME: "{{ minio_site_name }}"
+      MINIO_SITE_REGION: "{{ minio_site_region }}"
+      MINIO_ROOT_USER: "{{ minio_access_key }}"
+      MINIO_ROOT_PASSWORD: "{{ minio_secret_key }}"
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
       - source: minio-config
@@ -52,18 +52,18 @@
         type: volume
     labels:
       traefik.http.routers.minio.entrypoints: "websecure"
-      traefik.http.routers.minio.rule: "Host(`minio.{{project_tld}}`)"
+      traefik.http.routers.minio.rule: "Host(`minio.{{ project_tld }}`)"
       traefik.http.routers.minio.middlewares: "default-headers@file"
       traefik.http.routers.minio.tls: "true"
       traefik.http.routers.minio.service: "minio"
-      traefik.http.routers.minio.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.minio.loadbalancer.server.port: "{{minio_port}}"
+      traefik.http.routers.minio.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.minio.loadbalancer.server.port: "{{ minio_port }}"
       traefik.http.routers.s3.entrypoints: "websecure"
-      traefik.http.routers.s3.rule: "Host(`s3.{{project_tld}}`)"
+      traefik.http.routers.s3.rule: "Host(`s3.{{ project_tld }}`)"
       traefik.http.routers.s3.tls: "true"
       traefik.http.routers.s3.middlewares: "default-headers@file"
       traefik.http.routers.s3.service: "s3"
-      traefik.http.routers.s3.tls.certresolver: "{{default_certificate_resolver}}"
+      traefik.http.routers.s3.tls.certresolver: "{{ default_certificate_resolver }}"
       traefik.http.services.s3.loadbalancer.server.port: "9000"
       traefik.enable: "true"
     state: present

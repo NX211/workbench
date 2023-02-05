@@ -1,17 +1,17 @@
 listen:
   hostname: '0.0.0.0'
-  port: {{peertube_port}}
+  port: {{ peertube_port }}
 
 # Correspond to your reverse proxy server_name/listen configuration (i.e., your public PeerTube instance URL)
 webserver:
   https: true
-  hostname: '{{peertube_tld}}'
+  hostname: '{{ peertube_tld }}'
   port: 443
 
 # Secrets you need to generate the first time you run PeerTube
 secrets:
   # Generate one using `openssl rand -hex 32`
-  peertube: '{{peertube_secret}}'
+  peertube: '{{ peertube_secret }}'
 
 rates_limit:
   api:
@@ -39,19 +39,19 @@ trust_proxy:
 
 # Your database name will be database.name OR "peertube"+database.suffix
 database:
-  hostname: '{{postgres_hostname}}'
-  port: {{postgres_port}}
+  hostname: '{{ postgres_hostname }}'
+  port: {{ postgres_port }}
   ssl: false
   suffix: ''
-  username: '{{peertube_database_user}}'
-  password: '{{peertube_database_password}}'
+  username: '{{ peertube_database_user }}'
+  password: '{{ peertube_database_password }}'
 
 # Redis server for short time storage
 # You can also specify a 'socket' path to a unix socket but first need to
 # comment out hostname and port
 redis:
-  hostname: '{{redis_hostname}}'
-  port: {{redis_port}}
+  hostname: '{{ redis_hostname }}'
+  port: {{ redis_port }}
   auth: null
   db: 0
 
@@ -61,14 +61,14 @@ smtp:
   transport: smtp
   # Path to sendmail command. Required if you use sendmail transport
   sendmail: null
-  hostname: {{email_host}}
+  hostname: {{ email_host }}
   port: 465 # If you use StartTLS: 587
-  username: '{{email_user}}'
-  password: '{{email_password}}'
+  username: '{{ email_user }}'
+  password: '{{ email_password }}'
   tls: true # If you use StartTLS: false
   disable_starttls: false
   ca_file: null # Used for self signed certificates
-  from_address: '{{email_user}}'
+  from_address: '{{ email_user }}'
 
 email:
   body:
@@ -258,7 +258,7 @@ cache:
 admin:
   # Used to generate the root user at first startup
   # And to receive emails from the contact form
-  email: '{{project_notification_email}}'
+  email: '{{ project_notification_email }}'
 
 contact_form:
   enabled: true
@@ -336,7 +336,7 @@ live:
 
   # Your firewall should accept traffic from this port in TCP if you enable live
   rtmp:
-    port: {{peertube_rtmp_port}}
+    port: {{ peertube_rtmp_port }}
 
   # Allow to transcode the live streaming in multiple live resolutions
   transcoding:
@@ -376,9 +376,9 @@ auto_blacklist:
 
 # Instance settings
 instance:
-  name: '{{peertube_instance_name}}'
-  short_description: '{{peertube_instance_short_description}}'
-  description: '{{peertube_instance_description}}'
+  name: '{{ peertube_instance_name }}'
+  short_description: '{{ peertube_instance_short_description }}'
+  description: '{{ peertube_instance_description }}'
   terms: 'No terms for now.'
   code_of_conduct: ''
 

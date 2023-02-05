@@ -2,7 +2,7 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media
@@ -19,7 +19,7 @@
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/downloads
@@ -45,7 +45,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: sabnzbd.ini.j2
-    dest: "{{project_root_directory}}/sabnzbd/sabnzbd.ini"
+    dest: "{{ project_root_directory }}/sabnzbd/sabnzbd.ini"
   tags: sabnzbd
   no_log: true
 
@@ -53,42 +53,42 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: sabnzbd
-    hostname: "{{sabnzbd_hostname}}"
-    image: "{{sabnzbd_docker_image}}:{{sabnzbd_version}}"
+    hostname: "{{ sabnzbd_hostname }}"
+    image: "{{ sabnzbd_docker_image }}:{{ sabnzbd_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
       DOCKER_MODS: "gilbn/theme.park:sabnzbd"
-      TP_THEME: "{{theme_park_default}}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/sabnzbd/"
         target: /config/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
-      - source: "{{project_download_directory}}/incomplete/"
+      - source: "{{ project_download_directory }}/incomplete/"
         target: /media/downloads/incomplete/
         type: bind
     labels:
       traefik.http.routers.sabnzbd.entrypoints: "websecure"
-      traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{project_tld}}`)"
+      traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{ project_tld }}`)"
       traefik.http.routers.sabnzbd.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sabnzbd.tls: "true"
       traefik.http.routers.sabnzbd.service: "sabnzbd"
-      traefik.http.routers.sabnzbd.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.sabnzbd.loadbalancer.server.port: "{{sabnzbd_port}}"
+      traefik.http.routers.sabnzbd.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.sabnzbd.loadbalancer.server.port: "{{ sabnzbd_port }}"
       traefik.enable: "true"
     state: present
   tags: sabnzbd

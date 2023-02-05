@@ -16,7 +16,7 @@ entryPoints:
         - "127.0.0.1/32"
         - "10.10.0.1"
   mongodb:
-    address: ":{{mongodb_port}}"
+    address: ":{{ mongodb_port }}"
   rtmp:
     address: ":1935"
 
@@ -26,7 +26,7 @@ providers:
     exposedByDefault: false
     swarmMode: true
     watch: true
-    network: {{traefik_network}}
+    network: {{ traefik_network }}
   file:
     filename: /config.yml
     watch: true
@@ -34,7 +34,7 @@ providers:
 certificatesResolvers:
   dnsChallenge:
     acme:
-      email: support@{{project_tld}}
+      email: support@{{ project_tld }}
       storage: acme.json
       dnsChallenge:
         provider: dreamhost

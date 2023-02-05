@@ -92,21 +92,21 @@ authentication_backend:
       memory: 64
 
 storage:
-  encryption_key: {{authelia_encryption_key}}
+  encryption_key: {{ authelia_encryption_key }}
   postgres:
-    host: {{postgres_hostname}}
-    port: {{postgres_port}}
-    database: {{authelia_database}}
+    host: {{ postgres_hostname }}
+    port: {{ postgres_port }}
+    database: {{ authelia_database }}
     schema: public
-    username: {{authelia_database_user}}
-    password: {{authelia_database_password}}
+    username: {{ authelia_database_user }}
+    password: {{ authelia_database_password }}
 
 session:
-  domain: {{project_tld}}
-  secret: {{authelia_session_secret}}
+  domain: {{ project_tld }}
+  secret: {{ authelia_session_secret }}
   redis:
-    host: {{redis_hostname}}
-    port: {{redis_port}}
+    host: {{ redis_hostname }}
+    port: {{ redis_port }}
     database_index: 1
     maximum_active_connections: 8
     minimum_idle_connections: 0
@@ -114,14 +114,14 @@ session:
 notifier:
   disable_startup_check: false
   smtp:
-    host: {{email_host}}
-    port: {{email_port}}
+    host: {{ email_host }}
+    port: {{ email_port }}
     timeout: 5s
-    username: {{email_user}}
-    password: {{email_password}}
-    sender: "{{authelia_notifier_sender}}"
-    subject: "{{authelia_notifier_subject}}"
-    startup_check_address: {{authelia_notifier_startup_check_address}}
+    username: {{ email_user }}
+    password: {{ email_password }}
+    sender: "{{ authelia_notifier_sender }}"
+    subject: "{{ authelia_notifier_subject }}"
+    startup_check_address: {{ authelia_notifier_startup_check_address }}
     disable_require_tls: false
     disable_html_emails: false
 
@@ -145,5 +145,5 @@ totp:
   skew: 1
 
 theme: dark
-jwt_secret: {{authelia_jwt_secret}}
-default_redirection_url: https://www.{{project_tld}}/
+jwt_secret: {{ authelia_jwt_secret }}
+default_redirection_url: https://www.{{ project_tld }}/

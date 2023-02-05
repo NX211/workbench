@@ -2,9 +2,9 @@ clair:
   database:
     type: pgsql
     options:
-      source: host={{postgres_hostname}} port={{postgres_port}} dbname={{portus_clair_database}} user={{portus_clair_database_user}} password={{portus_clair_database_password}} sslmode=disable statement_timeout=60000
+      source: host={{ postgres_hostname }} port={{ postgres_port }} dbname={{ portus_clair_database }} user={{ portus_clair_database_user }} password={{ portus_clair_database_password }} sslmode=disable statement_timeout=60000
       cachesize: 16384
-      paginationkey: {{portus_clair_paginationkey}}
+      paginationkey: {{ portus_clair_paginationkey }}
 
   api:
     addr: "0.0.0.0:6060"

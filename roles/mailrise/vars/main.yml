@@ -1,7 +1,7 @@
 ---
-matrix_notifications_user: "{{vault_matrix_notifications_user}}"
-matrix_notifications_password: "{{vault_matrix_notifications_password}}"
-matrix_general_room_id: "{{vault_matrix_general_room_id}}"
-matrix_warning_room_id: "{{vault_matrix_warning_room_id}}"
-matrix_urgent_room_id: "{{vault_matrix_urgent_room_id}}"
-matrix_notifications_url: "{{vault_matrix_notifications_url}}"
+matrix_notifications_user: "{{ vault_matrix_notifications_user }}"
+matrix_notifications_password: "{{ vault_matrix_notifications_password }}"
+matrix_general_room_id: "{{ vault_matrix_general_room_id }}"
+matrix_warning_room_id: "{{ vault_matrix_warning_room_id }}"
+matrix_urgent_room_id: "{{ vault_matrix_urgent_room_id }}"
+matrix_notifications_url: "{{ vault_matrix_notifications_url }}"

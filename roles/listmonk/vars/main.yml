@@ -1,6 +1,6 @@
 ---
 listmonk_database: "listmonk"
 listmonk_database_user: "listmonk"
-listmonk_database_password: "{{vault_listmonk_database_password}}"
-listmonk_admin_username: "{{vault_listmonk_admin_username}}"
-listmonk_admin_password: "{{vault_listmonk_admin_password}}"
+listmonk_database_password: "{{ vault_listmonk_database_password }}"
+listmonk_admin_username: "{{ vault_listmonk_admin_username }}"
+listmonk_admin_password: "{{ vault_listmonk_admin_password }}"

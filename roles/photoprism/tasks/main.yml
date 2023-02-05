@@ -9,20 +9,20 @@
 - name: Ensure Photoprism Directories Exist
   when: inventory_hostname == groups['media'][0]
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     state: directory
   loop:
-    - "{{project_root_directory}}/photoprism/originals"
-    - "{{project_root_directory}}/photoprism/import"
-    - "{{project_root_directory}}/photoprism/data"
+    - "{{ project_root_directory }}/photoprism/originals"
+    - "{{ project_root_directory }}/photoprism/import"
+    - "{{ project_root_directory }}/photoprism/data"
   tags: photoprism
 
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
-    database_name: "{{photoprism_database}}"
-    database_user: "{{photoprism_database_user}}"
-    database_password: "{{photoprism_database_password}}"
+    database_name: "{{ photoprism_database }}"
+    database_user: "{{ photoprism_database_user }}"
+    database_password: "{{ photoprism_database_password }}"
   tags: photoprism
   no_log: true
 
@@ -30,16 +30,16 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: photoprism
-    hostname: "{{photoprism_hostname}}"
-    image: "{{photoprism_docker_image}}:{{photoprism_version}}"
+    hostname: "{{ photoprism_hostname }}"
+    image: "{{ photoprism_docker_image }}:{{ photoprism_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PHOTOPRISM_URL: "https://{{photo_tld}}"
+      PHOTOPRISM_URL: "https://{{ photo_tld }}"
       PHOTOPRISM_SITE_TITLE: "Authoritah Photos"
       PHOTOPRISM_SITE_CAPTION: "Authoritah Photos"
       PHOTOPRISM_SITE_DESCRIPTION: "Self-Hosted Photo Management"
@@ -52,20 +52,20 @@
       PHOTOPRISM_EXPERIMENTAL: "true"
       PHOTOPRISM_SERVER_MODE: "debug"
       PHOTOPRISM_APP_NAME: "Authoritah Photo"
-      PHOTOPRISM_APP_ICON: "https://www.{{project_tld}}/assets/tools/png/badge.png"
+      PHOTOPRISM_APP_ICON: "https://www.{{ project_tld }}/assets/tools/png/badge.png"
       PHOTOPRISM_WALLPAPER_URI: "https://www.authoritah.com/assets/icons/background.jpg"
-      PHOTOPRISM_APP_IMPRINT: "2022 {{project_tld}}"
-      PHOTOPRISM_APP_IMPRINT_URL: "https://www.{{project_tld}}/legal"
+      PHOTOPRISM_APP_IMPRINT: "2022 {{ project_tld }}"
+      PHOTOPRISM_APP_IMPRINT_URL: "https://www.{{ project_tld }}/legal"
       PHOTOPRISM_HTTP_HOST: "0.0.0.0"
-      PHOTOPRISM_HTTP_PORT: "{{photoprism_port}}"
+      PHOTOPRISM_HTTP_PORT: "{{ photoprism_port }}"
       PHOTOPRISM_SETTINGS_HIDDEN: "false"
       PHOTOPRISM_HTTP_COMPRESSION: "gzip"
-      PHOTOPRISM_ADMIN_PASSWORD: "{{photoprism_admin_password}}"
+      PHOTOPRISM_ADMIN_PASSWORD: "{{ photoprism_admin_password }}"
       PHOTOPRISM_DATABASE_DRIVER: "postgres"
-      PHOTOPRISM_DATABASE_SERVER: "{{postgres_hostname}}:{{postgres_port}}"
-      PHOTOPRISM_DATABASE_NAME: "{{photoprism_database}}"
-      PHOTOPRISM_DATABASE_USER: "{{photoprism_database_user}}"
-      PHOTOPRISM_DATABASE_PASSWORD: "{{photoprism_database_password}}"
+      PHOTOPRISM_DATABASE_SERVER: "{{ postgres_hostname }}:{{ postgres_port }}"
+      PHOTOPRISM_DATABASE_NAME: "{{ photoprism_database }}"
+      PHOTOPRISM_DATABASE_USER: "{{ photoprism_database_user }}"
+      PHOTOPRISM_DATABASE_PASSWORD: "{{ photoprism_database_password }}"
       PHOTOPRISM_THUMB_FILTER: "lanczos"
       PHOTOPRISM_THUMB_UNCACHED: "false"
       PHOTOPRISM_THUMB_SIZE: "2048"
@@ -78,15 +78,15 @@
       PHOTOPRISM_ORIGINALS_PATH: "/photoprism/originals"
       PHOTOPRISM_SPONSOR: "true"
       PHOTOPRISM_DISABLE_BACKUPS: "false"
-      PHOTOPRISM_DISABLE_WEBDAV: "false" 
+      PHOTOPRISM_DISABLE_WEBDAV: "false"
       PHOTOPRISM_DISABLE_SETTINGS: "false"
       PHOTOPRISM_DISABLE_PLACES: "false"
-      PHOTOPRISM_DISABLE_EXIFTOOL: "false"  
+      PHOTOPRISM_DISABLE_EXIFTOOL: "false"
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"
       PHOTOPRISM_DEFAULT_LOCALE: "en"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: /blacktalon/apps/photoprism/originals/
@@ -100,12 +100,12 @@
         type: bind
     labels:
       traefik.http.routers.photoprism.entrypoints: "websecure"
-      traefik.http.routers.photoprism.rule: "Host(`{{photo_tld}}`)"
+      traefik.http.routers.photoprism.rule: "Host(`{{ photo_tld }}`)"
       traefik.http.routers.photoprism.middlewares: "default-headers@file"
       traefik.http.routers.photoprism.tls: "true"
       traefik.http.routers.photoprism.service: "photoprism"
-      traefik.http.routers.photoprism.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.photoprism.loadbalancer.server.port: "{{photoprism_port}}"
+      traefik.http.routers.photoprism.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.photoprism.loadbalancer.server.port: "{{ photoprism_port }}"
       traefik.enable: "true"
     state: present
   tags: photoprism

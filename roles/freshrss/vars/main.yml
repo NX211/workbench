@@ -1,7 +1,7 @@
 ---
-freshrss_admin_email: "{{vault_freshrss_admin_email}}"
-freshrss_admin_password: "{{vault_freshrss_admin_password}}"
-freshrss_api_password: "{{vault_freshrss_api_password}}"
-freshrss_database_user: "{{ vault_freshrss_database_user }}"
-freshrss_database_password: "{{ vault_freshrss_database_password }}"
-freshrss_database: "{{ vault_freshrss_database }}"
+freshrss_admin_email: "{{ vault_freshrss_admin_email }}"
+freshrss_admin_password: "{{ vault_freshrss_admin_password }}"
+freshrss_api_password: "{{ vault_freshrss_api_password }}"
+freshrss_database_user: "{{  vault_freshrss_database_user  }}"
+freshrss_database_password: "{{  vault_freshrss_database_password  }}"
+freshrss_database: "{{  vault_freshrss_database  }}"

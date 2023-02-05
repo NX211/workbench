@@ -10,20 +10,20 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: wizarr
-    hostname: "{{wizarr_hostname}}"
-    image: "{{wizarr_docker_image}}:{{wizarr_version}}"
+    hostname: "{{ wizarr_hostname }}"
+    image: "{{ wizarr_docker_image }}:{{ wizarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      APP_URL: "https://join.{{media_tld}}"
+      APP_URL: "https://join.{{ media_tld }}"
       DISABLE_BUILTIN_AUTH: "false"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: /blacktalon/apps/wizarr/
@@ -31,12 +31,12 @@
         type: bind
     labels:
       traefik.http.routers.wizarr.entrypoints: "websecure"
-      traefik.http.routers.wizarr.rule: "Host(`join.{{media_tld}}`)"
+      traefik.http.routers.wizarr.rule: "Host(`join.{{ media_tld }}`)"
       traefik.http.routers.wizarr.middlewares: "default-headers@file"
       traefik.http.routers.wizarr.tls: "true"
       traefik.http.routers.wizarr.service: "wizarr"
-      traefik.http.routers.wizarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.wizarr.loadbalancer.server.port: "{{wizarr_port}}"
+      traefik.http.routers.wizarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.wizarr.loadbalancer.server.port: "{{ wizarr_port }}"
       traefik.enable: "true"
     state: present
   tags: wizarr

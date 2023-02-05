@@ -25,7 +25,7 @@
       LISTMONK_app__admin_password: "{{ listmonk_admin_password }}"
       LISTMONK_db__host: "{{ postgres_hostname }}"
       LISTMONK_db__port: "{{ postgres_port }}"
-      LISTMONK_db__user: "{{ listmonk_database_user }}"
+      LISTMONK_db__user: "{{ listmonk_database_user  }}"
       LISTMONK_db__password: "{{ listmonk_database_password }}"
       LISTMONK_db__database: "{{ listmonk_database }}"
       LISTMONK_db__ssl_mode: "disable"

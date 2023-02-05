@@ -24,7 +24,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config.xml.j2
-    dest: "{{project_root_directory}}/readarr/config.xml"
+    dest: "{{ project_root_directory }}/readarr/config.xml"
   tags: readarr
   no_log: true
 
@@ -32,42 +32,42 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: readarr
-    hostname: "{{readarr_hostname}}"
-    image: "{{readarr_docker_image}}:{{readarr_version}}"
+    hostname: "{{ readarr_hostname }}"
+    image: "{{ readarr_docker_image }}:{{ readarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{readarr_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ readarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/readarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/audiobooks/"
+      - source: "{{ project_media_directory }}/audiobooks/"
         target: /media/audiobooks/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
     labels:
       traefik.http.routers.readarr.entrypoints: "websecure"
-      traefik.http.routers.readarr.rule: "Host(`readarr.{{project_tld}}`)"
+      traefik.http.routers.readarr.rule: "Host(`readarr.{{ project_tld }}`)"
       traefik.http.routers.readarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.readarr.tls: "true"
       traefik.http.routers.readarr.service: "readarr"
-      traefik.http.routers.readarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.readarr.loadbalancer.server.port: "{{readarr_port}}"
+      traefik.http.routers.readarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.readarr.loadbalancer.server.port: "{{ readarr_port }}"
       traefik.enable: "true"
     state: present
   tags: readarr

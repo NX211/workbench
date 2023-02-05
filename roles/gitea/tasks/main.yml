@@ -49,7 +49,7 @@
       GITEA__security__SECRET_KEY: "{{ gitea_secret_key }}"
       GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES: "*"
       GITEA__database__DB_TYPE: "postgres"
-      GITEA__database__HOST: "{{ postgres_hostname }}:{{ postgres_port }}"
+      GITEA__database__HOST: "{{ postgres_hostname }}:{{  postgres_port }}"
       GITEA__database__NAME: "{{ gitea_database }}"
       GITEA__database__USER: "{{ gitea_database_user }}"
       GITEA__database__PASSWD: "{{ gitea_database_password }}"

@@ -2,7 +2,7 @@
 - name: Ensure Media Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/music
@@ -12,7 +12,7 @@
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: present
   loop:
     - blacktalon/media/downloads/music
@@ -30,7 +30,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config.xml.j2
-    dest: "{{project_root_directory}}/lidarr/config.xml"
+    dest: "{{ project_root_directory }}/lidarr/config.xml"
   tags: lidarr
   no_log: true
 
@@ -38,50 +38,50 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: lidarr
-    hostname: "{{lidarr_hostname}}"
-    image: "{{lidarr_docker_image}}:{{lidarr_version}}"
+    hostname: "{{ lidarr_hostname }}"
+    image: "{{ lidarr_docker_image }}:{{ lidarr_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{lidarr_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ lidarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/lidarr/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/music/"
+      - source: "{{ project_media_directory }}/music/"
         target: /media/music/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
     labels:
       traefik.http.routers.lidarr.entrypoints: "websecure"
-      traefik.http.routers.lidarr.rule: "Host(`lidarr.{{project_tld}}`)"
+      traefik.http.routers.lidarr.rule: "Host(`lidarr.{{ project_tld }}`)"
       traefik.http.routers.lidarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.lidarr.tls: "true"
       traefik.http.routers.lidarr.service: "lidarr"
-      traefik.http.routers.lidarr.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.lidarr.loadbalancer.server.port: "{{lidarr_port}}"
+      traefik.http.routers.lidarr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.lidarr.loadbalancer.server.port: "{{ lidarr_port }}"
       traefik.enable: "true"
     state: present
   tags: lidarr
 
-- import_tasks: "{{role_path}}/tasks/amd.yml"
+- import_tasks: "{{ role_path }}/tasks/amd.yml"
   tags:
     - lidarr
 
-- import_tasks: "{{role_path}}/tasks/amvd.yml"
+- import_tasks: "{{ role_path }}/tasks/amvd.yml"
   tags:
     - lidarr

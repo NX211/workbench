@@ -2,12 +2,12 @@ http:
   middlewares:
     authelia:
       forwardauth:
-        address: "http://authelia:9091/api/verify?rd=https://login.{{project_tld}}/"
+        address: "http://authelia:9091/api/verify?rd=https://login.{{ project_tld }}/"
         trustForwardHeader: true
         authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
     authelia-basic:
       forwardauth:
-        address: "http://{{authelia_hostname}}:{{authelia_port}}/api/verify?auth=basic"
+        address: "http://{{ authelia_hostname }}:{{ authelia_port }}/api/verify?auth=basic"
         trustForwardHeader: true
         authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
     default-headers:
@@ -25,7 +25,7 @@ http:
     homeassistant:
       entryPoints:
         - "websecure"
-      rule: "Host(`hass.{{project_tld}}`)"
+      rule: "Host(`hass.{{ project_tld }}`)"
       tls: {}
       middlewares:
         - default-headers@file
@@ -33,7 +33,7 @@ http:
     nodered:
       entryPoints:
         - "websecure"
-      rule: "Host(`nodered.{{project_tld}}`)"
+      rule: "Host(`nodered.{{ project_tld }}`)"
       tls: {}
       middlewares:
         - default-headers@file
@@ -41,7 +41,7 @@ http:
     cups:
       entryPoints:
         - "websecure"
-      rule: "Host(`print.{{project_tld}}`)"
+      rule: "Host(`print.{{ project_tld }}`)"
       tls: {}
       middlewares:
         - authelia@file
@@ -57,13 +57,13 @@ http:
     graylog:
       entryPoints:
         - "websecure"
-      rule: "Host(`logs.{{project_tld}}`)"
+      rule: "Host(`logs.{{ project_tld }}`)"
       tls: {}
       service: "graylog"
     grafana:
       entryPoints:
         - "websecure"
-      rule: "Host(`dashboard.{{project_tld}}`)"
+      rule: "Host(`dashboard.{{ project_tld }}`)"
       tls: {}
       middlewares:
         - default-headers@file
@@ -71,7 +71,7 @@ http:
     omada:
       entryPoints:
         - "websecure"
-      rule: "Host(`omada.{{project_tld}}`)"
+      rule: "Host(`omada.{{ project_tld }}`)"
       tls: {}
       middlewares:
         - default-headers@file
@@ -79,7 +79,7 @@ http:
     proxmox:
       entryPoints:
         - "websecure"
-      rule: "Host(`pve.{{project_tld}}`)"
+      rule: "Host(`pve.{{ project_tld }}`)"
       tls: {}
       service: "proxmox"
   services:

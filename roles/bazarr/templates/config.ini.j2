@@ -1,7 +1,7 @@
 [general]
 ip = 0.0.0.0
-port = {{bazarr_port}}
-base_url = 
+port = {{ bazarr_port }}
+base_url =
 path_mappings = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
 debug = False
 branch = master
@@ -10,7 +10,7 @@ single_language = False
 minimum_score = 90
 use_scenename = True
 use_postprocessing = False
-postprocessing_cmd = 
+postprocessing_cmd =
 postprocessing_threshold = 90
 use_postprocessing_threshold = False
 postprocessing_threshold_movie = 70
@@ -19,9 +19,9 @@ use_sonarr = True
 use_radarr = True
 path_mappings_movie = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
 serie_default_enabled = True
-serie_default_profile = 
+serie_default_profile =
 movie_default_enabled = True
-movie_default_profile = 
+movie_default_profile =
 page_size = 25
 page_size_manual_search = 10
 minimum_score_movie = 70
@@ -39,7 +39,7 @@ multithreading = True
 chmod_enabled = False
 chmod = 0640
 subfolder = current
-subfolder_custom = 
+subfolder_custom =
 upgrade_subs = False
 upgrade_frequency = 12
 days_to_upgrade_subs = None
@@ -47,7 +47,7 @@ upgrade_manual = False
 anti_captcha_provider = None
 wanted_search_frequency = 3
 wanted_search_frequency_movie = 3
-subzero_mods = 
+subzero_mods =
 dont_notify_manual_actions = False
 hi_extension = hi
 embedded_subtitles_parser = ffprobe
@@ -57,13 +57,13 @@ serie_default_forced = False
 movie_default_language = ['en']
 movie_default_hi = False
 movie_default_forced = False
-flask_secret_key = {{bazarr_flask_secret_key}}
+flask_secret_key = {{ bazarr_flask_secret_key }}
 
 [auth]
 type = None
-username = {{bazarr_auth_username}}
-password = {{bazarr_auth_password_hash}}
-apikey = {{bazarr_api_key}}
+username = {{ bazarr_auth_username }}
+password = {{ bazarr_auth_password_hash }}
+apikey = {{ bazarr_api_key }}
 
 [cors]
 enabled = False
@@ -78,9 +78,9 @@ hour = 3
 [sonarr]
 ip = sonarr
 port = 8989
-base_url = 
+base_url =
 ssl = False
-apikey = {{sonarr_api_key}}
+apikey = {{ sonarr_api_key }}
 full_update = Daily
 full_update_day = 6
 full_update_hour = 4
@@ -96,9 +96,9 @@ defer_search_signalr = False
 [radarr]
 ip = radarr
 port = 7878
-base_url = 
+base_url =
 ssl = False
-apikey = {{radarr_api_key}}
+apikey = {{ radarr_api_key }}
 full_update = Daily
 full_update_day = 6
 full_update_hour = 5
@@ -110,15 +110,15 @@ defer_search_signalr = False
 
 [proxy]
 type = None
-url = 
-port = 
-username = 
-password = 
+url =
+port =
+username =
+password =
 exclude = localhost,127.0.0.1
 
 [opensubtitles]
-username = {{opensubtitles_username}}
-password = {{opensubtitles_password}}
+username = {{ opensubtitles_username }}
+password = {{ opensubtitles_password }}
 use_tag_search = False
 vip = False
 ssl = True
@@ -126,15 +126,15 @@ timeout = 15
 skip_wrong_fps = False
 
 [opensubtitlescom]
-username = {{opensubtitlescom_username}}
-password = {{opensubtitlescom_password_hash}}
+username = {{ opensubtitlescom_username }}
+password = {{ opensubtitlescom_password_hash }}
 use_hash = True
 
 [addic7ed]
-username = 
-password = 
-cookies = 
-user_agent = 
+username =
+password =
+cookies =
+user_agent =
 vip = False
 random_agents = True
 
@@ -142,54 +142,54 @@ random_agents = True
 verify_ssl = True
 
 [legendasdivx]
-username = 
-password = 
+username =
+password =
 skip_wrong_fps = False
 
 [ktuvit]
-email = 
-hashed_password = 
+email =
+hashed_password =
 
 [legendastv]
-username = 
-password = 
+username =
+password =
 featured_only = False
 
 [xsubs]
-username = 
-password = 
+username =
+password =
 
 [assrt]
-token = 
+token =
 
 [anticaptcha]
-anti_captcha_key = 
+anti_captcha_key =
 
 [deathbycaptcha]
-username = 
-password = 
+username =
+password =
 
 [napisy24]
-username = 
-password = 
+username =
+password =
 
 [subscene]
-username = {{subscene_username}}
-password = {{subscene_password_hash}}
+username = {{ subscene_username }}
+password = {{ subscene_password_hash }}
 
 [betaseries]
-token = 
+token =
 
 [analytics]
 enabled = True
 
 [titlovi]
-username = 
-password = 
+username =
+password =
 
 [titulky]
-username = 
-password = 
+username =
+password =
 approved_only = False
 skip_wrong_fps = False
 multithreading = True
@@ -203,10 +203,10 @@ include_ass = True
 include_srt = True
 
 [karagarga]
-username = 
-password = 
-f_username = 
-f_password = 
+username =
+password =
+f_username =
+f_password =
 
 [subsync]
 use_subsync = False

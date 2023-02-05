@@ -4,13 +4,13 @@
   "db": {
     "authSource": "xbrowsersync",
     "connTimeout": 30000,
-	"host": "{{mongodb_hostname}}.{{traefik_network}}",
-	"port": {{mongodb_port}},
-	"name": "{{xbrowsersync_database}}",
-	"password": "{{xbrowsersync_database_password}}",
+	"host": "{{ mongodb_hostname }}.{{ traefik_network }}",
+	"port": {{ mongodb_port }},
+	"name": "{{ xbrowsersync_database }}",
+	"password": "{{ xbrowsersync_database_password }}",
     "ssl": false,
     "useSRV": false,
-    "username": "{{xbrowsersync_database_user}}"
+    "username": "{{ xbrowsersync_database_user }}"
   },
   "maxSyncs": 5242,
   "maxSyncSize": 512000,

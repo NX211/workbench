@@ -1,12 +1,12 @@
 ---
-- import_tasks: "{{role_path}}/tasks/clair.yml"
+- import_tasks: "{{ role_path }}/tasks/clair.yml"
   tags:
     - portus
 
 - name: Ensure Portus Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/portus"
+    path: "{{ project_root_directory }}/portus"
     state: directory
   tags: portus
 
@@ -14,7 +14,7 @@
   when: inventory_hostname == groups['workers'][0]
   template:
     src: clair-config.yml.j2
-    dest: "{{project_root_directory}}/portus/clair/clair-config.yml"
+    dest: "{{ project_root_directory }}/portus/clair/clair-config.yml"
   tags: portus
   no_log: true
 
@@ -22,10 +22,10 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: portus
-    hostname: "{{portus_hostname}}"
-    image: "{{portus_docker_image}}:{{portus_version}}"
+    hostname: "{{ portus_hostname }}"
+    image: "{{ portus_docker_image }}:{{ portus_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     mounts:
@@ -33,29 +33,29 @@
         target: /data/
         type: bind
     env:
-      PORTUS_MACHINE_FQDN_VALUE: "hub.{{git_tld}}"
+      PORTUS_MACHINE_FQDN_VALUE: "hub.{{ git_tld }}"
       CCONFIG_PREFIX: "PORTUS"
       PORTUS_KEY_PATH: "config/secrets.yml"
       PORTUS_CHECK_SSL_USAGE_ENABLED: "false"
       RAILS_SERVE_STATIC_FILES: "true"
-      PORTUS_PASSWORD: "{{portus_user_password}}"
-      PORTUS_SECRET_KEY_BASE: "{{portus_secret_key_base}}"
+      PORTUS_PASSWORD: "{{ portus_user_password }}"
+      PORTUS_SECRET_KEY_BASE: "{{ portus_secret_key_base }}"
       PORTUS_DB_ADAPTER: "postgresql"
-      PORTUS_DB_HOST: "{{postgres_hostname}}"
-      PORTUS_DB_USERNAME: "{{portus_database_user}}"
-      PORTUS_DB_PASSWORD: "{{portus_database_password}}"
-      PORTUS_DB_DATABASE: "{{portus_database}}"
-      PORTUS_DB_PORT: "{{postgres_port}}"
-      PORTUS_EMAIL_FROM: "{{email_user}}"
-      PORTUS_EMAIL_REPLY_TO: "support@{{project_tld}}"
+      PORTUS_DB_HOST: "{{ postgres_hostname }}"
+      PORTUS_DB_USERNAME: "{{ portus_database_user }}"
+      PORTUS_DB_PASSWORD: "{{ portus_database_password }}"
+      PORTUS_DB_DATABASE: "{{ portus_database }}"
+      PORTUS_DB_PORT: "{{ postgres_port }}"
+      PORTUS_EMAIL_FROM: "{{ email_user }}"
+      PORTUS_EMAIL_REPLY_TO: "support@{{ project_tld }}"
       PORTUS_EMAIL_NAME: "Portus"
       PORTUS_EMAIL_SMTP_ENABLED: 'true'
-      PORTUS_EMAIL_SMTP_ADDRESS: "{{email_user}}"
-      PORTUS_EMAIL_SMTP_PORT: "{{email_port}}"
+      PORTUS_EMAIL_SMTP_ADDRESS: "{{ email_user }}"
+      PORTUS_EMAIL_SMTP_PORT: "{{ email_port }}"
       PORTUS_EMAIL_SMTP_SSL_TLS: "true"
       PORTUS_EMAIL_SMTP_ENABLE_STARTTLS_AUTO: "true"
-      PORTUS_EMAIL_SMTP_USER_NAME: "{{email_user}}"
-      PORTUS_EMAIL_SMTP_PASSWORD: "{{email_password}}"
+      PORTUS_EMAIL_SMTP_USER_NAME: "{{ email_user }}"
+      PORTUS_EMAIL_SMTP_PASSWORD: "{{ email_password }}"
       PORTUS_EMAIL_SMTP_AUTHENTICATION: "plain"
       PORTUS_SECURITY_CLAIR_SERVER: "http://clair:6060"
       PORTUS_DELETE_ENABLED: "true"
@@ -71,23 +71,23 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     labels:
       traefik.http.routers.portus.entrypoints: "websecure"
-      traefik.http.routers.portus.rule: "Host(`hub.{{git_tld}}`)"
+      traefik.http.routers.portus.rule: "Host(`hub.{{ git_tld }}`)"
       traefik.http.routers.portus.tls: "true"
       traefik.http.routers.portus.service: "portus"
-      traefik.http.routers.portus.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.portus.loadbalancer.server.port: "{{portus_port}}"
+      traefik.http.routers.portus.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.portus.loadbalancer.server.port: "{{ portus_port }}"
       traefik.enable: "true"
     state: present
   tags: portus
 
-- import_tasks: "{{role_path}}/tasks/registry.yml"
+- import_tasks: "{{ role_path }}/tasks/registry.yml"
   tags:
     - portus
 
-- import_tasks: "{{role_path}}/tasks/background.yml"
+- import_tasks: "{{ role_path }}/tasks/background.yml"
   tags:
     - portus

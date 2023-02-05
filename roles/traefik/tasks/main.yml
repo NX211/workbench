@@ -2,7 +2,7 @@
 - name: Ensure Traefik Directories Exist
   when: inventory_hostname == groups['managers'][0]
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     state: directory
   loop:
     - /yellowtalon/apps/traefik
@@ -23,8 +23,8 @@
 - name: Ensure Teaefik Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
   template:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
     - {src: config.yml.j2,dest: /yellowtalon/apps/traefik/config.yml}
     - {src: traefik-conf.yml.j2,dest: /yellowtalon/apps/traefik/traefik-conf.yml}
@@ -35,19 +35,19 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: traefik
-    hostname: "{{traefik_hostname}}"
-    image: "{{traefik_docker_image}}:{{traefik_version}}"
+    hostname: "{{ traefik_hostname }}"
+    image: "{{ traefik_docker_image }}:{{ traefik_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     env:
-      DREAMHOST_API_KEY: "{{dreamhost_token}}"
+      DREAMHOST_API_KEY: "{{ dreamhost_token }}"
     publish:
-      - published_port: "{{traefik_http_port}}"
-        target_port: "{{traefik_http_port}}"
-      - published_port: "{{traefik_https_port}}"
-        target_port: "{{traefik_https_port}}"
-      - published_port: "{{mongodb_port}}"
-        target_port: "{{mongodb_port}}"
+      - published_port: "{{ traefik_http_port }}"
+        target_port: "{{ traefik_http_port }}"
+      - published_port: "{{ traefik_https_port }}"
+        target_port: "{{ traefik_https_port }}"
+      - published_port: "{{ mongodb_port }}"
+        target_port: "{{ mongodb_port }}"
       - published_port: "1935"
         target_port: "1935"
     mode: global
@@ -56,7 +56,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{yellowtalon_node_id}}
+        - node.id == {{ yellowtalon_node_id }}
     mounts:
       - source: /yellowtalon/apps/traefik/traefik-conf.yml
         target: /traefik.yml
@@ -69,23 +69,23 @@
         type: bind
     labels:
       traefik.http.routers.traefiksecure.entrypoints: "websecure"
-      traefik.http.routers.traefiksecure.rule: "Host(`api.{{project_tld}}`)"
+      traefik.http.routers.traefiksecure.rule: "Host(`api.{{ project_tld }}`)"
       traefik.http.routers.traefiksecure.tls: "true"
       traefik.http.routers.traefiksecure.middlewares: "authelia@file"
       traefik.http.routers.traefiksecure.service: "api@internal"
-      traefik.http.routers.wildcard.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.routers.wildcard.tls.domains[0].main: "{{project_tld}}"
-      traefik.http.routers.wildcard.tls.domains[0].sans: "*.{{project_tld}}"
-      traefik.http.routers.wildcard.tls.domains[1].main: "{{git_tld}}"
-      traefik.http.routers.wildcard.tls.domains[1].sans: "*.{{git_tld}}"
-      traefik.http.routers.wildcard.tls.domains[2].main: "{{media_tld}}"
-      traefik.http.routers.wildcard.tls.domains[2].sans: "*.{{media_tld}}"
-      traefik.http.routers.wildcard.tls.domains[3].main: "{{kutt_tld}}"
-      traefik.http.routers.wildcard.tls.domains[3].sans: "*.{{kutt_tld}}"
-      traefik.http.routers.wildcard.tls.domains[4].main: "{{peertube_tld}}"
-      traefik.http.routers.wildcard.tls.domains[4].sans: "*.{{peertube_tld}}"
-      traefik.http.routers.wildcard.tls.domains[5].main: "{{photo_tld}}"
-      traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{photo_tld}}"
+      traefik.http.routers.wildcard.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.routers.wildcard.tls.domains[0].main: "{{ project_tld }}"
+      traefik.http.routers.wildcard.tls.domains[0].sans: "*.{{ project_tld }}"
+      traefik.http.routers.wildcard.tls.domains[1].main: "{{ git_tld }}"
+      traefik.http.routers.wildcard.tls.domains[1].sans: "*.{{ git_tld }}"
+      traefik.http.routers.wildcard.tls.domains[2].main: "{{ media_tld }}"
+      traefik.http.routers.wildcard.tls.domains[2].sans: "*.{{ media_tld }}"
+      traefik.http.routers.wildcard.tls.domains[3].main: "{{ kutt_tld }}"
+      traefik.http.routers.wildcard.tls.domains[3].sans: "*.{{ kutt_tld }}"
+      traefik.http.routers.wildcard.tls.domains[4].main: "{{ peertube_tld }}"
+      traefik.http.routers.wildcard.tls.domains[4].sans: "*.{{ peertube_tld }}"
+      traefik.http.routers.wildcard.tls.domains[5].main: "{{ photo_tld }}"
+      traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{ photo_tld }}"
       traefik.http.routers.wildcard.tls.domains[6].main: "dimondyucas.com"
       traefik.http.routers.wildcard.tls.domains[6].sans: "*.dimondyucas.com"
       traefik.http.services.dummy-svc.loadbalancer.server.port: "9999"

@@ -2,7 +2,7 @@
 - name: Ensure MongoDB Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/mongodb"
+    path: "{{ project_root_directory }}/mongodb"
     state: directory
   tags: mongodb
 
@@ -10,10 +10,10 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: mongodb
-    hostname: "{{mongodb_hostname}}"
-    image: "{{mongodb_docker_image}}:{{mongodb_version}}"
+    hostname: "{{ mongodb_hostname }}"
+    image: "{{ mongodb_docker_image }}:{{ mongodb_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
@@ -24,15 +24,15 @@
         type: bind
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     labels:
       traefik.tcp.routers.mongodb.entrypoints: "mongodb"
-      traefik.tcp.routers.mongodb.rule: "HostSNI(`mongodb.{{project_tld}}`)"
+      traefik.tcp.routers.mongodb.rule: "HostSNI(`mongodb.{{ project_tld }}`)"
       traefik.tcp.routers.mongodb.tls: "true"
       traefik.tcp.routers.mongodb.service: "mongodb"
-      traefik.tcp.routers.mongodb.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.tcp.services.mongodb.loadbalancer.server.port: "{{mongodb_port}}"
+      traefik.tcp.routers.mongodb.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.tcp.services.mongodb.loadbalancer.server.port: "{{ mongodb_port }}"
       traefik.enable: "true"
     state: present
   tags: mongodb

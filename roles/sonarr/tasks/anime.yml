@@ -24,7 +24,7 @@
   when: inventory_hostname == groups['media'][0]
   template:
     src: config-anime.xml.j2
-    dest: "{{project_root_directory}}/sonarr2/config.xml"
+    dest: "{{ project_root_directory }}/sonarr2/config.xml"
   tags: sonarr
   no_log: true
 
@@ -32,42 +32,42 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: sonarr_anime
-    hostname: "{{sonarr_anime_hostname}}"
-    image: "{{sonarr_anime_docker_image}}:{{sonarr_anime_version}}"
+    hostname: "{{ sonarr_anime_hostname }}"
+    image: "{{ sonarr_anime_docker_image }}:{{ sonarr_anime_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     env:
-      PUID: "{{media_user}}"
-      PGID: "{{media_group}}"
-      TZ: "{{default_timezone}}"
-      DOCKER_MODS: "gilbn/theme.park:{{sonarr_hostname}}"
-      TP_THEME: "{{theme_park_default}}"
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ sonarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
     placement:
       constraints:
-        - node.id == {{blacktalon_node_id}}
+        - node.id == {{ blacktalon_node_id }}
     replicas: 1
     mounts:
       - source: "/blacktalon/apps/sonarr2/"
         target: /config/
         type: bind
-      - source: "{{project_media_directory}}/anime/"
+      - source: "{{ project_media_directory }}/anime/"
         target: /media/anime/
         type: bind
-      - source: "{{project_download_directory}}"
+      - source: "{{ project_download_directory }}"
         target: /media/downloads/
         type: bind
     labels:
       traefik.http.routers.sonarr-anime.entrypoints: "websecure"
-      traefik.http.routers.sonarr-anime.rule: "Host(`sonarr2.{{project_tld}}`)"
+      traefik.http.routers.sonarr-anime.rule: "Host(`sonarr2.{{ project_tld }}`)"
       traefik.http.routers.sonarr-anime.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sonarr-anime.tls: "true"
       traefik.http.routers.sonarr-anime.service: "sonarr-anime"
-      traefik.http.routers.sonarr-anime.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.sonarr-anime.loadbalancer.server.port: "{{sonarr_anime_port}}"
+      traefik.http.routers.sonarr-anime.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.sonarr-anime.loadbalancer.server.port: "{{ sonarr_anime_port }}"
       traefik.enable: "true"
     state: present
   tags: sonarr

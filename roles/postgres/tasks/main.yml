@@ -2,7 +2,7 @@
 - name: Ensure Postgres Directory Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{project_root_directory}}/postgres"
+    path: "{{ project_root_directory }}/postgres"
     state: directory
   tags: postgres
 
@@ -10,24 +10,24 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: postgres
-    hostname: "{{postgres_hostname}}"
-    image: "{{postgres_docker_image}}:{{postgres_version}}"
+    hostname: "{{ postgres_hostname }}"
+    image: "{{ postgres_docker_image }}:{{ postgres_version }}"
     env:
-      POSTGRES_PASSWORD: "{{postgres_root_password}}"
+      POSTGRES_PASSWORD: "{{ postgres_root_password }}"
       PGDATA: "/var/lib/postgresql/data/pgdata"
       POSTGRES_INITDB_ARGS: "--auth-local=md5"
     publish:
-      - published_port: "{{postgres_port}}"
-        target_port: "{{postgres_port}}" 
+      - published_port: "{{ postgres_port }}"
+        target_port: "{{ postgres_port }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
     restart_config:
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
       - source: "/greytalon/apps/postgres/data/"
@@ -39,7 +39,7 @@
 - name: Wait for Postgres to be up and running
   when: inventory_hostname == groups['managers'][0]
   wait_for:
-    host: "{{postgres_localhost}}"
-    port: "{{postgres_port}}"
+    host: "{{ postgres_localhost }}"
+    port: "{{ postgres_port }}"
     delay: 15
   tags: postgres

@@ -1,2 +1,2 @@
 ---
-kavita_tokenkey: "{{vault_kavita_tokenkey}}"
+kavita_tokenkey: "{{ vault_kavita_tokenkey }}"

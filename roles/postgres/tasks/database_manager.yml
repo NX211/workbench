@@ -5,7 +5,7 @@
     login_port: "{{ postgres_port }}"
     login_user: "{{ postgres_root_user }}"
     login_password: "{{ postgres_root_password }}"
-    name: "{{ database_name }}"
+    name: "{{ database_name  }}"
     state: "present"
 
 - name: Ensure PostgreSQL Users are Present.

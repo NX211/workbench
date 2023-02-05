@@ -16,7 +16,7 @@
 - name: Ensure Paperless Directories Exist
   when: inventory_hostname == groups['workers'][0]
   file:
-    path: "{{item}}"
+    path: "{{ item }}"
     owner: "paperless"
     group: "paperless"
     state: directory
@@ -29,9 +29,9 @@
 - import_tasks: roles/postgres/tasks/database_manager.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
-    database_name: "{{paperless_database}}"
-    database_user: "{{paperless_database_user}}"
-    database_password: "{{paperless_database_password}}"
+    database_name: "{{ paperless_database }}"
+    database_user: "{{ paperless_database_user }}"
+    database_password: "{{ paperless_database_password }}"
   tags: paperless
   no_log: true
 
@@ -39,25 +39,25 @@
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
     name: paperless
-    hostname: "{{paperless_hostname}}"
-    image: "{{paperless_docker_image}}:{{paperless_version}}"
+    hostname: "{{ paperless_hostname }}"
+    image: "{{ paperless_docker_image }}:{{ paperless_version }}"
     networks:
-      - "{{traefik_network}}"
+      - "{{ traefik_network }}"
     env:
-      PAPERLESS_REDIS: "redis://{{redis_hostname}}:{{redis_port}}"
-      PAPERLESS_DBHOST: "{{postgres_hostname}}"
-      PAPERLESS_DBPORT: "{{postgres_port}}"
-      PAPERLESS_NAME: "{{paperless_database}}"
-      PAPERLESS_DBUSER: "{{paperless_database_user}}"
-      PAPERLESS_DBPASS: "{{paperless_database_password}}"
-      PAPERLESS_ADMIN_USER: "{{paperless_admin_username}}"
-      PAPERLESS_ADMIN_MAIL: "{{paperless_admin_email}}"
-      PAPERLESS_ADMIN_PASSWORD: "{{paperless_admin_password}}"
-      PAPERLESS_URL: "https://docs.{{project_tld}}"
-      PAPERLESS_SECRET_KEY: "{{paperless_secret_key}}"
-      PAPERLESS_TIME_ZONE: "{{default_timezone}}"
-      USERMAP_UID: "{{paperless_user}}"
-      USERMAP_GID: "{{paperless_group}}"
+      PAPERLESS_REDIS: "redis://{{ redis_hostname }}:{{ redis_port }}"
+      PAPERLESS_DBHOST: "{{ postgres_hostname }}"
+      PAPERLESS_DBPORT: "{{ postgres_port }}"
+      PAPERLESS_NAME: "{{ paperless_database }}"
+      PAPERLESS_DBUSER: "{{ paperless_database_user }}"
+      PAPERLESS_DBPASS: "{{ paperless_database_password }}"
+      PAPERLESS_ADMIN_USER: "{{ paperless_admin_username }}"
+      PAPERLESS_ADMIN_MAIL: "{{ paperless_admin_email }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ paperless_admin_password }}"
+      PAPERLESS_URL: "https://docs.{{ project_tld }}"
+      PAPERLESS_SECRET_KEY: "{{ paperless_secret_key }}"
+      PAPERLESS_TIME_ZONE: "{{ default_timezone }}"
+      USERMAP_UID: "{{ paperless_user }}"
+      USERMAP_GID: "{{ paperless_group }}"
     mode: replicated
     force_update: yes
     restart_config:
@@ -77,15 +77,15 @@
         type: bind
     placement:
       constraints:
-        - node.id == {{greytalon_node_id}}
+        - node.id == {{ greytalon_node_id }}
     replicas: 1
     labels:
       traefik.http.routers.paperless.entrypoints: "websecure"
-      traefik.http.routers.paperless.rule: "Host(`docs.{{project_tld}}`)"
+      traefik.http.routers.paperless.rule: "Host(`docs.{{ project_tld }}`)"
       traefik.http.routers.paperless.tls: "true"
       traefik.http.routers.paperless.service: "paperless"
-      traefik.http.routers.paperless.tls.certresolver: "{{default_certificate_resolver}}"
-      traefik.http.services.paperless.loadbalancer.server.port: "{{paperless_port}}"
+      traefik.http.routers.paperless.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.paperless.loadbalancer.server.port: "{{ paperless_port }}"
       traefik.enable: "true"
     state: present
   tags: paperless
