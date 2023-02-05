@@ -8,7 +8,7 @@
   when: inventory_hostname == groups['workers'][0]
   ansible.builtin.file:
     path: "{{ project_root_directory }}/portus"
-    mode: 0644
+    mode: 0755
     state: directory
   tags: portus
 

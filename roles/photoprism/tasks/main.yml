@@ -10,7 +10,7 @@
   when: inventory_hostname == groups['media'][0]
   ansible.builtin.file:
     path: "{{ item }}"
-    mode: 0644
+    mode: 0755
     state: directory
   loop:
     - "{{ project_root_directory }}/photoprism/originals"

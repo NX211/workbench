@@ -3,7 +3,7 @@
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.file:
     path: "{{ item }}"
-    mode: 0644
+    mode: 0755
     state: directory
   loop:
     - /yellowtalon/apps/vault/config
