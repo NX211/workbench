@@ -84,5 +84,4 @@
 
 - name: Import Ansible Anime Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/anime.yml"
-  tags:
-    - sonarr
+  tags: sonarr

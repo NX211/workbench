@@ -1,4 +1,18 @@
 ---
+- name: Import Postgres Check Role
+  ansible.builtin.import_tasks: roles/postgres/tasks/check.yml
+  tags: mkdocs
+
+- name: Ensure MkDocs Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ mkdocs_database }}"
+    database_user: "{{ mkdocs_database_user }}"
+    database_password: "{{ mkdocs_database_password }}"
+  tags: mkdocs
+  no_log: true
+
 - name: Deploy MkDocs Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:

@@ -71,5 +71,4 @@
 
 - name: Import FreshRSS Bridge Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/bridge.yml"
-  tags:
-    - freshrss
+  tags: freshrss

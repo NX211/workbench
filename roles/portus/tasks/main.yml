@@ -1,8 +1,7 @@
 ---
 - name: Import Clair Database Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/clair.yml"
-  tags:
-    - portus
+  tags: portus
 
 - name: Ensure Portus Directory Exist
   when: inventory_hostname == groups['workers'][0]
@@ -89,10 +88,8 @@
 
 - name: Import Docker Registry Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/registry.yml"
-  tags:
-    - portus
+  tags: portus
 
 - name: Import Portus Backgroud Service Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/background.yml"
-  tags:
-    - portus
+  tags: portus

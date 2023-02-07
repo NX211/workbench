@@ -81,10 +81,8 @@
 
 - name: Import Automated Music Downloader
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/amd.yml"
-  tags:
-    - lidarr
+  tags: lidarr
 
 - name: Import Automated Music Video Downloader
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/amvd.yml"
-  tags:
-    - lidarr
+  tags: lidarr
