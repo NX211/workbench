@@ -1,6 +1,19 @@
 ---
-- name: Import Postgres Check Role
-  ansible.builtin.import_tasks: roles/postgres/tasks/check.yml
+- name: Ensure Media Datasets Exist
+  when: inventory_hostname == groups['workers'][0]
+  community.general.zfs:
+    name: greytalon/apps/mkdocs
+    state: present
+  tags: mkdocs
+
+- name: Clone a Wiki repository
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.git:
+    repo: "{{ wiki_git_repository_url }}"
+    dest: "{{ project_root_directory }}/mkdocs"
+    clone: yes
+    update: yes
+    version: main
   tags: mkdocs
 
 - name: Ensure MkDocs Database Exist
@@ -50,6 +63,10 @@
     force_update: yes
     restart_config:
       condition: on-failure
+    mounts:
+      - source: /greytalon/apps/mkdocs/
+        target: /docs/
+        type: bind
     placement:
       constraints:
         - node.id == {{ greytalon_node_id }}

@@ -1,4 +1,5 @@
 ---
+wiki_git_repository_url: "{{ vault_wiki_git_repository_url }}"
 mkdocs_site_name: "{{ vault_mkdocs_site_name }}"
 mkdocs_database_user: "{{ vault_mkdocs_database_user }}"
 mkdocs_database_password: "{{ vault_mkdocs_database_password }}"

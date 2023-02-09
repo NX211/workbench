@@ -1,5 +1,5 @@
 ---
 mkdocs_version: "latest"
-mkdocs_docker_image: "mkdocs/mkdocs"
+mkdocs_docker_image: "squidfunk/mkdocs-material"
 mkdocs_hostname: "mkdocs"
-mkdocs_port: "3000"
+mkdocs_port: "8000"
