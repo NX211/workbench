@@ -10,7 +10,7 @@
     - "{{ project_root_directory }}/homer/icons"
   tags: homer
 
-- name: Clone a github repository
+- name: Clone a Homer Icons Repository
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.git:
     repo: "{{ homer_git_repository_url }}"

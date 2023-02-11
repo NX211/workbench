@@ -82,6 +82,12 @@ http:
       rule: "Host(`pve.{{ project_tld }}`)"
       tls: {}
       service: "proxmox"
+    adguard:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`dns.{{ project_tld }}`)"
+      tls: {}
+      service: "adguard"
   services:
     homeassistant:
       loadBalancer:
@@ -110,11 +116,15 @@ http:
     omada:
       loadBalancer:
         servers:
-          - url: "http://10.10.0.252/"
+          - url: "https://10.10.0.252/"
     proxmox:
       loadBalancer:
         servers:
           - url: "https://10.20.0.205:8006/"
+    adguard:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.1:3000/"
 tls:
   options:
     default:
