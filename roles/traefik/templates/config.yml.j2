@@ -88,6 +88,14 @@ http:
       rule: "Host(`dns.{{ project_tld }}`)"
       tls: {}
       service: "adguard"
+    blueiris:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`blueiris.{{ project_tld }}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "blueiris"
   services:
     homeassistant:
       loadBalancer:
@@ -125,6 +133,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.1:3000/"
+    blueiris:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.110:81/"
 tls:
   options:
     default:
