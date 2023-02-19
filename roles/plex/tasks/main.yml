@@ -63,6 +63,9 @@
       - source: "{{ project_media_directory }}/audiobooks/"
         target: /audiobooks/
         type: bind
+      - source: "{{ project_media_directory }}/preroll/"
+        target: /pre-roll/
+        type: bind
     labels:
       traefik.http.routers.plex.entrypoints: "websecure"
       traefik.http.routers.plex.rule: "Host(`{{ media_tld }}`)"
