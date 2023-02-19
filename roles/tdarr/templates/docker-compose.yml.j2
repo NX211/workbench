@@ -10,29 +10,21 @@ services:
       webUIPort: "8265"
       serverPort: "8266"
       serverIP: "0.0.0.0"
-    hostname: "{{ tdarr_hostname }}"
-    networks:
-      - {{ traefik_network }}
+    network_mode: bridge
     ports:
-      - 8266:8266
-      - 8267:8267
+      - 8265:8265 # webUI port
+      - 8266:8266 # server port
+      - 8267:8267 # Internal node port
+      - 8268:8268 # Example extra node port
     volumes:
       - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
       - /blacktalon/apps/tdarr/data:/var/lib/mongodb
       - /blacktalon/media:/home/Tdarr/media
       - transcode:/temp
       - /etc/localtime:/etc/localtime:ro
-    labels:
-      - "traefik.http.routers.tdarr.entrypoints=websecure"
-      - "traefik.http.routers.tdarr.rule=Host(`tdarr.{{ project_tld }}`)"
-      - "traefik.http.routers.tdarr.tls=true"
-      - "traefik.http.routers.tdarr.middlewares=default-headers@file"
-      - "traefik.http.routers.tdarr.service=tdarr"
-      - "traefik.http.routers.tdarr.tls.certresolver={{ default_certificate_resolver }}"
-      - "traefik.http.services.tdarr.loadbalancer.server.port=8265"
-      - "traefik.enable=true"
+
   tdarrnode:
-    image: "haveagitgat/tdarr_node:{{ tdarr_version }}"
+    image: "{{ tdarr_node_docker_image }}:{{ tdarr_version }}"
     environment:
       PUID: "{{ media_user }}"
       PGID: "{{ media_group }}"
@@ -41,7 +33,6 @@ services:
       serverPort: "8266"
       serverIP: "0.0.0.0"
       nodeIP: "0.0.0.0"
-    hostname: {{ tdarr_node_hostname }}
     network_mode: service:tdarr
     volumes:
       - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
@@ -53,8 +44,3 @@ services:
 volumes:
   transcode:
     external: true
-
-networks:
-  {{ traefik_network }}:
-    external: true
-      name: {{ traefik_network }}

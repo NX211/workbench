@@ -31,7 +31,7 @@
   tags: tdarr
 
 - name: Deploy Tdarr from Compose File
-  when: inventory_hostname == groups['managers'][0]
+  when: inventory_hostname == groups['media'][0]
   community.docker.docker_stack:
     state: present
     name: tdarr

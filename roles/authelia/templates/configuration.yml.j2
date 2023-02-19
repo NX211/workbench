@@ -79,6 +79,10 @@ access_control:
     policy: two_factor
     subject:
     - "group:media"
+  - domain: tdarr.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:media"
 
 authentication_backend:
   disable_reset_password: false

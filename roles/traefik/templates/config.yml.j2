@@ -96,6 +96,15 @@ http:
       middlewares:
         - default-headers@file
       service: "blueiris"
+    tdarr:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`tdarr.{{ project_tld }}`)"
+      tls: {}
+      middlewares:
+        - authelia
+        - default-headers@file
+      service: "tdarr"
   services:
     homeassistant:
       loadBalancer:
@@ -137,6 +146,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.110:81/"
+    tdarr:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.250:8265/"
 tls:
   options:
     default:
