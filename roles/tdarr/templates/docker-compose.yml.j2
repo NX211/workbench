@@ -12,15 +12,15 @@ services:
       serverIP: "0.0.0.0"
     network_mode: bridge
     ports:
-      - 8265:8265 # webUI port
-      - 8266:8266 # server port
-      - 8267:8267 # Internal node port
-      - 8268:8268 # Example extra node port
+      - 8265:8265
+      - 8266:8266
+      - 8267:8267
     volumes:
-      - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
-      - /blacktalon/apps/tdarr/data:/var/lib/mongodb
-      - /blacktalon/media:/home/Tdarr/media
-      - transcode:/temp
+      - /blacktalon/apps/tdarr/server:/app/server
+      - /blacktalon/apps/tdarr/config:/app/configs
+      - /blacktalon/apps/tdarr/logs:/app/logs
+      - /blacktalon/media:/media
+      - transcode_cache:/temp
       - /etc/localtime:/etc/localtime:ro
 
   tdarrnode:
@@ -35,12 +35,12 @@ services:
       nodeIP: "0.0.0.0"
     network_mode: service:tdarr
     volumes:
-      - /blacktalon/apps/tdarr/app:/home/Tdarr/Documents/Tdarr
-      - /blacktalon/apps/tdarr/data:/var/lib/mongodb
-      - /blacktalon/media:/home/Tdarr/media
-      - transcode:/temp
+      - /blacktalon/apps/tdarr/config:/app/configs
+      - /blacktalon/apps/tdarr/logs:/app/logs
+      - /blacktalon/media:/media
+      - transcode_cache:/temp
       - /etc/localtime:/etc/localtime:ro
 
 volumes:
-  transcode:
+  transcode_cache:
     external: true

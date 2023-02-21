@@ -1,16 +1,27 @@
 ---
-- name: Ensure Tdarr Directory Exist
+- name: Ensure Tdarr Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/tdarr
+    state: present
+  tags: tdarr
+
+- name: Ensure Tdarr Directories Exist
   when: inventory_hostname == groups['media'][0]
   ansible.builtin.file:
-    path: "{{ project_root_directory }}/tdarr"
-    mode: 0644
+    path: "{{ item }}"
+    mode: 0755
     state: directory
+  loop:
+    - "{{ project_root_directory }}/tdarr/server"
+    - "{{ project_root_directory }}/tdarr/config"
+    - "{{ project_root_directory }}/tdarr/logs"
   tags: tdarr
 
 - name: Ensure Tdarr Transcode Volume Exist
   when: inventory_hostname == groups['media'][0]
   community.docker.docker_volume:
-    name: transcode
+    name: transcode_cache
     state: present
   tags: tdarr
 
@@ -32,9 +43,9 @@
 
 - name: Deploy Tdarr from Compose File
   when: inventory_hostname == groups['media'][0]
-  community.docker.docker_stack:
+  community.docker.docker_compose:
+    project_src: "{{ project_root_directory }}/tdarr/"
+    files:
+      - docker-compose.yml
     state: present
-    name: tdarr
-    compose:
-      - "{{ project_root_directory }}/tdarr/docker-compose.yml"
   tags: tdarr
