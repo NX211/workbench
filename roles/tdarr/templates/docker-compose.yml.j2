@@ -20,7 +20,7 @@ services:
       - /blacktalon/apps/tdarr/config:/app/configs
       - /blacktalon/apps/tdarr/logs:/app/logs
       - /blacktalon/media:/media
-      - transcode_cache:/temp
+      - /temp:/temp
       - /etc/localtime:/etc/localtime:ro
 
   tdarrnode:
@@ -38,9 +38,5 @@ services:
       - /blacktalon/apps/tdarr/config:/app/configs
       - /blacktalon/apps/tdarr/logs:/app/logs
       - /blacktalon/media:/media
-      - transcode_cache:/temp
+      - /temp:/temp
       - /etc/localtime:/etc/localtime:ro
-
-volumes:
-  transcode_cache:
-    external: true

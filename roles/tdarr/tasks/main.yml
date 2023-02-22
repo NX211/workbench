@@ -18,13 +18,6 @@
     - "{{ project_root_directory }}/tdarr/logs"
   tags: tdarr
 
-- name: Ensure Tdarr Transcode Volume Exist
-  when: inventory_hostname == groups['media'][0]
-  community.docker.docker_volume:
-    name: transcode_cache
-    state: present
-  tags: tdarr
-
 - name: Install jsondiff Python library
   when: inventory_hostname == groups['managers'][0]
   become: true
