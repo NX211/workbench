@@ -2,4 +2,4 @@
 minio_version: "latest"
 minio_hostname: "minio"
 minio_port: "9001"
-minio_docker_image: "minio/minio"
+minio_docker_image: "quay.io/minio/minio"

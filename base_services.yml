@@ -14,7 +14,6 @@
     - authelia
     - mailrise
     - gitea
-    - portus
     - jenkins
     - n8n
     - minio

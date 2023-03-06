@@ -83,6 +83,10 @@ access_control:
     policy: two_factor
     subject:
     - "group:media"
+  - domain: print.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:print"
 
 authentication_backend:
   disable_reset_password: false

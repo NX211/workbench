@@ -27,9 +27,6 @@
       - "{{ traefik_network }}"
     mode: replicated
     force_update: yes
-    publish:
-      - published_port: "2222"
-        target_port: "22"
     restart_config:
       condition: on-failure
     env:
@@ -88,6 +85,10 @@
       traefik.http.routers.gitea.service: "gitea"
       traefik.http.routers.gitea.tls.certresolver: "{{ default_certificate_resolver }}"
       traefik.http.services.gitea.loadbalancer.server.port: "{{ gitea_port }}"
+      traefik.http.services.gitea.loadbalancer.passhostheader: "true"
+      traefik.tcp.routers.gitea-ssh.entrypoints: "git"
+      traefik.tcp.routers.gitea-ssh.rule: "HostSNI(`*`)"
+      traefik.tcp.services.gitea-ssh.loadbalancer.server.port: "22"
       traefik.enable: "true"
     state: present
   tags: gitea

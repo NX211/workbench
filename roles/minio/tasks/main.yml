@@ -1,22 +1,20 @@
 ---
-- name: Install Docker Python library
+- name: Ensure Lidarr Dataset Exist
   when: inventory_hostname == groups['workers'][0]
-  ansible.builtin.apt:
-    name: python3-docker
-  tags: minio
-
-- name: Ensure Minio Volume Exist
-  when: inventory_hostname == groups['workers'][0]
-  community.docker.docker_volume:
-    name: minio-config
+  community.general.zfs:
+    name: greytalon/apps/minio
     state: present
   tags: minio
 
-- name: Ensure Minio Volume Exist
+- name: Ensure Minio Directories Exist
   when: inventory_hostname == groups['workers'][0]
-  community.docker.docker_volume:
-    name: minio-data
-    state: present
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: 0755
+    state: directory
+  loop:
+    - /greytalon/apps/minio/config
+    - /greytalon/apps/minio/data
   tags: minio
 
 - name: Deploy Minio Service
@@ -28,8 +26,8 @@
     networks:
       - "{{ traefik_network }}"
     mode: replicated
+    command: minio server /data --console-address ":9001"
     force_update: yes
-    command: "server /data --console-address :9001"
     restart_config:
       condition: on-failure
     env:
@@ -44,12 +42,12 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: minio-config
+      - source: /greytalon/apps/minio/config/
         target: /root/.minio/
-        type: volume
-      - source: minio-data
+        type: bind
+      - source: /greytalon/apps/minio/data/
         target: /data/
-        type: volume
+        type: bind
     labels:
       traefik.http.routers.minio.entrypoints: "websecure"
       traefik.http.routers.minio.rule: "Host(`minio.{{ project_tld }}`)"

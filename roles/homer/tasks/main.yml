@@ -19,6 +19,7 @@
     update: yes
   tags: homer
 
+
 - name: Ensure Homer Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.template:

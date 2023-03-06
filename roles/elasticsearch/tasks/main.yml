@@ -31,7 +31,7 @@
       condition: on-failure
     placement:
       constraints:
-        - node.id == {{ yellowtalon_node_id }}
+        - node.id == {{ redtalon_node_id }}
     mounts:
       - source: elasticsearch_data
         target: /usr/share/elasticsearch/data/

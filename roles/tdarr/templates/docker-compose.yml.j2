@@ -1,7 +1,8 @@
-version: '3.4'
+version: "3.4"
 
 services:
   tdarr:
+    container_name: "tdarr"
     image: "{{ tdarr_docker_image }}:{{ tdarr_version }}"
     environment:
       PUID: "{{ media_user }}"
@@ -23,7 +24,8 @@ services:
       - /temp:/temp
       - /etc/localtime:/etc/localtime:ro
 
-  tdarrnode:
+  tdarr-node:
+    container_name: tdarr-node
     image: "{{ tdarr_node_docker_image }}:{{ tdarr_version }}"
     environment:
       PUID: "{{ media_user }}"

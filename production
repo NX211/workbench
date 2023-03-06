@@ -4,6 +4,7 @@ yellowtalon ansible_port=22 ansible_host=10.20.0.240
 
 [workers]
 greytalon ansible_port=22 ansible_host=10.20.0.210
+redtalon ansible_port=22 ansible_host=10.20.0.230
 
 [media]
 blacktalon ansible_port=22 ansible_host=10.20.0.250
