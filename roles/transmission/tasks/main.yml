@@ -14,7 +14,7 @@
     - blacktalon/media/movies
     - blacktalon/media/music
     - blacktalon/media/tv
-  tags: qbittorrent
+  tags: transmission
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
@@ -32,69 +32,59 @@
     - blacktalon/media/downloads/movies
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/tv
-  tags: qbittorrent
+  tags: transmission
 
-- name: Ensure qBittorrent Dataset Exist
+- name: Ensure Transmission Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
-    name: blacktalon/apps/qbittorrent
+    name: blacktalon/apps/transmission
     state: present
-  tags: qbittorrent
+  tags: transmission
 
-- name: Ensure qBittorrent Configuration Files Exist
-  when: inventory_hostname == groups['media'][0]
-  ansible.builtin.template:
-    src: qBittorrent.conf.j2
-    mode: 0644
-    dest: "{{ project_root_directory }}/qbittorrent/qBittorrent.conf"
-  tags: qbittorrent
-  no_log: true
-
-- name: Deploy qBittorrent Service
+- name: Deploy Transmission Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
-    name: qbittorrent
-    hostname: "{{ qbittorrent_hostname }}"
-    image: "{{ qbittorrent_docker_image }}:{{ qbittorrent_version }}"
+    name: transmission
+    hostname: "{{ transmission_hostname }}"
+    image: "{{ transmission_docker_image }}:{{ transmission_version }}"
     networks:
       - "{{ traefik_network }}"
     mode: replicated
-    force_update: yes
-    restart_config:
-      condition: on-failure
     env:
       PUID: "{{ media_user }}"
       PGID: "{{ media_group }}"
       TZ: "{{ default_timezone }}"
-      DOCKER_MODS: "gilbn/theme.park:{{ qbittorrent_hostname }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ transmission_hostname }}"
       TP_THEME: "{{ theme_park_default }}"
-      UMASK: "022"
-      WEBUI_PORT: "{{ qbittorrent_port }}"
+    restart_config:
+      condition: on-failure
+    publish:
+      - published_port: "51413"
+        target_port: "51413"
+      - published_port: "51413"
+        target_port: "51413"
+        protocol: "udp"
     placement:
       constraints:
         - node.id == {{ blacktalon_node_id }}
-    replicas: 1
-    publish:
-      - published_port: "6881"
-        target_port: "6881"
-      - published_port: "6881"
-        target_port: "6881"
-        protocol: "udp"
     mounts:
-      - source: "/blacktalon/apps/qbittorrent/"
+      - source: "/blacktalon/apps/transmission/"
         target: /config/
         type: bind
       - source: "{{ project_download_directory }}"
-        target: /media/downloads/
+        target: /downloads/
+        type: bind
+      - source: "{{ project_download_directory }}/torrentfiles"
+        target: /watch/
         type: bind
     labels:
-      traefik.http.routers.qbittorrent.entrypoints: "websecure"
-      traefik.http.routers.qbittorrent.rule: "Host(`qbittorrent.{{ project_tld }}`)"
-      traefik.http.routers.qbittorrent.middlewares: "default-headers@file,authelia@file"
-      traefik.http.routers.qbittorrent.tls: "true"
-      traefik.http.routers.qbittorrent.service: "qbittorrent"
-      traefik.http.routers.qbittorrent.tls.certresolver: "{{ default_certificate_resolver }}"
-      traefik.http.services.qbittorrent.loadbalancer.server.port: "{{ qbittorrent_port }}"
+      traefik.http.routers.transmission.entrypoints: "websecure"
+      traefik.http.routers.transmission.rule: "Host(`transmission.{{ project_tld }}`)"
+      traefik.http.routers.transmission.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.transmission.tls: "true"
+      traefik.http.routers.transmission.service: "transmission"
+      traefik.http.routers.transmission.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.transmission.loadbalancer.server.port: "{{ transmission_port }}"
       traefik.enable: "true"
     state: present
-  tags: qbittorrent
+  tags: transmission

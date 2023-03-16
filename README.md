@@ -35,7 +35,7 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 ## Media Service
 
 - [SABnzbd](https://sabnzbd.org/) - The automated Usenet download tool
-- [Qbittorrent](https://www.qbittorrent.org/) - BitTorrent client
+- [Transmission](https://transmissionbt.com/) - BitTorrent client
 - [Prowlarr](https://prowlarr.github.io) - A Indexer for Bittorrent and Usenet
 - [Sonarr](https://github.com/Sonarr/Sonarr/) - Smart PVR for newsgroup and bittorrent users
 - [Radarr](https://github.com/Radarr/Radarr/) - A fork of Sonarr to work with movies à la Couchpotato

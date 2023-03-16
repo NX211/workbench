@@ -1,0 +1,5 @@
+---
+transmission_version: "latest"
+transmission_hostname: "transmission"
+transmission_port: "9091"
+transmission_docker_image: "lscr.io/linuxserver/transmission"

@@ -1,0 +1,4 @@
+---
+unpackerr_version: "latest"
+unpackerr_hostname: "unpackerr"
+unpackerr_docker_image: "golift/unpackerr"
