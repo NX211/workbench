@@ -1,0 +1,5 @@
+---
+immich_database_user: "{{ vault_immich_database_user }}"
+immich_database_password: "{{ vault_immich_database_password }}"
+immich_database: "{{ vault_immich_database }}"
+immich_jwt_secret: "{{ vault_immich_jwt_secret }}"

@@ -1,0 +1,9 @@
+---
+immich_version: "latest"
+immich_database_version: "14"
+immich_hostname: "immich"
+immich_database_hostname: "immich-database"
+immich_docker_image: "ghcr.io/imagegenius/immich"
+immich_database_docker_image: "postgres"
+immich_port: "8080"
+immich_database_port: "5432"

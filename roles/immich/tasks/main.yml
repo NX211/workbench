@@ -1,0 +1,97 @@
+---
+- name: Ensure Immich Configuration Dataset Exist
+  when: inventory_hostname == groups['workers'][0]
+  community.general.zfs:
+    name: greytalon/apps/immich
+    state: present
+  tags: immich
+
+- name: Ensure Immich Media Dataset Exist
+  when: inventory_hostname == groups['workers'][0]
+  community.general.zfs:
+    name: greytalon/media/photos
+    state: present
+  tags: immich
+
+- name: Ensure Immich Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: 0755
+    state: directory
+  loop:
+    - /greytalon/apps/immich/config
+    - /greytalon/apps/immich/database
+  tags: immich
+
+- name: Deploy Immich Database Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: immich-database
+    hostname: "{{ immich_database_hostname }}"
+    image: "{{ immich_database_docker_image }}:{{ immich_database_version }}"
+    env:
+      POSTGRES_USER: "{{ immich_database_user }}"
+      POSTGRES_PASSWORD: "{{ immich_database_password }}"
+      POSTGRES_DB: "{{ immich_database }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ greytalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/immich/database/
+        target: /var/lib/postgresql/data/
+        type: bind
+    state: present
+  tags: immich
+
+- name: Deploy Immich Server
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: immich
+    hostname: "{{ immich_hostname }}"
+    image: "{{ immich_docker_image }}:{{ immich_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      TZ: "{{ default_timezone }}"
+      DB_HOSTNAME: "{{ immich_database_hostname }}"
+      DB_USERNAME: "{{ immich_database_user }}"
+      DB_PASSWORD: "{{ immich_database_password }}"
+      DB_DATABASE_NAME: "{{ immich_database }}"
+      REDIS_HOSTNAME: "{{ redis_hostname }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      DB_PORT: "{{ immich_database_port }}"
+      REDIS_PORT: "{{ redis_port }}"
+    placement:
+      constraints:
+        - node.id == {{ greytalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/immich/config/
+        target: /config/
+        type: bind
+      - source: /greytalon/media/photos/
+        target: /photos/
+        type: bind
+    labels:
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.rule: "Host(`{{ photo_tld }}`)"
+      traefik.http.routers.immich.middlewares: "default-headers@file"
+      traefik.http.routers.immich.tls: "true"
+      traefik.http.routers.immich.service: "immich"
+      traefik.http.routers.immich.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.immich.loadbalancer.server.port: "{{ immich_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: immich

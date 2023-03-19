@@ -1,5 +1,0 @@
----
-photoprism_version: "latest"
-photoprism_hostname: "photoprism"
-photoprism_docker_image: "photoprism/photoprism"
-photoprism_port: "2342"

@@ -43,7 +43,7 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [AMD](https://github.com/RandomNinjaAtk/docker-amd) - Lidarr companion for downloading Music
 - [AMVD](https://github.com/RandomNinjaAtk/docker-amvd) - Lidarr companion for downloading and tagging Music Videos
 - [Beets](https://beets.io/) - Organize your music collection once and for all
-- [Photoprism](https://photoprism.app/) - AI-Powered Photos App for the Decentralized Web
+- [Immich](https://immich.app/) - Self-Hosted Photo & Video Solution
 - [Peertube](https://joinpeertube.org/) - Free Software to Take Back Control of your Videos
 - [Readarr](https://github.com/Readarr/Readarr/) - Readarr is a eBook collection manager for Usenet and BitTorrent users
 - [Bazarr](https://github.com/morpheus65535/bazarr/) - Bazarr is a companion application to Sonarr and Radarr that manages and downloads subtitles
