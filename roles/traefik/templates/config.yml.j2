@@ -49,7 +49,7 @@ http:
     dimondyucas:
       entryPoints:
         - "websecure"
-      rule: "Host(`dimondyucas.com`,`www.dimondyucas.com`)"
+      rule: "Host(`{{ dimondyucas_tld }}`,`www.{{ dimondyucas_tld }}`)"
       tls: {}
       middlewares:
         - default-headers@file
