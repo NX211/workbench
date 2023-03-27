@@ -1,10 +1,9 @@
 ---
-- name: Ensure RSS-Bridge Directory Exist
+- name: Ensure RSS-Bridge Dataset Exist
   when: inventory_hostname == groups['workers'][0]
-  ansible.builtin.file:
-    path: "{{ project_root_directory }}/rssbridge"
-    mode: 0644
-    state: directory
+  community.general.zfs:
+    name: greytalon/apps/rssbridge
+    state: present
   tags: freshrss
 
 - name: Ensure RSS-Bridge Configuration File Exist
@@ -33,8 +32,8 @@
         - node.id == {{ greytalon_node_id }}
     replicas: 1
     mounts:
-      - source: /greytalon/apps/rssbridge/whitelist.txt
-        target: /app/whitelist.txt
+      - source: /greytalon/apps/rssbridge/
+        target: /config/
         type: bind
     labels:
       traefik.http.routers.rssbridge.entrypoints: "websecure"
