@@ -33,6 +33,16 @@
   tags: peertube
   no_log: true
 
+- name: Ensure PeerTube Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ peertube_database }}"
+    database_user: "{{ peertube_database_user }}"
+    database_password: "{{ peertube_database_password }}"
+  tags: peertube
+  no_log: true
+
 - name: Deploy PeerTube Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:

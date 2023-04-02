@@ -1,0 +1,8 @@
+---
+gitlab_version: "latest"
+gitlab_runner_version: "ubuntu"
+gitlab_hostname: "authoritah.io"
+gitlab_port: "80"
+gitlab_registry_port: "5005"
+gitlab_docker_image: "gitlab/gitlab-ce"
+gitlab_runner_docker_image: "gitlab/gitlab-runner"

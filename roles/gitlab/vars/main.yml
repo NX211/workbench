@@ -1,0 +1,4 @@
+---
+gitlab_root_username: "{{ vault_gitlab_root_username }}"
+gitlab_root_password: "{{ vault_gitlab_root_password }}"
+gitlab_runner_token: "{{ vault_gitlab_runner_token }}"

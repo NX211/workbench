@@ -1,0 +1,101 @@
+---
+- name: Ensure GitLab Dataset Exist
+  when: inventory_hostname == groups['workers'][0]
+  community.general.zfs:
+    name: greytalon/apps/gitlab
+    state: present
+  tags: gitlab
+
+- name: Ensure GitLab Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: 0755
+    state: directory
+  loop:
+    - "{{ project_root_directory }}/gitlab/data"
+    - "{{ project_root_directory }}/gitlab/logs"
+    - "{{ project_root_directory }}/gitlab/config"
+  tags: gitlab
+
+- name: Deploy GitLab Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: gitlab
+    hostname: "{{ gitlab_hostname }}"
+    image: "{{ gitlab_docker_image }}:{{ gitlab_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    env:
+      GITLAB_ROOT_EMAIL: "{{ gitlab_root_username }}"
+      GITLAB_ROOT_PASSWORD: "{{ gitlab_root_password }}"
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://{{ git_tld }}/'
+        nginx['listen_port'] = '{{ gitlab_port }}'
+        nginx['listen_https'] = false
+        letsencrypt['enable'] = false
+        registry_nginx['listen_https'] = false
+        registry_nginx['listen_port'] = 5005
+        registry_external_url 'https://registry.{{ git_tld }}'
+        registry_nginx['proxy_set_headers'] = {
+          "X-Forwarded-Proto" => "https",
+          "X-Forwarded-Ssl" => "on"
+        }
+        nginx['enable'] = true
+        gitlab_rails['gitlab_email_enabled'] = true
+        gitlab_rails['gitlab_email_from'] = '{{ email_user }}'
+        gitlab_rails['gitlab_email_display_name'] = '{{ email_user }}'
+        gitlab_rails['gitlab_email_reply_to'] = '{{ email_user }}'
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = '{{ email_host }}'
+        gitlab_rails['smtp_port'] = 587
+        gitlab_rails['smtp_user_name'] = '{{ email_user }}'
+        gitlab_rails['smtp_password'] = '{{ email_password }}'
+        gitlab_rails['smtp_domain'] = '{{ project_tld }}'
+        gitlab_rails['smtp_authentication'] = 'login'
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['gitlab_root_email'] = 'gitlab@{{ project_tld }}'
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ greytalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/gitlab/data/
+        target: /var/opt/gitlab/
+        type: bind
+      - source: /greytalon/apps/gitlab/logs/
+        target: /var/log/gitlab/
+        type: bind
+      - source: /greytalon/apps/gitlab/config/
+        target: /etc/gitlab/
+        type: bind
+    labels:
+      traefik.http.routers.gitlab.entrypoints: "websecure"
+      traefik.http.routers.gitlab.rule: "Host(`{{ git_tld }}`)"
+      traefik.http.routers.gitlab.tls: "true"
+      traefik.http.routers.gitlab.service: "gitlab"
+      traefik.http.routers.gitlab.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.gitlab.loadbalancer.server.port: "{{ gitlab_port }}"
+      traefik.http.routers.registry.entrypoints: "websecure"
+      traefik.http.routers.registry.rule: "Host(`registry.{{ git_tld }}`)"
+      traefik.http.routers.registry.tls: "true"
+      traefik.http.routers.registry.service: "registry"
+      traefik.http.routers.registry.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.registry.loadbalancer.server.port: "{{ gitlab_registry_port }}"
+      traefik.tcp.routers.git.entrypoints: "git"
+      traefik.tcp.routers.git.rule: "HostSNI(`{{ git_tld }}`)"
+      traefik.tcp.routers.git.tls: "true"
+      traefik.tcp.routers.git.service: "git"
+      traefik.tcp.routers.git.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.tcp.services.git.loadbalancer.server.port: "22"
+      traefik.enable: "true"
+    state: present
+  tags: gitlab
+
+- name: Import GitLab Runners Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/runners.yml"
+  tags: gitlab

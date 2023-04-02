@@ -1,0 +1,18 @@
+concurrent = 1
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+
+[[runners]]
+  name = "docker"
+  url = "http://gitlab"
+  id = 1
+  token = "{{ gitlab_runner_token }}"
+  executor = "docker"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]

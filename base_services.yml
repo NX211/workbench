@@ -13,7 +13,7 @@
     - elasticsearch
     - authelia
     - mailrise
-    - gitea
+    - gitlab
     - jenkins
     - n8n
     - minio

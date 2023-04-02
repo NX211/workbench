@@ -1,0 +1,42 @@
+---
+- name: Ensure GitLab Runners Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ project_root_directory }}/gitlab/runners"
+    mode: 0755
+    state: directory
+  tags: gitlab
+
+- name: Ensure GitLab Runners Configuration Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.template:
+    src: config.toml.j2
+    mode: 0644
+    dest: "{{ project_root_directory }}/gitlab/runners/config.toml"
+  tags: gitlab
+  no_log: true
+
+- name: Deploy GitLab Runner Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: gitlab-runner
+    image: "{{ gitlab_runner_docker_image }}:{{ gitlab_runner_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ greytalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /greytalon/apps/gitlab/runners/
+        target: /etc/gitlab-runner/
+        type: bind
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    state: present
+  tags: gitlab
