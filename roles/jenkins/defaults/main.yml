@@ -1,5 +1,0 @@
----
-jenkins_version: "latest"
-jenkins_hostname: "jenkins"
-jenkins_port: "8080"
-jenkins_docker_image: "jenkins/jenkins"
