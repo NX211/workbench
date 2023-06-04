@@ -35,6 +35,16 @@
     state: present
   tags: guacamole
 
+- name: Ensure Guacamole DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ guacamole_domain }}"
+  tags: 
+    - guacamole
+    - dns
+  no_log: true
+
 - name: Deploy Guacamole Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -69,7 +79,7 @@
         type: volume
     labels:
       traefik.http.routers.guacamole.entrypoints: "websecure"
-      traefik.http.routers.guacamole.rule: "Host(`guac.{{ project_tld }}`)"
+      traefik.http.routers.guacamole.rule: "Host(`{{ guacamole_domain }}`)"
       traefik.http.middlewares.guacamole-prefix.addPrefix.prefix: "/guacamole"
       traefik.http.middlewares.guacamole_themepark.plugin.traefik-themepark.app: "guacamole"
       traefik.http.middlewares.guacamole_themepark.plugin.traefik-themepark.theme: "{{ theme_park_default }}"

@@ -7,7 +7,9 @@
   loop:
     - blacktalon/media/kids
     - blacktalon/media/tv
-  tags: sonarr
+  tags: 
+    - sonarr
+    - zfs
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
@@ -17,14 +19,28 @@
   loop:
     - blacktalon/media/downloads/kids
     - blacktalon/media/downloads/tv
-  tags: sonarr
+  tags: 
+    - sonarr
+    - zfs
 
 - name: Ensure Sonarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/sonarr
     state: present
-  tags: sonarr
+  tags: 
+    - sonarr
+    - zfs
+
+- name: Ensure Sonarr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ sonarr_domain }}"
+  tags: 
+    - sonarr
+    - dns
+  no_log: true
 
 - name: Ensure Sonarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
@@ -72,7 +88,7 @@
         type: bind
     labels:
       traefik.http.routers.sonarr.entrypoints: "websecure"
-      traefik.http.routers.sonarr.rule: "Host(`sonarr.{{ project_tld }}`)"
+      traefik.http.routers.sonarr.rule: "Host(`{{ sonarr_domain }}`)"
       traefik.http.routers.sonarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sonarr.tls: "true"
       traefik.http.routers.sonarr.service: "sonarr"
@@ -84,4 +100,8 @@
 
 - name: Import Sonarr Anime Role
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/anime.yml"
+  tags: sonarr
+
+- name: Import Sonarr UHD Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/uhd.yml"
   tags: sonarr

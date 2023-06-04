@@ -1,0 +1,5 @@
+---
+mastodon_version: "latest"
+mastodon_docker_image: "lscr.io/linuxserver/mastodon"
+mastodon_hostname: "mastodon"
+mastodon_port: "443"

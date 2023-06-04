@@ -27,6 +27,16 @@
   ansible.builtin.import_tasks: "{{ role_path }}/tasks/geoip.yml"
   tags: plausible
 
+- name: Ensure Plausible DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ plausible_domain }}"
+  tags: 
+   - plausible
+   - dns
+  no_log: true
+
 - name: Deploy Plausible Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -44,10 +54,10 @@
       ADMIN_USER_EMAIL: "{{ plausible_admin_email }}"
       ADMIN_USER_NAME: "{{ plausible_admin_username }}"
       ADMIN_USER_PWD: "{{ plausible_admin_password }}"
-      BASE_URL: "https://plausible.{{ project_tld }}"
+      BASE_URL: "https://{{ plausible_domain }}"
       SECRET_KEY_BASE: "{{ plausible_secret_key }}"
       DATABASE_URL: "postgres://{{ plausible_database_user }}:{{ plausible_database_password }}@{{ postgres_hostname }}/{{ plausible_database }}"
-      CLICKHOUSE_DATABASE_URL: "http://plausible-db:8123/plausible_events_db"
+      CLICKHOUSE_DATABASE_URL: "http://{{ plausible_db_hostname }}:8123/plausible_events_db"
       MAILER_EMAIL: "{{ email_user }}"
       SMTP_HOST_ADDR: "{{ email_host }}"
       SMTP_HOST_PORT: "465"
@@ -65,7 +75,7 @@
         type: volume
     labels:
       traefik.http.routers.plausible.entrypoints: "websecure"
-      traefik.http.routers.plausible.rule: "Host(`plausible.{{ project_tld }}`)"
+      traefik.http.routers.plausible.rule: "Host(`{{ plausible_domain }}`)"
       traefik.http.routers.plausible.middlewares: "default-headers@file"
       traefik.http.routers.plausible.tls: "true"
       traefik.http.routers.plausible.service: "plausible"

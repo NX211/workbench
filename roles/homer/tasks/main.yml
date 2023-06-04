@@ -16,9 +16,9 @@
     repo: "{{ homer_git_repository_url }}"
     dest: "{{ project_root_directory }}/homer/tools"
     clone: yes
+    version: master
     update: yes
   tags: homer
-
 
 - name: Ensure Homer Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]

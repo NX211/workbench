@@ -4,7 +4,19 @@
   community.general.zfs:
     name: blacktalon/apps/ombi
     state: present
-  tags: ombi
+  tags: 
+    - ombi
+    - zfs
+
+- name: Ensure Ombi DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ ombi_domain }}"
+  tags: 
+    - ombi
+    - dns
+  no_log: true
 
 - name: Deploy Ombi Service
   when: inventory_hostname == groups['managers'][0]
@@ -32,7 +44,7 @@
         type: bind
     labels:
       traefik.http.routers.ombi.entrypoints: "websecure"
-      traefik.http.routers.ombi.rule: "Host(`ombi.{{ media_tld }}`)"
+      traefik.http.routers.ombi.rule: "Host(`{{ ombi_domain }}`)"
       traefik.http.routers.ombi.middlewares: "default-headers@file"
       traefik.http.routers.ombi.tls: "true"
       traefik.http.routers.ombi.service: "ombi"

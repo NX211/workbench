@@ -43,7 +43,15 @@ access_control:
     policy: two_factor
     subject:
     - "group:media"
+  - domain: sonarr3.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:media"
   - domain: radarr.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:media"
+  - domain: radarr2.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"
@@ -80,6 +88,10 @@ access_control:
     subject:
     - "group:media"
   - domain: tdarr.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:media"
+  - domain: openaudible.{{ project_tld }}
     policy: two_factor
     subject:
     - "group:media"

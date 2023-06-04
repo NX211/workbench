@@ -9,6 +9,16 @@
   tags: listmonk
   no_log: true
 
+- name: Ensure Listmonk DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ listmonk_domain }}"
+  tags: 
+    - listmonk
+    - dns
+  no_log: true
+
 - name: Deploy Listmonk Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -37,7 +47,7 @@
         - node.id == {{ yellowtalon_node_id }}
     labels:
       traefik.http.routers.listmonk.entrypoints: "websecure"
-      traefik.http.routers.listmonk.rule: "Host(`listmonk.{{ project_tld }}`)"
+      traefik.http.routers.listmonk.rule: "Host(`{{ listmonk_domain }}`)"
       traefik.http.routers.listmonk.middlewares: "default-headers@file"
       traefik.http.routers.listmonk.tls: "true"
       traefik.http.routers.listmonk.service: "listmonk"

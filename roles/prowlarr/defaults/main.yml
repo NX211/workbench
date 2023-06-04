@@ -2,6 +2,7 @@
 prowlarr_version: "develop"
 flaresolverr_version: "v3.0.0"
 prowlarr_hostname: "prowlarr"
+prowlarr_domain: "prowlarr.{{ project_tld }}"
 flaresolverr_hostname: "flaresolverr"
 flaresolverr_port: "8191"
 flaresolverr_docker_image: "ghcr.io/aeonlucid/flaresolverr"

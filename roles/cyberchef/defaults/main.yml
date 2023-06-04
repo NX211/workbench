@@ -1,5 +1,6 @@
 ---
 cyberchef_version: "latest"
 cyberchef_hostname: "cyberchef"
+cyberchef_domain: "cyberchef.{{ project_tld }}"
 cyberchef_port: "8000"
 cyberchef_docker_image: "mpepping/cyberchef"

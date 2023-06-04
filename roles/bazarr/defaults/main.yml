@@ -1,4 +1,5 @@
 ---
 bazarr_version: "latest"
 bazarr_hostname: "bazarr"
+bazarr_domain: "bazarr.{{ project_tld }}"
 bazarr_docker_image: "ghcr.io/linuxserver/bazarr"

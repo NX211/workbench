@@ -1,10 +1,20 @@
 ---
+- name: Ensure FreshRSS DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ freshrss_domain }}"
+  tags: freshrss
+  no_log: true
+
 - name: Ensure FreshRSS Dataset Exist
   when: inventory_hostname == groups['workers'][0]
   community.general.zfs:
     name: greytalon/apps/freshrss
     state: present
-  tags: freshrss
+  tags: 
+    - freshrss
+    - zfs
 
 - name: Ensure FreshRSS Database Exist
   ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
@@ -40,7 +50,7 @@
         type: bind
     labels:
       traefik.http.routers.freshrss.entrypoints: "websecure"
-      traefik.http.routers.freshrss.rule: "Host(`rss.{{ project_tld }}`)"
+      traefik.http.routers.freshrss.rule: "Host(`{{ freshrss_domain }}`)"
       traefik.http.routers.freshrss.middlewares: "default-headers@file"
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.service: "freshrss"

@@ -4,7 +4,19 @@
   community.general.zfs:
     name: blacktalon/apps/wizarr
     state: present
-  tags: wizarr
+  tags: 
+    - wizarr
+    - zfs
+
+- name: Ensure Wizarr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ wizarr_domain }}"
+  tags: 
+    - wizarr
+    - dns
+  no_log: true
 
 - name: Deploy Wizarr Service
   when: inventory_hostname == groups['managers'][0]
@@ -19,7 +31,7 @@
     restart_config:
       condition: on-failure
     env:
-      APP_URL: "https://join.{{ media_tld }}"
+      APP_URL: "https://{{ wizarr_domain }}"
       DISABLE_BUILTIN_AUTH: "false"
     placement:
       constraints:
@@ -31,7 +43,7 @@
         type: bind
     labels:
       traefik.http.routers.wizarr.entrypoints: "websecure"
-      traefik.http.routers.wizarr.rule: "Host(`join.{{ media_tld }}`)"
+      traefik.http.routers.wizarr.rule: "Host(`{{ wizarr_domain }}`)"
       traefik.http.routers.wizarr.middlewares: "default-headers@file"
       traefik.http.routers.wizarr.tls: "true"
       traefik.http.routers.wizarr.service: "wizarr"

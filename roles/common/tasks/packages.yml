@@ -1,0 +1,22 @@
+---
+- name: Update system
+  become: true
+  package:
+    update_cache: true
+    upgrade: true
+
+- name: Install packages
+  become: true
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages }}"
+
+- name: Install packages
+  import_role:
+    name: common_roles/install_latest
+  vars:
+    packages:
+    - "git"
+    - "zsh"
+    - "stow"

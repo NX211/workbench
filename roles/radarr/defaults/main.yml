@@ -1,4 +1,7 @@
 ---
 radarr_version: "nightly"
 radarr_hostname: "radarr"
+radarr_domain: "radarr.{{ project_tld }}"
+radarr_uhd_hostname: "radarr2"
+radarr_uhd_domain: "radarr2.{{ project_tld }}"
 radarr_docker_image: "ghcr.io/linuxserver/radarr"

@@ -1,5 +1,8 @@
 ---
 minio_version: "latest"
 minio_hostname: "minio"
+minio_domain: "minio.{{ project_tld }}"
+s3_domain: "s3.{{ project_tld }}"
 minio_port: "9001"
+s3_port: "9000"
 minio_docker_image: "quay.io/minio/minio"

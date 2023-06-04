@@ -1,15 +1,17 @@
-concurrent = 1
+concurrent = 3
 check_interval = 0
 
 [session_server]
+  listen_address = "[::]:8093" 
+  advertise_address = "gitlab-runner:8093"
   session_timeout = 1800
 
 
 [[runners]]
   name = "docker"
-  url = "http://gitlab"
+  url = "https://authoritah.io/"
   id = 1
-  token = "{{ gitlab_runner_token }}"
+  token = "GR1348941nTFMA3qHkpY7jtXJZwGV"
   executor = "docker"
   [runners.custom_build_dir]
   [runners.cache]

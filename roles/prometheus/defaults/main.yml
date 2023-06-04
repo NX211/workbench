@@ -1,0 +1,5 @@
+---
+prometheus_hostname: "prometheus"
+prometheus_version: "latest"
+prometheus_port: "9090"
+prometheus_docker_image: "prom/prometheus"

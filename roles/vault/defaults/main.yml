@@ -2,4 +2,5 @@
 vault_docker_image: "vault"
 vault_version: "latest"
 vault_hostname: "vault"
+vault_domain: "pki.{{ project_tld }}"
 vault_port: "8200"

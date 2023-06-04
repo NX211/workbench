@@ -3,14 +3,14 @@
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.apt:
     name: python3-docker
-  tags: plausible
+  tags: plausible-goip
 
 - name: Ensure Plausible GeoIP Volume Exist
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_volume:
     name: plausible-geoip
     state: present
-  tags: plausible
+  tags: plausible-goip
 
 - name: Deploy Plausible GeoIP Service
   when: inventory_hostname == groups['managers'][0]
@@ -39,4 +39,4 @@
         target: /usr/share/GeoIP/
         type: volume
     state: present
-  tags: plausible
+  tags: plausible-goip

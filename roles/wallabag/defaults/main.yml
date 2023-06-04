@@ -1,5 +1,6 @@
 ---
 wallabag_version: latest
 wallabag_hostname: "wallabag"
+wallabag_domain: "wallabag.{{ project_tld }}"
 wallabag_port: "80"
 wallabag_docker_image: "wallabag/wallabag"

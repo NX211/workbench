@@ -1,10 +1,22 @@
 ---
+- name: Ensure RSS-Bridge DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ freshrss_bridge_domain }}"
+  tags: 
+    - rss-bridge
+    - dns
+  no_log: true
+
 - name: Ensure RSS-Bridge Dataset Exist
   when: inventory_hostname == groups['workers'][0]
   community.general.zfs:
     name: greytalon/apps/rssbridge
     state: present
-  tags: freshrss
+  tags: 
+    - rss-bridge
+    - zfs
 
 - name: Ensure RSS-Bridge Configuration File Exist
   when: inventory_hostname == groups['workers'][0]
@@ -12,7 +24,7 @@
     src: whitelist.txt.j2
     dest: "{{ project_root_directory }}/rssbridge/whitelist.txt"
     mode: 0644
-  tags: freshrss
+  tags: rss-bridge
   no_log: true
 
 - name: Deploy RSS-Bridge Service
@@ -37,7 +49,7 @@
         type: bind
     labels:
       traefik.http.routers.rssbridge.entrypoints: "websecure"
-      traefik.http.routers.rssbridge.rule: "Host(`rssbridge.{{ project_tld }}`)"
+      traefik.http.routers.rssbridge.rule: "Host(`{{ freshrss_bridge_domain }}`)"
       traefik.http.routers.rssbridge.middlewares: "default-headers@file"
       traefik.http.routers.rssbridge.tls: "true"
       traefik.http.routers.rssbridge.service: "rssbridge"
@@ -45,4 +57,4 @@
       traefik.http.services.rssbridge.loadbalancer.server.port: "{{ freshrss_bridge_port }}"
       traefik.enable: "true"
     state: present
-  tags: freshrss
+  tags: rss-bridge

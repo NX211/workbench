@@ -14,7 +14,9 @@
     - blacktalon/media/movies
     - blacktalon/media/music
     - blacktalon/media/tv
-  tags: transmission
+  tags: 
+    - transmission
+    - zfs
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
@@ -32,14 +34,28 @@
     - blacktalon/media/downloads/movies
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/tv
-  tags: transmission
+  tags: 
+    - transmission
+    - zfs
 
 - name: Ensure Transmission Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/transmission
     state: present
-  tags: transmission
+  tags: 
+    - transmission
+    - zfs
+
+- name: Ensure Transmission DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ transmission_domain }}"
+  tags: 
+    - transmission
+    - dns
+  no_log: true
 
 - name: Deploy Transmission Service
   when: inventory_hostname == groups['managers'][0]
@@ -59,10 +75,10 @@
     restart_config:
       condition: on-failure
     publish:
-      - published_port: "51413"
-        target_port: "51413"
-      - published_port: "51413"
-        target_port: "51413"
+      - published_port: "{{ transmission_peer_port }}"
+        target_port: "{{ transmission_peer_port }}"
+      - published_port: "{{ transmission_peer_port }}"
+        target_port: "{{ transmission_peer_port }}"
         protocol: "udp"
     placement:
       constraints:
@@ -79,7 +95,7 @@
         type: bind
     labels:
       traefik.http.routers.transmission.entrypoints: "websecure"
-      traefik.http.routers.transmission.rule: "Host(`transmission.{{ project_tld }}`)"
+      traefik.http.routers.transmission.rule: "Host(`{{ transmission_domain }}`)"
       traefik.http.routers.transmission.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.transmission.tls: "true"
       traefik.http.routers.transmission.service: "transmission"

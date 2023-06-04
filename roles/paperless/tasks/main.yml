@@ -37,6 +37,16 @@
   tags: paperless
   no_log: true
 
+- name: Ensure PeerTube DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ peertube_tld }}"
+  tags: 
+    - peertube
+    - dns
+  no_log: true
+
 - name: Deploy Paperless Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:

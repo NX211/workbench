@@ -8,13 +8,13 @@ services:
       PUID: "{{ media_user }}"
       PGID: "{{ media_group }}"
       TZ: "{{ default_timezone }}"
-      webUIPort: "8265"
-      serverPort: "8266"
+      webUIPort: "{{ tdarr_port }}"
+      serverPort: "{{ tdarr_server_port }}"
       serverIP: "0.0.0.0"
     network_mode: bridge
     ports:
-      - 8265:8265
-      - 8266:8266
+      - {{ tdarr_port }}:{{ tdarr_port }}
+      - {{ tdarr_server_port }}:{{ tdarr_server_port }}
       - 8267:8267
     volumes:
       - /blacktalon/apps/tdarr/server:/app/server
@@ -32,7 +32,7 @@ services:
       PGID: "{{ media_group }}"
       TZ: "{{ default_timezone }}"
       nodeID: "MainNode"
-      serverPort: "8266"
+      serverPort: "{{ tdarr_server_port }}"
       serverIP: "0.0.0.0"
       nodeIP: "0.0.0.0"
     network_mode: service:tdarr

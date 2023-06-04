@@ -21,6 +21,8 @@ entryPoints:
       trustedIPs:
         - "127.0.0.1/32"
         - "10.10.0.1"
+  metrics:
+    address: :8082
   git:
     address: ":22"
   mongodb:
@@ -48,6 +50,13 @@ certificatesResolvers:
         provider: dreamhost
         disablePropagationCheck: true
         delayBeforeCheck: 0
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
 
 experimental:
   plugins:

@@ -10,10 +10,11 @@
     - postgres
     - redis
     - mongodb
+    - prometheus
     - elasticsearch
     - authelia
     - mailrise
+    - uptime-kuma
     - gitlab
-    - jenkins
     - n8n
     - minio

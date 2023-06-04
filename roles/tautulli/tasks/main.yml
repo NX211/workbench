@@ -7,6 +7,16 @@
     state: directory
   tags: tautulli
 
+- name: Ensure Tautulli DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ tautulli_domain }}"
+  tags: 
+    - tautulli
+    - dns
+  no_log: true
+
 - name: Deploy Tautulli Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -18,8 +28,8 @@
     mode: replicated
     force_update: yes
     env:
-      PUID: "1000"
-      PGID: "1000"
+      PUID: "{{ tautulli_puid }}"
+      PGID: "{{ tautulli_guid }}"
       TZ: "{{ default_timezone }}"
     restart_config:
       condition: on-failure
@@ -33,7 +43,7 @@
         type: bind
     labels:
       traefik.http.routers.tautulli.entrypoints: "websecure"
-      traefik.http.routers.tautulli.rule: "Host(`stats.{{ media_tld }}`)"
+      traefik.http.routers.tautulli.rule: "Host(`{{ tautulli_domain }}`)"
       traefik.http.routers.tautulli.middlewares: "default-headers@file"
       traefik.http.routers.tautulli.tls: "true"
       traefik.http.routers.tautulli.service: "tautulli"

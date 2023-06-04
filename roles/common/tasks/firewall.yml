@@ -1,0 +1,16 @@
+---
+- name: UFW deny all except HTTP and HTTPS
+  ufw:
+    state: enabled
+    policy: deny
+    rule: allow
+    port: "{{ item }}"
+  with_items:
+    - "{{ ports.http }}"
+    - "{{ ports.https }}"
+
+- name: UFW limit ssh traffic
+  ufw:
+    state: enabled
+    rule: limit
+    port: "{{ ports.ssh }}"

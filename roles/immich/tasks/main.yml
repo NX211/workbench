@@ -4,14 +4,18 @@
   community.general.zfs:
     name: greytalon/apps/immich
     state: present
-  tags: immich
+  tags: 
+    - immich
+    - zfs
 
 - name: Ensure Immich Media Dataset Exist
   when: inventory_hostname == groups['workers'][0]
   community.general.zfs:
     name: greytalon/media/photos
     state: present
-  tags: immich
+  tags: 
+    - immich
+    - zfs
 
 - name: Ensure Immich Directories Exist
   when: inventory_hostname == groups['workers'][0]
@@ -23,6 +27,16 @@
     - /greytalon/apps/immich/config
     - /greytalon/apps/immich/database
   tags: immich
+
+- name: Ensure Immich DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ photo_tld }}"
+  tags: 
+    - immich
+    - dns
+  no_log: true
 
 - name: Deploy Immich Database Service
   when: inventory_hostname == groups['managers'][0]

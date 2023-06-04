@@ -1,5 +1,6 @@
 ---
 wizarr_version: "latest"
 wizarr_hostname: "wizarr"
+wizarr_domain: "join.{{ media_tld }}"
 wizarr_port: "5690"
 wizarr_docker_image: "wizarr/wizarr"

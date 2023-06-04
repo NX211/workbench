@@ -12,9 +12,13 @@
     - blacktalon/media/comics
     - blacktalon/media/kids
     - blacktalon/media/movies
+    - blacktalon/media/movies-uhd
     - blacktalon/media/music
     - blacktalon/media/tv
-  tags: sabnzbd
+    - blacktalon/media/tv-uhd
+  tags: 
+    - sabnzbd
+    - zfs
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
@@ -30,16 +34,32 @@
     - blacktalon/media/downloads/comics
     - blacktalon/media/downloads/kids
     - blacktalon/media/downloads/movies
+    - blacktalon/media/downloads/movies-uhd
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/tv
-  tags: sabnzbd
+    - blacktalon/media/downloads/tv-uhd
+  tags: 
+    - sabnzbd
+    - zfs
 
 - name: Ensure Sabnzbd Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/sabnzbd
     state: present
-  tags: sabnzbd
+  tags: 
+    - sabnzbd
+    - zfs
+
+- name: Ensure Sabnzbd DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ sabnzbd_domain }}"
+  tags: 
+    - sabnzbd
+    - dns
+  no_log: true
 
 - name: Ensure Sabnzbd Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
@@ -84,7 +104,7 @@
         type: bind
     labels:
       traefik.http.routers.sabnzbd.entrypoints: "websecure"
-      traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{ project_tld }}`)"
+      traefik.http.routers.sabnzbd.rule: "Host(`{{ sabnzbd_domain }}`)"
       traefik.http.routers.sabnzbd.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.sabnzbd.tls: "true"
       traefik.http.routers.sabnzbd.service: "sabnzbd"

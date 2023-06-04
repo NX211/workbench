@@ -12,6 +12,16 @@
     state: present
   tags: wallabag
 
+- name: Ensure Wallabag DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ wallabag_domain }}"
+  tags: 
+    - wallabag
+    - dns
+  no_log: true
+
 - name: Deploy Wallabag Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -38,7 +48,7 @@
       SYMFONY__ENV__MAILER_USER: "{{ email_user }}"
       SYMFONY__ENV__MAILER_PASSWORD: "{{ email_password }}"
       SYMFONY__ENV__FROM_EMAIL: "{{ email_user }}"
-      SYMFONY__ENV__DOMAIN_NAME: "https://wallabag.{{ project_tld }}"
+      SYMFONY__ENV__DOMAIN_NAME: "https://{{ wallabag_domain }}"
       SYMFONY__ENV__REDIS_SCHEME: "tcp"
       SYMFONY__ENV__REDIS_HOST: "{{ redis_hostname }}"
       SYMFONY__ENV__REDIS_PORT: "{{ redis_port }}"
@@ -62,7 +72,7 @@
         type: volume
     labels:
       traefik.http.routers.wallabag.entrypoints: "websecure"
-      traefik.http.routers.wallabag.rule: "Host(`wallabag.{{ project_tld }}`)"
+      traefik.http.routers.wallabag.rule: "Host(`{{ wallabag_domain }}`)"
       traefik.http.routers.wallabag.middlewares: "default-headers@file"
       traefik.http.routers.wallabag.tls: "true"
       traefik.http.routers.wallabag.service: "wallabag"

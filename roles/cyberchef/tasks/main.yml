@@ -1,4 +1,14 @@
 ---
+- name: Ensure Cyberchef DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ cyberchef_domain }}"
+  tags: 
+    - cyberchef
+    - dns
+  no_log: true
+
 - name: Deploy Cyberchef Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -17,7 +27,7 @@
     replicas: 1
     labels:
       traefik.http.routers.cyberchef.entrypoints: "websecure"
-      traefik.http.routers.cyberchef.rule: "Host(`cyberchef.{{ project_tld }}`)"
+      traefik.http.routers.cyberchef.rule: "Host(`{{ cyberchef_domain }}`)"
       traefik.http.middlewares.cyberchef_plausible.plugin.rewritebody.rewrites.regex: "</head>"
       traefik.http.middlewares.cyberchef_plausible.plugin.rewritebody.rewrites.replacement: "<script defer data-domain='cyberchef.{{ project_tld }}' src='https://plausible.{{ project_tld }}/js/plausible.js'></script></head>"
       traefik.http.routers.cyberchef.middlewares: "default-headers@file,authelia@file,cyberchef_plausible"

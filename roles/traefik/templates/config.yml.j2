@@ -1,4 +1,7 @@
 http:
+  serversTransports:
+    ignorecert:
+      insecureSkipVerify: true
   middlewares:
     authelia:
       forwardauth:
@@ -13,6 +16,17 @@ http:
     default-headers:
       headers:
         referrerPolicy: no-referrer
+        forceSTSHeader: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        browserXssFilter: true
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+    mastodon-headers:
+      headers:
+        referrerPolicy: same-origin
         forceSTSHeader: true
         stsSeconds: 31536000
         stsIncludeSubdomains: true
@@ -129,7 +143,7 @@ http:
     grafana:
       loadBalancer:
         servers:
-          - url: "http://10.20.0.230:3000/"
+          - url: "http://10.20.0.200:4000/"
     omada:
       loadBalancer:
         servers:
@@ -145,7 +159,7 @@ http:
     blueiris:
       loadBalancer:
         servers:
-          - url: "http://10.20.0.110:81/"
+          - url: "http://10.60.0.200:81/"
     tdarr:
       loadBalancer:
         servers:

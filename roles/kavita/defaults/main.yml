@@ -1,5 +1,6 @@
 ---
 kavita_version: "latest"
 kavita_hostname: "kavita"
+kavita_domain: "kavita.{{ project_tld }}"
 kavita_port: "5000"
 kavita_docker_image: "kizaing/kavita"

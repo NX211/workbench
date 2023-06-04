@@ -4,7 +4,9 @@
   community.general.zfs:
     name: greytalon/apps/gitlab
     state: present
-  tags: gitlab
+  tags: 
+    - gitlab
+    - zfs
 
 - name: Ensure GitLab Directories Exist
   when: inventory_hostname == groups['workers'][0]
@@ -17,6 +19,16 @@
     - "{{ project_root_directory }}/gitlab/logs"
     - "{{ project_root_directory }}/gitlab/config"
   tags: gitlab
+
+- name: Ensure GitLab DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ git_tld }}"
+  tags: 
+    - gitlab
+    - dns
+  no_log: true
 
 - name: Deploy GitLab Service
   when: inventory_hostname == groups['managers'][0]

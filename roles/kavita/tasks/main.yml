@@ -8,14 +8,28 @@
     - blacktalon/media/manga
     - blacktalon/media/books
     - blacktalon/media/comics
-  tags: kavita
+  tags: 
+    - kavita
+    - zfs
 
 - name: Ensure Kavita Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/kavita
     state: present
-  tags: kavita
+  tags: 
+    - kavita
+    - zfs
+
+- name: Ensure Kavita DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ kavita_domain }}"
+  tags: 
+    - kavita
+    - dns
+  no_log: true
 
 - name: Ensure Kavita Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
@@ -61,7 +75,7 @@
         type: bind
     labels:
       traefik.http.routers.kavita.entrypoints: "websecure"
-      traefik.http.routers.kavita.rule: "Host(`kavita.{{ project_tld }}`)"
+      traefik.http.routers.kavita.rule: "Host(`{{ kavita_domain }}`)"
       traefik.http.routers.kavita.middlewares: "default-headers@file"
       traefik.http.routers.kavita.tls: "true"
       traefik.http.routers.kavita.service: "kavita"

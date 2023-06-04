@@ -4,7 +4,9 @@
   community.general.zfs:
     name: blacktalon/apps/tdarr
     state: present
-  tags: tdarr
+  tags: 
+    - tdarr
+    - zfs
 
 - name: Ensure Tdarr Directories Exist
   when: inventory_hostname == groups['media'][0]
@@ -25,6 +27,16 @@
   ansible.builtin.pip:
     name: jsondiff
   tags: tdarr
+
+- name: Ensure Tdarr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ tdarr_domain }}"
+  tags: 
+    - tdarr
+    - dns
+  no_log: true
 
 - name: Create Tdarr Docker Compose File
   when: inventory_hostname == groups['media'][0]

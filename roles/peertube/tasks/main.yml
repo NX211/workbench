@@ -4,7 +4,9 @@
   community.general.zfs:
     name: blacktalon/apps/peertube
     state: present
-  tags: peertube
+  tags: 
+    - peertube
+    - zfs
 
 - name: Ensure PeerTube Directories Exist
   when: inventory_hostname == groups['media'][0]
@@ -24,6 +26,16 @@
     state: present
   tags: peertube
 
+- name: Ensure PeerTube DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ peertube_tld }}"
+  tags: 
+    - peertube
+    - dns
+  no_log: true
+
 - name: Ensure PeerTube Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
   ansible.builtin.template:
@@ -42,6 +54,21 @@
     database_password: "{{ peertube_database_password }}"
   tags: peertube
   no_log: true
+
+- name: Add Extensions to PeerTube Database
+  when: inventory_hostname == groups['managers'][0]
+  community.postgresql.postgresql_ext:
+    name: "{{ item }}"
+    db: peertube
+    login_host: "{{ postgres_localhost }}"
+    login_port: "{{ postgres_port }}"
+    login_user: "{{ postgres_root_user }}"
+    login_password: "{{ postgres_root_password }}"
+    state: present
+  loop:
+    - pg_trgm
+    - unaccent
+  tags: peertube
 
 - name: Deploy PeerTube Service
   when: inventory_hostname == groups['managers'][0]

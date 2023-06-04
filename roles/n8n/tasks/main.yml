@@ -9,6 +9,16 @@
   tags: n8n
   no_log: true
 
+- name: Ensure n8n DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ n8n_domain }}"
+  tags: 
+    - n8n
+    - dns
+  no_log: true
+
 - name: Deploy n8n Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -24,7 +34,7 @@
       DB_POSTGRESDB_DATABASE: "{{ n8n_database }}"
       DB_POSTGRESDB_USER: "{{ n8n_database_user }}"
       DB_POSTGRESDB_PASSWORD: "{{ n8n_database_password }}"
-      N8N_EDITOR_BASE_URL: "n8n.{{ project_tld }}"
+      N8N_EDITOR_BASE_URL: "{{ n8n_domain }}"
       N8N_EMAIL_MODE: "smtp"
       N8N_SMTP_HOST: "{{ email_host }}"
       N8N_SMTP_PORT: "{{ email_port }}"
@@ -46,7 +56,7 @@
     replicas: 1
     labels:
       traefik.http.routers.n8n.entrypoints: "websecure"
-      traefik.http.routers.n8n.rule: "Host(`n8n.{{ project_tld }}`)"
+      traefik.http.routers.n8n.rule: "Host(`{{ n8n_domain }}`)"
       traefik.http.routers.n8n.middlewares: "default-headers@file"
       traefik.http.routers.n8n.tls: "true"
       traefik.http.routers.n8n.service: "n8n"

@@ -1,0 +1,96 @@
+---
+- name: Ensure Mastodon Config Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: mastodon_config
+    state: present
+  tags: mastodon
+
+- name: Ensure Mastodon Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ mastodon_database }}"
+    database_user: "{{ mastodon_database_user }}"
+    database_password: "{{ mastodon_database_password }}"
+  tags: mastodon
+  no_log: true
+
+- name: Ensure Mastodon DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ social_tld }}"
+  tags: 
+    - mastodon
+    - dns
+  no_log: true
+
+- name: Deploy Mastodon Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: mastodon
+    hostname: "{{ mastodon_hostname }}"
+    image: "{{ mastodon_docker_image }}:{{ mastodon_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{ default_timezone }}"
+      LOCAL_DOMAIN: "{{ social_tld }}"
+      REDIS_HOST: "{{ redis_hostname }}"
+      REDIS_PORT: "{{ redis_port }}"
+      DB_HOST: "{{ postgres_hostname }}"
+      DB_USER: "{{ mastodon_database_user }}"
+      DB_NAME: "{{ mastodon_database }}"
+      DB_PASS: "{{ mastodon_database_password }}"
+      DB_PORT: "{{ postgres_port }}"
+      ES_ENABLED: "true"
+      SECRET_KEY_BASE: "{{ mastodon_secret_key_base }}"
+      OTP_SECRET: "{{ mastodon_otp_secret }}"
+      VAPID_PRIVATE_KEY: "{{ mastodon_vapid_private_key }}"
+      VAPID_PUBLIC_KEY: "{{ mastodon_vapid_public_key }}"
+      SMTP_SERVER: "{{ email_host }}"
+      SMTP_PORT: "{{ email_port }}"
+      SMTP_LOGIN: "{{ email_user }}"
+      SMTP_PASSWORD: "{{ email_password }}"
+      SMTP_FROM_ADDRESS: "{{ email_user }}"
+      S3_ENABLED: "true"
+      ES_HOST: "{{ elasticsearch_hostname }}"
+      ES_PORT: "{{ elasticsearch_port }}"
+      ES_USER: "{{ elasticsearch_username }}"
+      ES_PASS: "{{ elasticsearch_password }}"
+      SIDEKIQ_ONLY: "false"
+      SIDEKIQ_QUEUE: "default"
+      SIDEKIQ_DEFAULT: "false"
+      SIDEKIQ_THREADS: "5"
+      DB_POOL: "5"
+      S3_BUCKET: "https://s3.authoritah.com/mastodon"
+      AWS_ACCESS_KEY_ID: "2QW9hgu3FKVcX7BvXEdRjehZidVDNP42"
+      AWS_SECRET_ACCESS_KEY: "jRV48ywcG99V6JT5XQYNK5SLQJqDZNSR"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: mastodon_config
+        target: /config/
+        type: volume
+    labels:
+      traefik.http.routers.mastodon.entrypoints: "websecure"
+      traefik.http.routers.mastodon.rule: "Host(`{{ social_tld }}`)"
+      traefik.http.routers.mastodon.middlewares: "mastodon-headers@file"
+      traefik.http.routers.mastodon.tls: "true"
+      traefik.http.routers.mastodon.service: "mastodon"
+      traefik.http.services.mastodon.loadbalancer.server.scheme: "https"
+      traefik.http.services.mastodon.loadbalancer.serverstransport: "ignorecert@file"
+      traefik.http.routers.mastodon.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.mastodon.loadbalancer.server.port: "{{ mastodon_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: mastodon

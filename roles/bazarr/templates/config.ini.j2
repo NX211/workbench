@@ -1,7 +1,7 @@
 [general]
 ip = 0.0.0.0
 port = {{ bazarr_port }}
-base_url =
+base_url = 
 path_mappings = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
 debug = False
 branch = master
@@ -10,7 +10,7 @@ single_language = False
 minimum_score = 90
 use_scenename = True
 use_postprocessing = False
-postprocessing_cmd =
+postprocessing_cmd = 
 postprocessing_threshold = 90
 use_postprocessing_threshold = False
 postprocessing_threshold_movie = 70
@@ -19,9 +19,9 @@ use_sonarr = True
 use_radarr = True
 path_mappings_movie = [['', ''], ['', ''], ['', ''], ['', ''], ['', '']]
 serie_default_enabled = True
-serie_default_profile =
+serie_default_profile = 
 movie_default_enabled = True
-movie_default_profile =
+movie_default_profile = 
 page_size = 25
 page_size_manual_search = 10
 minimum_score_movie = 70
@@ -39,18 +39,22 @@ multithreading = True
 chmod_enabled = False
 chmod = 0640
 subfolder = current
-subfolder_custom =
+subfolder_custom = 
 upgrade_subs = False
 upgrade_frequency = 12
 days_to_upgrade_subs = None
 upgrade_manual = False
 anti_captcha_provider = None
-wanted_search_frequency = 3
-wanted_search_frequency_movie = 3
-subzero_mods =
+wanted_search_frequency = 6
+wanted_search_frequency_movie = 6
+subzero_mods = 
 dont_notify_manual_actions = False
 hi_extension = hi
 embedded_subtitles_parser = ffprobe
+default_und_audio_lang = 
+default_und_embedded_subtitles_lang = 
+parse_embedded_audio_track = False
+skip_hashing = False
 serie_default_language = ['en']
 serie_default_hi = False
 serie_default_forced = False
@@ -78,8 +82,9 @@ hour = 3
 [sonarr]
 ip = sonarr
 port = 8989
-base_url =
+base_url = 
 ssl = False
+http_timeout = 60
 apikey = {{ sonarr_api_key }}
 full_update = Daily
 full_update_day = 6
@@ -96,8 +101,9 @@ defer_search_signalr = False
 [radarr]
 ip = radarr
 port = 7878
-base_url =
+base_url = 
 ssl = False
+http_timeout = 60
 apikey = {{ radarr_api_key }}
 full_update = Daily
 full_update_day = 6
@@ -110,10 +116,10 @@ defer_search_signalr = False
 
 [proxy]
 type = None
-url =
-port =
-username =
-password =
+url = 
+port = 
+username = 
+password = 
 exclude = localhost,127.0.0.1
 
 [opensubtitles]
@@ -131,65 +137,72 @@ password = {{ opensubtitlescom_password_hash }}
 use_hash = True
 
 [addic7ed]
-username =
-password =
-cookies =
-user_agent =
+username = 
+password = 
+cookies = 
+user_agent = 
 vip = False
 random_agents = True
 
 [podnapisi]
 verify_ssl = True
 
+[subf2m]
+verify_ssl = True
+
+[whisperai]
+endpoint = http://127.0.0.1:9000
+timeout = 3600
+
 [legendasdivx]
-username =
-password =
+username = 
+password = 
 skip_wrong_fps = False
 
 [ktuvit]
-email =
-hashed_password =
+email = 
+hashed_password = 
 
 [legendastv]
-username =
-password =
+username = 
+password = 
 featured_only = False
 
 [xsubs]
-username =
-password =
+username = 
+password = 
 
 [assrt]
-token =
+token = 
 
 [anticaptcha]
-anti_captcha_key =
+anti_captcha_key = 
 
 [deathbycaptcha]
-username =
-password =
+username = 
+password = 
 
 [napisy24]
-username =
-password =
+username = 
+password = 
 
 [subscene]
 username = {{ subscene_username }}
 password = {{ subscene_password_hash }}
 
 [betaseries]
-token =
+token = 
 
 [analytics]
 enabled = True
 
 [titlovi]
-username =
-password =
+username = 
+password = 
 
 [titulky]
-username =
-password =
+username = 
+password = 
 approved_only = False
 skip_wrong_fps = False
 multithreading = True
@@ -203,10 +216,10 @@ include_ass = True
 include_srt = True
 
 [karagarga]
-username =
-password =
-f_username =
-f_password =
+username = 
+password = 
+f_username = 
+f_password = 
 
 [subsync]
 use_subsync = False
@@ -244,4 +257,12 @@ video_codec = 2
 streaming_service = 0
 edition = 0
 hearing_impaired = 1
+
+[postgresql]
+enabled = False
+host = localhost
+port = 5432
+database = 
+username = 
+password = 
 

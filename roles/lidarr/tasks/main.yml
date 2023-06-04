@@ -7,7 +7,9 @@
   loop:
     - blacktalon/media/music
     - blacktalon/media/music-videos
-  tags: lidarr
+  tags: 
+    - lidarr
+    - zfs
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
@@ -17,14 +19,28 @@
   loop:
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/music-videos
-  tags: lidarr
+  tags: 
+    - lidarr
+    - zfs
 
 - name: Ensure Lidarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/lidarr
     state: present
-  tags: lidarr
+  tags: 
+   - lidarr
+   - zfs
+
+- name: Ensure Lidarr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ lidarr_domain }}"
+  tags: 
+    - lidarr
+    - dns
+  no_log: true
 
 - name: Ensure Lidarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
@@ -69,7 +85,7 @@
         type: bind
     labels:
       traefik.http.routers.lidarr.entrypoints: "websecure"
-      traefik.http.routers.lidarr.rule: "Host(`lidarr.{{ project_tld }}`)"
+      traefik.http.routers.lidarr.rule: "Host(`{{ lidarr_domain }}`)"
       traefik.http.routers.lidarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.lidarr.tls: "true"
       traefik.http.routers.lidarr.service: "lidarr"

@@ -2,4 +2,5 @@
 n8n_version: "latest"
 n8n_docker_image: "n8nio/n8n"
 n8n_hostname: "n8n"
+n8n_domain: "n8n.{{ project_tld }}"
 n8n_port: "5678"

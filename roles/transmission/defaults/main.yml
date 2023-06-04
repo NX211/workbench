@@ -1,5 +1,7 @@
 ---
 transmission_version: "latest"
 transmission_hostname: "transmission"
+transmission_domain: "transmission.{{ project_tld }}"
 transmission_port: "9091"
+transmission_peer_port: "51413"
 transmission_docker_image: "lscr.io/linuxserver/transmission"

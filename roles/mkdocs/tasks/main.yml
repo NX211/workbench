@@ -4,7 +4,9 @@
   community.general.zfs:
     name: greytalon/apps/mkdocs
     state: present
-  tags: mkdocs
+  tags: 
+    - mkdocs
+    - zfs
 
 - name: Clone a Wiki repository
   when: inventory_hostname == groups['workers'][0]
@@ -24,6 +26,16 @@
     database_user: "{{ mkdocs_database_user }}"
     database_password: "{{ mkdocs_database_password }}"
   tags: mkdocs
+  no_log: true
+
+- name: Ensure MkDocs DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ mkdocs_domain }}"
+  tags: 
+    - mkdocs
+    - dns
   no_log: true
 
 - name: Deploy MkDocs Service
@@ -73,7 +85,7 @@
     replicas: 1
     labels:
       traefik.http.routers.mkdocs.entrypoints: "websecure"
-      traefik.http.routers.mkdocs.rule: "Host(`wiki.{{ project_tld }}`)"
+      traefik.http.routers.mkdocs.rule: "Host(`{{ mkdocs_domain }}`)"
       traefik.http.routers.mkdocs.middlewares: "default-headers@file"
       traefik.http.routers.mkdocs.tls: "true"
       traefik.http.routers.mkdocs.service: "mkdocs"

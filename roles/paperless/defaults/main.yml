@@ -2,4 +2,5 @@
 paperless_version: "latest"
 paperless_docker_image: "ghcr.io/paperless-ngx/paperless-ngx"
 paperless_hostname: "paperless"
+paperless_domain: ""
 paperless_port: "8000"

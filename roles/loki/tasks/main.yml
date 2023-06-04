@@ -1,0 +1,41 @@
+---
+- name: Ensure Loki Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.file:
+    path: "{{ project_root_directory }}/loki"
+    mode: 0755
+    state: directory
+  tags: loki
+
+- name: Ensure Loki Configuration File Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.template:
+    src: loki-config.yaml.j2
+    mode: 0755
+    dest: "{{ project_root_directory }}/loki/local-config.yaml"
+  no_log: true
+  tags: loki
+
+- name: Deploy Loki Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: loki
+    hostname: "{{ loki_hostname }}"
+    image: "{{ loki_docker_image }}:{{ loki_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    command: "-config.file=/etc/loki/local-config.yaml"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ yellowtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /yellowtalon/apps/grafana/loki/local-config.yaml
+        target: /etc/loki/local-config.yaml
+        type: bind
+    state: present
+  tags: loki

@@ -4,21 +4,36 @@
   community.general.zfs:
     name: blacktalon/media/movies
     state: present
-  tags: radarr
+  tags: 
+    - radarr
+    - zfs
 
 - name: Ensure Media Download Datasets Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/media/downloads/movies
     state: present
-  tags: radarr
+  tags: 
+    - radarr
+    - zfs
 
 - name: Ensure Radarr Dataset Exist
   when: inventory_hostname == groups['media'][0]
   community.general.zfs:
     name: blacktalon/apps/radarr
     state: present
-  tags: radarr
+  tags: 
+    - radarr
+    - zfs
+
+- name: Ensure Readarr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ radarr_domain }}"
+  tags: 
+    - readarr
+    - dns
 
 - name: Ensure Radarr Configuration Files Exist
   when: inventory_hostname == groups['media'][0]
@@ -74,4 +89,8 @@
       traefik.http.services.radarr.loadbalancer.server.port: "{{ radarr_port }}"
       traefik.enable: "true"
     state: present
+  tags: radarr
+
+- name: Import Radarr UHD Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/uhd.yml"
   tags: radarr

@@ -1,7 +1,9 @@
 ---
 sonarr_version: "develop"
 sonarr_hostname: "sonarr"
+sonarr_domain: "sonarr.{{ project_tld }}"
 sonarr_docker_image: "ghcr.io/linuxserver/sonarr"
-sonarr_anime_version: "develop"
 sonarr_anime_hostname: "sonarr_anime"
-sonarr_anime_docker_image: "ghcr.io/linuxserver/sonarr"
+sonarr_anime_domain: "sonarr2.{{ project_tld }}"
+sonarr_uhd_hostname: "sonarr_uhd"
+sonarr_uhd_domain: "sonarr3.{{ project_tld }}"

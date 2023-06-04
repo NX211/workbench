@@ -16,7 +16,7 @@ services:
     deploy:
       labels:
         - "traefik.http.routers.vault.entrypoints=websecure"
-        - "traefik.http.routers.vault.rule=Host(`pki.{{ project_tld }}`)"
+        - "traefik.http.routers.vault.rule=Host(`{{ vault_domain }}`)"
         - "traefik.http.routers.vault.tls=true"
         - "traefik.http.routers.vault.middlewares=default-headers@file"
         - "traefik.http.routers.vault.service=vault"

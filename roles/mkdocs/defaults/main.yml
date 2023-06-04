@@ -2,4 +2,5 @@
 mkdocs_version: "latest"
 mkdocs_docker_image: "squidfunk/mkdocs-material"
 mkdocs_hostname: "mkdocs"
+mkdocs_domain: "wiki.{{ project_tld }}"
 mkdocs_port: "8000"

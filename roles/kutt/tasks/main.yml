@@ -1,4 +1,14 @@
 ---
+- name: Ensure Kutt DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ kutt_tld }}"
+  tags: 
+    - kutt
+    - dns
+  no_log: true
+
 - name: Deploy Kutt Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:

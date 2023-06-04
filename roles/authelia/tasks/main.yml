@@ -10,6 +10,16 @@
     - "{{ project_root_directory }}/authelia/assets"
   tags: authelia
 
+- name: Ensure Authelia DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ authelia_domain }}"
+  tags: 
+    - authelia
+    - dns
+  no_log: true
+
 - name: Ensure Authelia Icons Files Exist
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.copy:
@@ -66,7 +76,7 @@
         target: /config/
         type: bind
     labels:
-      traefik.http.routers.authelia.rule: "Host(`login.{{ project_tld }}`)"
+      traefik.http.routers.authelia.rule: "Host(`{{ authelia_domain }}`)"
       traefik.http.routers.authelia.entrypoints: "websecure"
       traefik.http.routers.authelia.tls: "true"
       traefik.http.routers.authelia.service: "authelia"

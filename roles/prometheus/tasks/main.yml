@@ -1,0 +1,53 @@
+---
+- name: Ensure Prometheus Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: prometheus_data
+    state: present
+  tags: prometheus
+
+- name: Ensure Prometheus Directory Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.file:
+    path: "{{ project_root_directory }}/prometheus"
+    mode: 0755
+    state: directory
+  tags: prometheus
+
+- name: Ensure Prometheus Configuration File Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.template:
+    src: prometheus.yml.j2
+    mode: 0755
+    dest: "{{ project_root_directory }}/prometheus/prometheus.yml"
+  no_log: true
+  tags: prometheus
+
+- name: Deploy Prometheus Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: prometheus
+    hostname: "{{ prometheus_hostname }}"
+    image: "{{ prometheus_docker_image }}:{{ prometheus_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    publish:
+      - published_port: "{{ prometheus_port }}"
+        target_port: "{{ prometheus_port }}"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ yellowtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /yellowtalon/apps/prometheus/
+        target: /etc/prometheus/
+        type: bind
+      - source: prometheus_data
+        target: /prometheus
+        type: volume
+    state: present
+  tags: prometheus

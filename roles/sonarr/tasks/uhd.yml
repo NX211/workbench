@@ -1,0 +1,90 @@
+---
+- name: Ensure Sonarr UHD Media Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/media/tv-uhd
+    state: present
+  tags: 
+    - sonarr-uhd
+    - zfs
+
+- name: Ensure Sonarr UHD Media Download Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/media/downloads/tv-uhd
+    state: present
+  tags: 
+    - sonarr-uhd
+    - zfs
+
+- name: Ensure Sonarr UHD Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/sonarr3
+    state: present
+  tags: 
+    - sonarr-uhd
+    - zfs
+
+- name: Ensure Sonarr UHD DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ sonarr_uhd_domain }}"
+  tags: 
+    - sonarr-uhd
+    - dns
+  no_log: true
+
+- name: Ensure Sonarr UHD Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  ansible.builtin.template:
+    src: config-uhd.xml.j2
+    mode: 0644
+    dest: "{{ project_root_directory }}/sonarr3/config.xml"
+  no_log: true
+  tags: sonarr-uhd
+
+- name: Deploy Sonarr UHD Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: sonarr_uhd
+    hostname: "{{ sonarr_uhd_hostname }}"
+    image: "{{ sonarr_docker_image }}:{{ sonarr_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+      DOCKER_MODS: "gilbn/theme.park:{{ sonarr_hostname }}"
+      TP_THEME: "{{ theme_park_default }}"
+    placement:
+      constraints:
+        - node.id == {{ blacktalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/sonarr3/"
+        target: /config/
+        type: bind
+      - source: "{{ project_media_directory }}/tv-uhd/"
+        target: /media/tv-uhd/
+        type: bind
+      - source: "{{ project_download_directory }}"
+        target: /media/downloads/
+        type: bind
+    labels:
+      traefik.http.routers.sonarr-uhd.entrypoints: "websecure"
+      traefik.http.routers.sonarr-uhd.rule: "Host(`{{ sonarr_uhd_domain }}`)"
+      traefik.http.routers.sonarr-uhd.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.sonarr-uhd.tls: "true"
+      traefik.http.routers.sonarr-uhd.service: "sonarr-uhd"
+      traefik.http.routers.sonarr-uhd.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.sonarr-uhd.loadbalancer.server.port: "{{ sonarr_uhd_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: sonarr-uhd

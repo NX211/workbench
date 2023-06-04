@@ -21,6 +21,27 @@
   no_log: true
   tags: traefik
 
+- name: Ensure All Root DNS Records Exist
+  when: inventory_hostname == groups['managers'][0]
+  dreamhost_dns:
+      name: "{{ item }}"
+      type: A
+      value: "{{ external_ipv4_address }}"
+      api_key: "{{ dreamhost_token }}"
+      state: present
+  with_items:
+    - "{{ project_tld }}"
+    - "{{ git_tld }}"
+    - "{{ media_tld }}"
+    - "{{ kutt_tld }}"
+    - "{{ peertube_tld }}"
+    - "{{ photo_tld }}"
+    - "{{ cloud_tld }}"
+    - "{{ social_tld }}"
+    - "{{ dimondyucas_tld }}"
+  tags: traefik
+  no_log: true
+
 - name: Ensure Teaefik Configuration Files Exist
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.template:
@@ -52,6 +73,8 @@
         target_port: "{{ mongodb_port }}"
       - published_port: "1935"
         target_port: "1935"
+      - published_port: "8082"
+        target_port: "8082"
     mode: global
     force_update: yes
     restart_config:
@@ -90,8 +113,10 @@
       traefik.http.routers.wildcard.tls.domains[5].sans: "*.{{ photo_tld }}"
       traefik.http.routers.wildcard.tls.domains[6].main: "{{ cloud_tld }}"
       traefik.http.routers.wildcard.tls.domains[6].sans: "*.{{ cloud_tld }}"
-      traefik.http.routers.wildcard.tls.domains[7].main: "{{ dimondyucas_tld }}"
-      traefik.http.routers.wildcard.tls.domains[7].sans: "*.{{ dimondyucas_tld }}"
+      traefik.http.routers.wildcard.tls.domains[7].main: "{{ social_tld }}"
+      traefik.http.routers.wildcard.tls.domains[7].sans: "*.{{ social_tld }}"     
+      traefik.http.routers.wildcard.tls.domains[8].main: "{{ dimondyucas_tld }}"
+      traefik.http.routers.wildcard.tls.domains[8].sans: "*.{{ dimondyucas_tld }}"
       traefik.http.services.dummy-svc.loadbalancer.server.port: "9999"
       traefik.enable: "true"
     state: present

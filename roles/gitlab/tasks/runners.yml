@@ -5,7 +5,7 @@
     path: "{{ project_root_directory }}/gitlab/runners"
     mode: 0755
     state: directory
-  tags: gitlab
+  tags: gitlab-runner
 
 - name: Ensure GitLab Runners Configuration Exist
   when: inventory_hostname == groups['workers'][0]
@@ -13,7 +13,7 @@
     src: config.toml.j2
     mode: 0644
     dest: "{{ project_root_directory }}/gitlab/runners/config.toml"
-  tags: gitlab
+  tags: gitlab-runner
   no_log: true
 
 - name: Deploy GitLab Runner Service

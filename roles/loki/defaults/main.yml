@@ -1,0 +1,4 @@
+---
+loki_hostname: "loki"
+loki_version: "latest"
+loki_docker_image: "grafana/loki"
