@@ -1,5 +1,0 @@
----
-xbrowsersync_version: latest
-xbrowsersync_hostname: "xbrowsersync"
-xbrowsersync_port: "8080"
-xbrowsersync_docker_image: "xbrowsersync/api"
