@@ -1,0 +1,6 @@
+---
+uptime_kuma_version: "1"
+uptime_kuma_hostname: "uptime-kuma"
+uptime_kuma_domain: "status.{{ project_tld }}"
+uptime_kuma_port: "3001"
+uptime_kuma_docker_image: "louislam/uptime-kuma"

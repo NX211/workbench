@@ -1,0 +1,48 @@
+---
+- name: Ensure Uptime Kuma Data Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: uptime-kuma
+    state: present
+  tags: uptime-kuma
+
+- name: Ensure Uptime Kuma DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ uptime_kuma_domain }}"
+  tags: 
+    - uptime-kuma
+    - dns
+  no_log: true
+
+- name: Deploy Uptime Kuma Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: uptime-kuma
+    hostname: "{{ uptime_kuma_hostname }}"
+    image: "{{ uptime_kuma_docker_image }}:{{ uptime_kuma_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: global
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    mounts:
+      - source: uptime-kuma
+        target: /app/data/
+        type: volume
+    labels:
+      traefik.http.routers.uptime-kuma.entrypoints: "websecure"
+      traefik.http.routers.uptime-kuma.rule: "Host(`{{ uptime_kuma_domain }}`)"
+      traefik.http.routers.uptime-kuma.middlewares: "default-headers@file"
+      traefik.http.routers.uptime-kuma.tls: "true"
+      traefik.http.routers.uptime-kuma.service: "uptime-kuma"
+      traefik.http.routers.uptime-kuma.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.uptime-kuma.loadbalancer.server.port: "{{ uptime_kuma_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: uptime-kuma
