@@ -11,10 +11,9 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Redis](https://redis.io/) - An in-memory database that persists on disk
 - [Vault](https://github.com/hashicorp/vault) - Certificate Authority and Automated Certificate Management
 - [Traefik](https://containo.us/traefik/) - The Cloud Native Edge Router
-- [Gitea](https://gitea.io/en-us/) - Community Managed lightweight code hosting solution written in Go
+- [GitLab](https://gitlab.com/) - Community Managed Git Solution
 - [Minio](https://min.io/) - High performance object storage server compatible with Amazon S3 APIs
 - [Jenkins](https://jenkins.io/) -  Free and Open Source Automation Server
-- [Portus](https://port.us.org/) - Next Generation Docker Registry
 - [n8n](https://n8n.io/) - The workflow Automation Platform That Doesn't Box You In
 - [Homer](https://github.com/bastienwirtz/homer/) - A very simple static homepage for your server
 - [Elasticsearch](https://www.elastic.co/elasticsearch/) - A Distributed, RESTful Search + Analytics Engine
@@ -22,7 +21,6 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 
 ## Core Services
 
-- [xBrowserSync](https://www.xbrowsersync.org/) - Browser syncing as it should be: secure, anonymous and free
 - [Cyberchef](https://gchq.github.io/CyberChef/) - A web app for encryption, encoding, compression and data analysis
 - [Freshrss](https://freshrss.org/) - A free, self-hostable aggregator
 - [Plausible](https://plausible.io/) - Lightweight + Open Source Website Analytics Tool
@@ -30,6 +28,7 @@ Workbench is a collection of Ansible Playbooks and assets for Production Deploym
 - [Kutt](https://kutt.it/) - Free Modern URL Shortener
 - [Paperless](https://github.com/paperless-ngx) - Scan, Index and Archive all your Physical Documents
 - [Wallabag](https://wallabag.org/en/) - Save and classify articles. Read them later. Freely
+- [Mastodon](https://mastodon.social) - Decentralized Federated Social Network
 - [MkDocs](https://js.wiki/) - Fast, Simple + Downright Gorgeous Static Site Generator
 
 ## Media Service
