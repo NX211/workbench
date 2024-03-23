@@ -1,0 +1,13 @@
+---
+firefly_version: "latest"
+firefly_cron_version: "latest"
+firefly_importer_version: "latest"
+firefly_hostname: "firefly"
+firefly_importer_hostname: "firefly_importer"
+firefly_cron_hostname: "firefly_cron"
+firefly_domain: "firefly.{{ development_tld }}"
+firefly_port: "8080"
+firefly_importer_port: "8080"
+firefly_docker_image: "fireflyiii/core"
+firefly_cron_docker_image: "alpine"
+firefly_importer_docker_image: "fireflyiii/data-importer"

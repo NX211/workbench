@@ -1,0 +1,7 @@
+---
+jellyfin_version: "latest"
+jellyfin_hostname: "jellyfin"
+jellyfin_node: "blacktalon"
+jellyfin_tld: "jellyfin.{{ project_tld }}"
+jellyfin_port: "8096"
+jellyfin_docker_image: "jellyfin/jellyfin"

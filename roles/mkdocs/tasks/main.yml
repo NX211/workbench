@@ -4,7 +4,7 @@
   community.general.zfs:
     name: greytalon/apps/mkdocs
     state: present
-  tags: 
+  tags:
     - mkdocs
     - zfs
 
@@ -28,16 +28,6 @@
   tags: mkdocs
   no_log: true
 
-- name: Ensure MkDocs DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
-  when: inventory_hostname == groups['managers'][0]
-  vars:
-    domain_name: "{{ mkdocs_domain }}"
-  tags: 
-    - mkdocs
-    - dns
-  no_log: true
-
 - name: Deploy MkDocs Service
   when: inventory_hostname == groups['managers'][0]
   community.docker.docker_swarm_service:
@@ -48,7 +38,7 @@
       - "{{ traefik_network }}"
     env:
       SITE_NAME: "{{ mkdocs_site_name }}"
-      DEFAULT_DOMAIN: "{{ mkdocs_tld }}"
+      DEFAULT_DOMAIN: "{{ wiki_tld }}"
       PORT: "{{ mkdocs_port }}"
       LINK_LENGTH: "6"
       DB_HOST: "{{ postgres_hostname }}"
@@ -85,7 +75,7 @@
     replicas: 1
     labels:
       traefik.http.routers.mkdocs.entrypoints: "websecure"
-      traefik.http.routers.mkdocs.rule: "Host(`{{ mkdocs_domain }}`)"
+      traefik.http.routers.mkdocs.rule: "Host(`{{ wiki_tld }}`)"
       traefik.http.routers.mkdocs.middlewares: "default-headers@file"
       traefik.http.routers.mkdocs.tls: "true"
       traefik.http.routers.mkdocs.service: "mkdocs"

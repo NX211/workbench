@@ -16,7 +16,7 @@
     - blacktalon/media/music
     - blacktalon/media/tv
     - blacktalon/media/tv-uhd
-  tags: 
+  tags:
     - sabnzbd
     - zfs
 
@@ -38,7 +38,7 @@
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/tv
     - blacktalon/media/downloads/tv-uhd
-  tags: 
+  tags:
     - sabnzbd
     - zfs
 
@@ -47,16 +47,16 @@
   community.general.zfs:
     name: blacktalon/apps/sabnzbd
     state: present
-  tags: 
+  tags:
     - sabnzbd
     - zfs
 
 - name: Ensure Sabnzbd DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ sabnzbd_domain }}"
-  tags: 
+  tags:
     - sabnzbd
     - dns
   no_log: true

@@ -1,0 +1,59 @@
+---
+- name: Ensure Jellyfin Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/jellyfin
+    state: present
+  tags:
+    - jellyfin
+    - zfs
+
+- name: Ensure Jellyfin Volume Exist
+  when: inventory_hostname == groups['media'][0]
+  community.docker.docker_volume:
+    name: jellyfin-cache
+    state: present
+  tags: jellyfin
+
+- name: Deploy Jellyfin Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: jellyfin
+    hostname: "{{ jellyfin_hostname }}"
+    image: "{{ jellyfin_docker_image }}:{{ jellyfin_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ blacktalon_node_id }}
+    publish:
+      - target_port: "{{ jellyfin_port }}"
+        published_port: "{{ jellyfin_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+    replicas: 1
+    mounts:
+      - source: "/{{ jellyfin_node }}/apps/{{ role_name }}/"
+        target: /config/
+        type: bind
+      - source: jellyfin-cache
+        target: /cache/
+        type: volume
+      - source: "/{{ jellyfin_node }}/media/"
+        target: /media/
+        type: bind
+    labels:
+      traefik.http.routers.jellyfin.entrypoints: "websecure"
+      traefik.http.routers.jellyfin.rule: "Host(`{{ jellyfin_tld }}`)"
+      traefik.http.routers.jellyfin.middlewares: "default-headers@file"
+      traefik.http.routers.jellyfin.tls: "true"
+      traefik.http.routers.jellyfin.service: "{{ role_name }}"
+      traefik.http.routers.jellyfin.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.jellyfin.loadbalancer.server.port: "{{ jellyfin_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: jellyfin

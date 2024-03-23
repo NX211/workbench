@@ -1,8 +1,8 @@
 ---
+peertube_database: "{{ vault_peertube_database }}"
+peertube_database_password: "{{ vault_peertube_database_password }}"
+peertube_database_user: "{{ vault_peertube_database_user }}"
 peertube_instance_description: "{{ vault_peertube_instance_description }}"
 peertube_instance_name: "{{ vault_peertube_instance_name }}"
 peertube_instance_short_description: "{{ vault_peertube_instance_short_description }}"
 peertube_secret: "{{ vault_peertube_secret }}"
-peertube_database: "{{ vault_peertube_database }}"
-peertube_database_user: "{{ vault_peertube_database_user }}"
-peertube_database_password: "{{ vault_peertube_database_password }}"

@@ -1,0 +1,7 @@
+---
+fasten_version: "main"
+fasten_hostname: "fasten"
+fasten_node: "toybox"
+fasten_domain: "fasten.{{ development_tld }}"
+fasten_port: "8080"
+fasten_docker_image: "ghcr.io/fastenhealth/fasten-onprem"

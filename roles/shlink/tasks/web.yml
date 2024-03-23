@@ -1,0 +1,41 @@
+---
+- name: Ensure Shlink Web DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "shlink.{{ project_tld }}"
+  tags:
+    - shlink
+    - dns
+  no_log: true
+
+- name: Deploy Shlink Web Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: shlink-web
+    hostname: "{{ shlink_web_hostname }}"
+    image: "{{ shlink_web_docker_image }}:{{ shlink_web_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      SHLINK_SERVER_URL: "https://{{ link_tld }}"
+      SHLINK_SERVER_API_KEY: "{{ shlink_server_api_key }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    labels:
+      traefik.http.routers.shlink-web.entrypoints: "websecure"
+      traefik.http.routers.shlink-web.rule: "Host(`shlink.{{ project_tld }}`)"
+      traefik.http.routers.shlink-web.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.shlink-web.tls: "true"
+      traefik.http.routers.shlink-web.service: "shlink-web"
+      traefik.http.routers.shlink-web.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.shlink-web.loadbalancer.server.port: "{{ shlink_web_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: shlink

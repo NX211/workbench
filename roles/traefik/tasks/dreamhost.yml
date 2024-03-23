@@ -1,0 +1,8 @@
+---
+- name: Ensure DNS Records Exist
+  dreamhost_dns:
+      name: "{{ domain_name }}"
+      type: A
+      value: "{{ external_ipv4_address }}"
+      api_key: "{{ dreamhost_token }}"
+      state: present

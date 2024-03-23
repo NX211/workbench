@@ -1,22 +1,11 @@
 ---
-- name: Update system
-  become: true
-  package:
-    update_cache: true
-    upgrade: true
-
-- name: Install packages
-  become: true
-  package:
+- name: Install Packages
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-  with_items: "{{ packages }}"
-
-- name: Install packages
-  import_role:
-    name: common_roles/install_latest
-  vars:
-    packages:
+    update_cache: true
+  with_items:
     - "git"
-    - "zsh"
-    - "stow"
+    - "apt-transport-https"
+    - "python3-docker"
+    - "python3-psycopg2"

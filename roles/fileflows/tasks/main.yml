@@ -1,0 +1,83 @@
+---
+- name: Ensure FileFlows Media Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "/{{ fileflows_node }}/media/"
+    mode: 0755
+    state: directory
+  tags:
+    - development
+    - fileflows
+
+- name: Ensure FileFlows Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - {path: '/{{ fileflows_node }}/apps/{{ role_name }}/data', mode: '755'}
+    - {path: '/{{ fileflows_node }}/apps/{{ role_name }}/logs', mode: '700'}
+  tags:
+    - development
+    - fileflows
+
+- name: Ensure FileFlows DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - fileflows
+    - dns
+
+- name: Deploy FileFlows Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: fileflows
+    hostname: "{{ fileflows_hostname }}"
+    image: "{{ fileflows_docker_image }}:{{ fileflows_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      TempPathHost: "/temp"
+      TZ: "{{ default_timezone }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/{{ fileflows_node }}/apps/{{ role_name }}/data/"
+        target: /app/Data/
+        type: bind
+      - source: "/{{ fileflows_node }}/apps/{{ role_name }}/logs/"
+        target: /app/Logs/
+        type: bind
+      - source: /tmp/
+        target: /temp/
+        type: bind
+      - source: "/{{ fileflows_node }}/media/"
+        target: /media/
+        type: bind
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    labels:
+      traefik.http.routers.fileflows.entrypoints: "websecure"
+      traefik.http.routers.fileflows.rule: "Host(`{{ fileflows_tld }}`)"
+      traefik.http.routers.fileflows.middlewares: "default-headers@file"
+      traefik.http.routers.fileflows.tls: "true"
+      traefik.http.routers.fileflows.service: "{{ role_name }}"
+      traefik.http.routers.fileflows.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.fileflows.loadbalancer.server.port: "{{ fileflows_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - fileflows

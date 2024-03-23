@@ -11,4 +11,4 @@ scrape_configs:
   - job_name: traefik
     scheme: http
     static_configs:
-    - targets: ['yellowtalon.authoritah.com:8082']
+    - targets: ['yellowtalon.{{ project_tld }}:8082']

@@ -1,6 +1,6 @@
 ---
-- name: UFW deny all except HTTP and HTTPS
-  ufw:
+- name: UFW Deny ALL except HTTP and HTTPS
+  community.general.ufw:
     state: enabled
     policy: deny
     rule: allow
@@ -9,8 +9,8 @@
     - "{{ ports.http }}"
     - "{{ ports.https }}"
 
-- name: UFW limit ssh traffic
-  ufw:
+- name: UFW limit SSH Traffic
+  community.general.ufw:
     state: enabled
     rule: limit
     port: "{{ ports.ssh }}"

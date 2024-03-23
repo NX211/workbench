@@ -1,0 +1,77 @@
+---
+- name: Ensure Librum Storage Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: librum_storage
+    state: present
+  tags:
+    - development
+    - librum
+    - volume
+
+- name: Ensure Librum DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - librum
+    - dns
+
+- name: Ensure Librum Databases Exist
+  ansible.builtin.import_tasks: roles/mariadb/tasks/development_database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ librum_database }}"
+    database_user: "{{ librum_database_user }}"
+    database_password: "{{ librum_database_password }}"
+  tags:
+    - development
+    - librum
+  no_log: true
+
+- name: Deploy Librum Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: librum
+    hostname: "{{ librum_hostname }}"
+    image: "{{ librum_docker_image }}:{{ librum_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      JWTValidIssuer: "{{ librum_jwt_issuer }}"
+      JWTKey: "{{ librum_jwt_key }}"
+      SMTPEndpoint: "{{ email_host }}"
+      SMTPUsername: "{{ email_user }}"
+      SMTPPassword: "{{ email_password }}"
+      SMTPMailFrom: "{{ email_user }}"
+      DBConnectionString: "Server={{ mmariadb_hostname }};port={{ mariadb_port }};Database={{ librum_database }};Uid={{ librum_database_user }};Pwd={{ librum_database_password }};"
+      AdminEmail: "{{ librum_admin_email }}"
+      AdminPassword: "{{ librum_admin_password }}"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    mounts:
+      - source: librum_storage
+        target: /var/lib/librum-server/librum_storage/
+        type: volume
+    replicas: 1
+    labels:
+      traefik.http.routers.librum.entrypoints: "websecure"
+      traefik.http.routers.librum.rule: "Host(`{{ librum_domain }}`)"
+      traefik.http.routers.librum.middlewares: "default-headers@file"
+      traefik.http.routers.librum.tls: "true"
+      traefik.http.routers.librum.service: "{{ role_name }}"
+      traefik.http.routers.librum.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.librum.loadbalancer.server.port: "{{ librum_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - librum

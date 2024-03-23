@@ -8,16 +8,16 @@
   community.general.zfs:
     name: blacktalon/apps/prowlarr
     state: present
-  tags: 
+  tags:
     - prowlarr
     - zfs
 
 - name: Ensure Prowlarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ prowlarr_domain }}"
-  tags: 
+  tags:
     - prowlarr
     - dns
   no_log: true

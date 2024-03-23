@@ -7,7 +7,7 @@
   loop:
     - blacktalon/media/kids
     - blacktalon/media/tv
-  tags: 
+  tags:
     - sonarr
     - zfs
 
@@ -19,7 +19,7 @@
   loop:
     - blacktalon/media/downloads/kids
     - blacktalon/media/downloads/tv
-  tags: 
+  tags:
     - sonarr
     - zfs
 
@@ -28,16 +28,16 @@
   community.general.zfs:
     name: blacktalon/apps/sonarr
     state: present
-  tags: 
+  tags:
     - sonarr
     - zfs
 
 - name: Ensure Sonarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ sonarr_domain }}"
-  tags: 
+  tags:
     - sonarr
     - dns
   no_log: true

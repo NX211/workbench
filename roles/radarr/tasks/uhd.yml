@@ -4,7 +4,7 @@
   community.general.zfs:
     name: blacktalon/media/movies-uhd
     state: present
-  tags: 
+  tags:
     - radarr-uhd
     - zfs
 
@@ -13,7 +13,7 @@
   community.general.zfs:
     name: blacktalon/media/downloads/movies-uhd
     state: present
-  tags: 
+  tags:
     - radarr-uhd
     - zfs
 
@@ -22,16 +22,16 @@
   community.general.zfs:
     name: blacktalon/apps/radarr2
     state: present
-  tags: 
+  tags:
     - radarr-uhd
     - zfs
 
 - name: Ensure Readarr UHD DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ radarr_uhd_domain }}"
-  tags: 
+  tags:
     - readarr-uhd
     - dns
   no_log: true

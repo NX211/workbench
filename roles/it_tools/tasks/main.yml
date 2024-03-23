@@ -1,0 +1,38 @@
+---
+- name: Ensure IT Tools DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ it_tools_domain }}"
+  tags:
+    - it-tools
+    - dns
+  no_log: true
+
+- name: Deploy IT Tools Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: it-tools
+    hostname: "{{ it_tools_hostname }}"
+    image: "{{ it_tools_docker_image }}:{{ it_tools_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    labels:
+      traefik.http.routers.it-tools.entrypoints: "websecure"
+      traefik.http.routers.it-tools.rule: "Host(`{{ it_tools_domain }}`)"
+      traefik.http.routers.it-tools.middlewares: "default-headers@file"
+      traefik.http.routers.it-tools.tls: "true"
+      traefik.http.routers.it-tools.service: "it-tools"
+      traefik.http.routers.it-tools.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.it-tools.loadbalancer.server.port: "{{ it_tools_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: it-tools

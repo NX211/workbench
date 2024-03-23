@@ -1,0 +1,102 @@
+---
+- name: Ensure Huginn DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - huginn
+    - dns
+  no_log: true
+
+- name: Ensure Huginn Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "/{{ huginn_node }}/apps/{{ role_name }}"
+    mode: 0755
+    state: directory
+  tags:
+    - development
+    - huginn
+
+- name: Ensure Huginn Databases Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ huginn_database }}"
+    database_user: "{{ huginn_database_user }}"
+    database_password: "{{ huginn_database_password }}"
+  tags:
+    - development
+    - huginn
+  no_log: true
+
+- name: Deploy Huginn Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: huginn
+    hostname: "{{ huginn_hostname }}"
+    image: "{{ huginn_docker_image }}:{{ huginn_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      APP_SECRET_TOKEN: "{{ huginn_app_secret_token }}"
+      DOMAIN: "{{ huginn_domain }}"
+      PORT: "{{ huginn_port }}"
+      DATABASE_ADAPTER: "postgresql"
+      DATABASE_HOST: "{{ postgres_hostname }}"
+      DATABASE_PORT: "{{ postgres_port }}"
+      DO_NOT_CREATE_DATABASE: "true"
+      DO_NOT_SEED: "true"
+      HUGINN_DATABASE_PASSWORD: "{{ huginn_database_password }}"
+      HUGINN_DATABASE_USERNAME: "{{ huginn_database_user }}"
+      HUGINN_DATABASE_NAME: "{{ huginn_database }}"
+      FORCE_SSL: "false"
+      INVITATION_CODE: "{{ huginn_invitation_code }}"
+      SKIP_INVITATION_CODE: "false"
+      REQUIRE_CONFIRMED_EMAIL: "true"
+      ALLOW_UNCONFIRMED_ACCESS_FOR: "2.days"
+      CONFIRM_WITHIN: "3.days"
+      MIN_PASSWORD_LENGTH: "8"
+      RESET_PASSWORD_WITHIN: "6.hours" # pragma: allowlist secret
+      LOCK_STRATEGY: "failed_attempts"
+      MAX_FAILED_LOGIN_ATTEMPTS: "10"
+      UNLOCK_STRATEGY: "both"
+      UNLOCK_AFTER: "1.hour"
+      REMEMBER_FOR: "4.weeks"
+      IMPORT_DEFAULT_SCENARIO_FOR_ALL_USERS: "true"
+      SMTP_DOMAIN: "{{ project_tld }}"
+      SMTP_USER_NAME: "{{ email_user }}"
+      SMTP_PASSWORD: "{{ email_password }}"
+      SMTP_SERVER: "{{ email_host }}"
+      SMTP_PORT: "{{ email_port }}"
+      SMTP_AUTHENTICATION: "plain"
+      SMTP_ENABLE_STARTTLS_AUTO: "true"
+      EMAIL_FROM_ADDRESS: "{{ email_user }}"
+      SMTP_SSL: "true"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/{{ huginn_node }}/apps/{{ role_name }}/"
+        target: /data/
+        type: bind
+    labels:
+      traefik.http.routers.huginn.entrypoints: "websecure"
+      traefik.http.routers.huginn.rule: "Host(`{{ huginn_domain }}`)"
+      traefik.http.routers.huginn.tls: "true"
+      traefik.http.routers.huginn.service: "{{ role_name }}"
+      traefik.http.routers.huginn.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.huginn.loadbalancer.server.port: "{{ huginn_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - huginn

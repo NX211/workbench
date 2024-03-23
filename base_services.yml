@@ -5,16 +5,16 @@
   become: yes
   roles:
     - traefik
-    - vault
     - homer
     - postgres
+    - mariadb
     - redis
     - mongodb
     - prometheus
     - elasticsearch
     - authelia
     - mailrise
-    - uptime-kuma
-    - gitlab
+    - uptime_kuma
+    - gitea
     - n8n
     - minio

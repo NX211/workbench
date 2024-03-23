@@ -4,7 +4,7 @@
   community.general.zfs:
     name: blacktalon/media/movies
     state: present
-  tags: 
+  tags:
     - radarr
     - zfs
 
@@ -13,7 +13,7 @@
   community.general.zfs:
     name: blacktalon/media/downloads/movies
     state: present
-  tags: 
+  tags:
     - radarr
     - zfs
 
@@ -22,16 +22,16 @@
   community.general.zfs:
     name: blacktalon/apps/radarr
     state: present
-  tags: 
+  tags:
     - radarr
     - zfs
 
 - name: Ensure Readarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ radarr_domain }}"
-  tags: 
+  tags:
     - readarr
     - dns
 

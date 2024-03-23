@@ -60,14 +60,6 @@ http:
       middlewares:
         - authelia@file
       service: "cups"
-    dimondyucas:
-      entryPoints:
-        - "websecure"
-      rule: "Host(`{{ dimondyucas_tld }}`,`www.{{ dimondyucas_tld }}`)"
-      tls: {}
-      middlewares:
-        - default-headers@file
-      service: "dimondyucas"
     graylog:
       entryPoints:
         - "websecure"
@@ -107,8 +99,6 @@ http:
         - "websecure"
       rule: "Host(`blueiris.{{ project_tld }}`)"
       tls: {}
-      middlewares:
-        - default-headers@file
       service: "blueiris"
     tdarr:
       entryPoints:
@@ -119,6 +109,14 @@ http:
         - authelia
         - default-headers@file
       service: "tdarr"
+    invoiceninja:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`invoice.{{ project_tld }}`)"
+      tls: {}
+      middlewares:
+        - default-headers@file
+      service: "invoiceninja"
   services:
     homeassistant:
       loadBalancer:
@@ -132,10 +130,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.232:631/"
-    dimondyucas:
-      loadBalancer:
-        servers:
-          - url: "http://10.20.0.109:80/"
     graylog:
       loadBalancer:
         servers:
@@ -151,7 +145,7 @@ http:
     proxmox:
       loadBalancer:
         servers:
-          - url: "https://10.20.0.205:8006/"
+          - url: "https://10.20.0.254:8006/"
     adguard:
       loadBalancer:
         servers:
@@ -164,6 +158,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.20.0.250:8265/"
+    invoiceninja:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.101:80/"
 tls:
   options:
     default:

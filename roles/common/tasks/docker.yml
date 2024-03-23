@@ -1,15 +1,39 @@
 ---
-- name: Install packages
-  import_role:
-    name: common_roles/install_latest
-  vars:
-    packages:
-    - "docker"
-    - "docker-compose"
+- name: Install Docker Dependency Packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - "software-properties-common"
+    - "apt-transport-https"
+    - "ca-certificates"
+    - "curl"
+    - "gnupg-agent"
 
-- name: Start and enable docker
+- name: Add Docker GPG apt Key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+
+- name: Install Docker Packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - "docker-ce"
+    - "docker-ce-cli"
+    - "containerd.io"
+
+- name: Start and Enable Docker
   become: true
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     daemon_reload: true
     state: started

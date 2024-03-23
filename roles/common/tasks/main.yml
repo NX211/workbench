@@ -1,1 +1,20 @@
 ---
+- name: Configure SSH
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/ssh.yml"
+  tags: ssh
+
+- name: Configure Users and Groups
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/user.yml"
+  tags: user
+
+- name: Install Docker
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/docker.yml"
+  tags: docker
+
+- name: Install Dependency Packages for Ansible
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/packages.yml"
+  tags: ansible
+
+- name: Configure and Enable Firewall
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/firewall.yml"
+  tags: firewall

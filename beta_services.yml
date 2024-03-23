@@ -1,0 +1,16 @@
+---
+- name: Deploy Development Services
+  hosts: all
+  gather_facts: False
+  become: yes
+  roles:
+    - traefik
+    - postgres
+    - mariadb
+    - redis
+    - homer
+    - fasten
+    - firefly
+    - librum
+    - actual
+    - fileflows

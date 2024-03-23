@@ -1,0 +1,99 @@
+---
+- name: Ensure WordPress Storage Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: wordpress_storage
+    state: present
+  tags:
+    - wordpress
+    - volume
+
+- name: Ensure WordPress Database Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: wordpress_database
+    state: present
+  tags:
+    - wordpress
+    - volume
+
+- name: Ensure WordPress DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ realestate_tld }}"
+  tags:
+    - wordpress
+    - dns
+  no_log: true
+
+- name: Deploy WordPress Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: wordpressdb
+    hostname: "{{ wordpress_database_hostname }}"
+    image: "{{ wordpress_database_docker_image }}:{{ wordpress_database_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD: "{{ wordpress_database_root_password }}"
+      MYSQL_USER: "{{ wordpress_database_user }}"
+      MYSQL_PASSWORD: "{{ wordpress_database_password }}"
+      MYSQL_DATABASE: "{{ wordpress_database }}"
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    mounts:
+      - source: wordpress_database
+        target: /var/lib/mysql/
+        type: volume
+    replicas: 1
+    state: present
+  tags: wordpress
+
+- name: Deploy WordPress Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: wordpress
+    hostname: "{{ wordpress_hostname }}"
+    image: "{{ wordpress_docker_image }}:{{ wordpress_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      WORDPRESS_DB_HOST: "{{ wordpress_database_hostname }}"
+      WORDPRESS_DB_USER: "{{ wordpress_database_user }}"
+      WORDPRESS_DB_PASSWORD: "{{ wordpress_database_password }}"
+      WORDPRESS_DB_NAME: "{{ wordpress_database }}"
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    mounts:
+      - source: wordpress_storage
+        target: /var/www/html/
+        type: volume
+      - source: /redtalon/apps/wordpress/themes/
+        target: /var/www/html/wp-content/themes/
+        type: bind
+      - source: /redtalon/apps/wordpress/uploads.ini
+        target: /usr/local/etc/php/conf.d/uploads.ini
+        type: bind
+    replicas: 1
+    labels:
+      traefik.http.routers.wordpress.entrypoints: "websecure"
+      traefik.http.routers.wordpress.rule: "Host(`{{ realestate_tld }}`)"
+      traefik.http.routers.wordpress.middlewares: "default-headers@file"
+      traefik.http.routers.wordpress.tls: "true"
+      traefik.http.routers.wordpress.service: "{{ role_name }}"
+      traefik.http.routers.wordpress.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.wordpress.loadbalancer.server.port: "{{ wordpress_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: wordpress

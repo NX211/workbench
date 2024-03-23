@@ -1,0 +1,34 @@
+---
+- name: Ensure Watchstate Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/watchstate
+    state: present
+  tags:
+    - watchstate
+    - zfs
+
+- name: Deploy Watchstate Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: watchstate
+    hostname: "{{ watchstate_hostname }}"
+    image: "{{ watchstate_docker_image }}:{{ watchstate_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    env:
+      WS_TZ: "{{ default_timezone }}"
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ blacktalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/blacktalon/apps/watchstate/"
+        target: /config/
+        type: bind
+    state: present
+  tags: watchstate

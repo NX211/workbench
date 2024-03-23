@@ -4,7 +4,7 @@
   community.general.zfs:
     name: blacktalon/media/tv-uhd
     state: present
-  tags: 
+  tags:
     - sonarr-uhd
     - zfs
 
@@ -13,7 +13,7 @@
   community.general.zfs:
     name: blacktalon/media/downloads/tv-uhd
     state: present
-  tags: 
+  tags:
     - sonarr-uhd
     - zfs
 
@@ -22,16 +22,16 @@
   community.general.zfs:
     name: blacktalon/apps/sonarr3
     state: present
-  tags: 
+  tags:
     - sonarr-uhd
     - zfs
 
 - name: Ensure Sonarr UHD DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ sonarr_uhd_domain }}"
-  tags: 
+  tags:
     - sonarr-uhd
     - dns
   no_log: true

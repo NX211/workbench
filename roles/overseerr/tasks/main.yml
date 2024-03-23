@@ -1,0 +1,54 @@
+---
+- name: Ensure Overseerr Directories Exist
+  when: inventory_hostname == ['redtalon'][0]
+  ansible.builtin.file:
+    path: "/redtalon/apps/overseerr"
+    mode: 0755
+    state: directory
+  tags: overseerr
+
+- name: Ensure Overseerr DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ overseerr_domain }}"
+  tags:
+    - overseerr
+    - dns
+  no_log: true
+
+- name: Deploy Overseerr Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: overseerr
+    hostname: "{{ overseerr_hostname }}"
+    image: "{{ overseerr_docker_image }}:{{ overseerr_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      PUID: "{{ media_user }}"
+      PGID: "{{ media_group }}"
+      TZ: "{{ default_timezone }}"
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/redtalon/apps/overseerr/"
+        target: /config/
+        type: bind
+    labels:
+      traefik.http.routers.overseerr.entrypoints: "websecure"
+      traefik.http.routers.overseerr.rule: "Host(`{{ overseerr_domain }}`)"
+      traefik.http.routers.overseerr.middlewares: "default-headers@file"
+      traefik.http.routers.overseerr.tls: "true"
+      traefik.http.routers.overseerr.service: "overseerr"
+      traefik.http.routers.overseerr.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.overseerr.loadbalancer.server.port: "{{ overseerr_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: overseerr

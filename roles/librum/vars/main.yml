@@ -1,0 +1,5 @@
+---
+librum_jwt_kwy: "{{ vault_librum_jwt_kwy }}"
+librum_admin_email: "{{ vault_librum_admin_email }}"
+librum_admin_password: "{{ vault_librum_admin_password }}"
+librum_jwt_issuer: "{{ vault_librum_jwt_issuer }}"

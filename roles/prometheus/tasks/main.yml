@@ -34,8 +34,10 @@
     mode: replicated
     force_update: yes
     publish:
-      - published_port: "{{ prometheus_port }}"
-        target_port: "{{ prometheus_port }}"
+      - target_port: "{{ prometheus_port }}"
+        published_port: "{{ prometheus_port }}"
+        protocol: "tcp"
+        mode: "ingress"
     restart_config:
       condition: on-failure
     placement:

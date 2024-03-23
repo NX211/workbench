@@ -1,0 +1,21 @@
+---
+- name: Ensure MariaDB Databases are Present.
+  community.mysql.mysql_db:
+    login_host: "{{ development_mariadb_localhost }}"
+    login_port: "{{ mariadb_port }}"
+    login_user: "{{ mariadb_root_user }}"
+    login_password: "{{ development_mariadb_root_password }}"
+    name: "{{ database_name }}"
+    state: "present"
+
+- name: Ensure MariaDB Users are Present.
+  community.mysql.mysql_user:
+    login_host: "{{ development_mariadb_localhost }}"
+    login_port: "{{ mariadb_port }}"
+    login_user: "{{ mariadb_root_user }}"
+    login_password: "{{ development_mariadb_root_password }}"
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+    priv:
+      '{{ database_name }}.*': 'ALL,GRANT'
+    state: "present"

@@ -1,0 +1,53 @@
+---
+api:
+  dashboard: true
+  debug: false
+
+serversTransport:
+  insecureSkipVerify: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+    forwardedHeaders:
+      trustedIPs:
+        - "127.0.0.1/32"
+        - "10.10.0.1"
+
+providers:
+  docker:
+    endpoint: "tcp://10.70.0.112:2375"
+    exposedByDefault: false
+    swarmMode: true
+    watch: true
+    network: {{ traefik_network }}
+  file:
+    filename: /config.yml
+    watch: true
+
+certificatesResolvers:
+  dnsChallenge:
+    acme:
+      email: support@{{ project_tld }}
+      storage: acme.json
+      dnsChallenge:
+        provider: cloudflare
+        disablePropagationCheck: true
+        delayBeforeCheck: 0
+
+experimental:
+  plugins:
+    rewritebody:
+      modulename: "github.com/traefik/plugin-rewritebody"
+      version: "v0.3.1"
+    traefik-themepark:
+      moduleName: "github.com/packruler/traefik-themepark"
+      version: "v1.3.0"

@@ -1,19 +1,18 @@
 ---
-- name: Ensure Wizarr Dataset Exist
-  when: inventory_hostname == groups['media'][0]
-  community.general.zfs:
-    name: blacktalon/apps/wizarr
-    state: present
-  tags: 
-    - wizarr
-    - zfs
+- name: Ensure Wizarr Directories Exist
+  when: inventory_hostname == ['redtalon'][0]
+  ansible.builtin.file:
+    path: /redtalon/apps/wizarr
+    mode: 0755
+    state: directory
+  tags: wizarr
 
 - name: Ensure Wizarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ wizarr_domain }}"
-  tags: 
+  tags:
     - wizarr
     - dns
   no_log: true
@@ -30,15 +29,12 @@
     force_update: yes
     restart_config:
       condition: on-failure
-    env:
-      APP_URL: "https://{{ wizarr_domain }}"
-      DISABLE_BUILTIN_AUTH: "false"
     placement:
       constraints:
-        - node.id == {{ blacktalon_node_id }}
+        - node.id == {{ redtalon_node_id }}
     replicas: 1
     mounts:
-      - source: /blacktalon/apps/wizarr/
+      - source: /redtalon/apps/wizarr/
         target: /data/database/
         type: bind
     labels:

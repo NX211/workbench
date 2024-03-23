@@ -1,0 +1,9 @@
+---
+freescout_admin_email: "{{ vault_freescout_admin_email }}"
+freescout_admin_first_name: "{{ vault_freescout_admin_first_name }}"
+freescout_admin_last_name: "{{ vault_freescout_admin_last_name }}"
+freescout_admin_password: "{{ vault_freescout_admin_password }}"
+freescout_application_name: "{{ vault_freescout_application_name }}"
+freescout_database: "freescout"
+freescout_database_password: "{{ vault_freescout_database_password }}"
+freescout_database_user: "{{ vault_freescout_database_user }}"

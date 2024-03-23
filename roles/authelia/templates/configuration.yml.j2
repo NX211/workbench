@@ -2,12 +2,17 @@ server:
   host: 0.0.0.0
   port: {{ authelia_port }}
   path: ""
-  read_buffer_size: 4096
-  write_buffer_size: 4096
   enable_pprof: false
   enable_expvars: false
   disable_healthcheck: false
   asset_path: /config/assets/
+  buffers:
+    read: 8192
+    write: 8192
+  timeouts:
+    read: 6s
+    write: 6s
+    idle: 30s
 
 access_control:
   default_policy: two_factor
@@ -63,6 +68,10 @@ access_control:
     policy: two_factor
     subject:
     - "group:media"
+  - domain: readarr2.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:media"
   - domain: prowlarr.{{ project_tld }}
     policy: two_factor
     subject:
@@ -99,6 +108,10 @@ access_control:
     policy: two_factor
     subject:
     - "group:print"
+  - domain: web.{{ project_tld }}
+    policy: two_factor
+    subject:
+    - "group:admin"
 
 authentication_backend:
   disable_reset_password: false

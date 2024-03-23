@@ -9,4 +9,3 @@ freshrss_bridge_hostname: "rssbridge"
 freshrss_bridge_domain: "rssbridge.{{ project_tld }}"
 freshrss_docker_image: "ghcr.io/linuxserver/freshrss"
 freshrss_bridge_docker_image: "rssbridge/rss-bridge"
-deploy_freshrss_bridge_config: true

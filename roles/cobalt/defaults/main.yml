@@ -1,0 +1,5 @@
+---
+cobalt_version: "latest"
+cobalt_hostname: "cobalt"
+cobalt_domain: "cobalt.{{ project_tld }}"
+cobalt_docker_image: "ghcr.io/wukko/cobalt"

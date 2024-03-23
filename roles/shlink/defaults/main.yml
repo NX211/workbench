@@ -1,0 +1,9 @@
+---
+shlink_version: "stable"
+shlink_web_version: "latest"
+shlink_docker_image: "shlinkio/shlink"
+shlink_web_docker_image: "shlinkio/shlink-web-client"
+shlink_hostname: "shlink"
+shlink_web_hostname: "shlink-web-client"
+shlink_port: "8080"
+shlink_web_port: "80"

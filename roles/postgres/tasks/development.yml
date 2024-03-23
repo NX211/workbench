@@ -1,0 +1,54 @@
+---
+- name: Ensure Postgres Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ project_root_directory }}/postgres"
+    mode: 0700
+    state: directory
+  tags:
+    - development
+    - postgres
+
+- name: Deploy Postgres Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: postgres
+    hostname: "{{ postgres_hostname }}"
+    image: "{{ postgres_docker_image }}:{{ postgres_version }}"
+    env:
+      POSTGRES_PASSWORD: "{{ development_postgres_root_password }}"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_INITDB_ARGS: "--auth-local=md5"
+    publish:
+      - target_port: "{{ postgres_port }}"
+        published_port: "{{ postgres_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/toybox/apps/postgres/"
+        target: /var/lib/postgresql/data/pgdata/
+        type: bind
+    state: present
+  tags:
+    - development
+    - postgres
+
+- name: Wait for Postgres to be up and running
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.wait_for:
+    host: "{{ development_postgres_localhost }}"
+    port: "{{ postgres_port }}"
+    delay: 15
+  tags:
+    - development
+    - postgres

@@ -1,0 +1,18 @@
+version: 1
+
+web:
+  listen:
+    port: {{ fasten_port }}
+    host: 0.0.0.0
+    basepath: ''
+  src:
+    frontend:
+      path: /opt/fasten/web
+database:
+  location: '/opt/fasten/db/fasten.db'
+log:
+  file: ''
+  level: INFO
+jwt:
+  issuer:
+    key: "{{ fasten_jwt_secret }}"

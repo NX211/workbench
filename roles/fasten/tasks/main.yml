@@ -1,0 +1,57 @@
+---
+- name: Ensure Fasten Database Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: fasten_database
+    state: present
+  tags:
+    - development
+    - fasten
+    - volume
+
+- name: Ensure Fasten DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - fasten
+    - dns
+
+- name: Deploy Fasten Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: fasten
+    hostname: "{{ fasten_hostname }}"
+    image: "{{ fasten_docker_image }}:{{ fasten_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      FASTEN_ENV: "prod"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    mounts:
+      - source: fasten_database
+        target: /opt/fasten/db/
+        type: volume
+    replicas: 1
+    labels:
+      traefik.http.routers.fasten.entrypoints: "websecure"
+      traefik.http.routers.fasten.rule: "Host(`{{ fasten_domain }}`)"
+      traefik.http.routers.fasten.middlewares: "default-headers@file"
+      traefik.http.routers.fasten.tls: "true"
+      traefik.http.routers.fasten.service: "{{ role_name }}"
+      traefik.http.routers.fasten.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.fasten.loadbalancer.server.port: "{{ fasten_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - fasten

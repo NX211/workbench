@@ -1,5 +1,9 @@
 ---
-- import_playbook: private_registry.yml
-- import_playbook: base_services.yml
-- import_playbook: core_services.yml
-- import_playbook: media_services.yml
+- name: Login to Local Registry
+  import_playbook: private_registry.yml
+- name: Base Services Playbook
+  import_playbook: base_services.yml
+- name: Core Service Playbook
+  import_playbook: core_services.yml
+- name: Media Services Playbook
+  import_playbook: media_services.yml

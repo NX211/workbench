@@ -2,7 +2,7 @@
 - name: Ensure PostgreSQL Databases are Present.
   community.general.postgresql_db:
     login_host: "{{ postgres_localhost }}"
-    login_port: "{{ postgres_port }}"
+    port: "{{ postgres_port }}"
     login_user: "{{ postgres_root_user }}"
     login_password: "{{ postgres_root_password }}"
     name: "{{ database_name }}"
@@ -11,7 +11,7 @@
 - name: Ensure PostgreSQL Users are Present.
   community.general.postgresql_user:
     login_host: "{{ postgres_localhost }}"
-    login_port: "{{ postgres_port }}"
+    port: "{{ postgres_port }}"
     login_user: "{{ postgres_root_user }}"
     login_password: "{{ postgres_root_password }}"
     name: "{{ database_user }}"

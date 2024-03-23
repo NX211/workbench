@@ -4,14 +4,15 @@
   gather_facts: False
   become: yes
   roles:
-    - kutt
+    - shlink
     - wallabag
     - freshrss
-    - cyberchef
+    - it_tools
     - guacamole
     - paperless
-    - podfetch
     - plausible
+    - freescout
     - listmonk
     - mastodon
+    - wordpress
     - mkdocs

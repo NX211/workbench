@@ -16,15 +16,15 @@
 - name: Ensure Paperless Directories Exist
   when: inventory_hostname == groups['workers'][0]
   ansible.builtin.file:
-    path: "{{ item }}"
-    mode: 0755
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
     owner: "paperless"
     group: "paperless"
     state: directory
   loop:
-    - /greytalon/apps/paperless
-    - /greytalon/apps/paperless/export
-    - /greytalon/apps/paperless/consume
+    - {path: '/greytalon/apps/paperless', mode: '0755'}
+    - {path: '/greytalon/apps/paperless/export', mode: '0755'}
+    - {path: '/greytalon/apps/paperless/consume', mode: '0755'}
   tags: paperless
 
 - name: Ensure Paperless Database Exist
@@ -38,11 +38,11 @@
   no_log: true
 
 - name: Ensure PeerTube DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ peertube_tld }}"
-  tags: 
+  tags:
     - peertube
     - dns
   no_log: true

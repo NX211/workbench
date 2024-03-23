@@ -14,7 +14,7 @@
     - blacktalon/media/movies
     - blacktalon/media/music
     - blacktalon/media/tv
-  tags: 
+  tags:
     - transmission
     - zfs
 
@@ -34,7 +34,7 @@
     - blacktalon/media/downloads/movies
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/tv
-  tags: 
+  tags:
     - transmission
     - zfs
 
@@ -43,16 +43,16 @@
   community.general.zfs:
     name: blacktalon/apps/transmission
     state: present
-  tags: 
+  tags:
     - transmission
     - zfs
 
 - name: Ensure Transmission DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ transmission_domain }}"
-  tags: 
+  tags:
     - transmission
     - dns
   no_log: true
@@ -75,11 +75,14 @@
     restart_config:
       condition: on-failure
     publish:
-      - published_port: "{{ transmission_peer_port }}"
-        target_port: "{{ transmission_peer_port }}"
-      - published_port: "{{ transmission_peer_port }}"
-        target_port: "{{ transmission_peer_port }}"
+      - target_port: "{{ transmission_peer_port }}"
+        published_port: "{{ transmission_peer_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+      - target_port: "{{ transmission_peer_port }}"
+        published_port: "{{ transmission_peer_port }}"
         protocol: "udp"
+        mode: "ingress"
     placement:
       constraints:
         - node.id == {{ blacktalon_node_id }}

@@ -13,13 +13,23 @@
   tags: wallabag
 
 - name: Ensure Wallabag DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ wallabag_domain }}"
-  tags: 
+  tags:
     - wallabag
     - dns
+  no_log: true
+
+- name: Ensure Wallabag Database exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ wallabag_database }}"
+    database_user: "{{ wallabag_database_user }}"
+    database_password: "{{ wallabag_database_password }}"
+  tags: wallabag
   no_log: true
 
 - name: Deploy Wallabag Service
@@ -31,9 +41,6 @@
     networks:
       - "{{ traefik_network }}"
     env:
-      POSTGRES_USER: "{{ postgres_root_user }}"
-      POSTGRES_PASSWORD: "{{ postgres_root_password }}"
-      POSTGRES_DB: "{{ wallabag_database }}"
       SYMFONY__ENV__DATABASE_DRIVER: "pdo_pgsql"
       SYMFONY__ENV__DATABASE_HOST: "{{ postgres_hostname }}"
       SYMFONY__ENV__DATABASE_PORT: "{{ postgres_port }}"

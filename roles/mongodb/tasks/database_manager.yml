@@ -12,4 +12,4 @@
     roles: readWrite,dbAdmin,userAdmin
     ssl: yes
     state: present
-    update_password: on_create
+    update_password: on_create # pragma: allowlist secret

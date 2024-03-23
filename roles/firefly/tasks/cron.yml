@@ -1,0 +1,22 @@
+---
+- name: Deploy Firefly Cron Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: firefly_cron
+    hostname: "{{ firefly_cron_hostname }}"
+    image: "{{ firefly_cron_docker_image }}:{{ firefly_cron_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    command: sh -c "echo \"0 3 * * * wget -qO- http://firefly:8080/api/v1/cron/{{ firefly_cron_token }}\" | crontab - && crond -f -L /dev/stdout"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    state: present
+  tags:
+    - development
+    - firefly

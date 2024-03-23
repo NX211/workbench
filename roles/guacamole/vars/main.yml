@@ -1,4 +1,4 @@
 ---
-guacamole_database_user: "{{ vault_guacamole_database_user }}"
-guacamole_database_password: "{{ vault_guacamole_database_password }}"
 guacamole_database: "{{ vault_guacamole_database }}"
+guacamole_database_password: "{{ vault_guacamole_database_password }}"
+guacamole_database_user: "{{ vault_guacamole_database_user }}"

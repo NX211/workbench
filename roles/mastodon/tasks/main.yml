@@ -17,11 +17,11 @@
   no_log: true
 
 - name: Ensure Mastodon DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ social_tld }}"
-  tags: 
+  tags:
     - mastodon
     - dns
   no_log: true
@@ -66,9 +66,9 @@
       SIDEKIQ_DEFAULT: "false"
       SIDEKIQ_THREADS: "5"
       DB_POOL: "5"
-      S3_BUCKET: "https://s3.authoritah.com/mastodon"
-      AWS_ACCESS_KEY_ID: "2QW9hgu3FKVcX7BvXEdRjehZidVDNP42"
-      AWS_SECRET_ACCESS_KEY: "jRV48ywcG99V6JT5XQYNK5SLQJqDZNSR"
+      S3_BUCKET: "https://s3.{{ project_tld }}/mastodon"
+      AWS_ACCESS_KEY_ID: "{{ mastodon_s3_access_key_id }}"
+      AWS_SECRET_ACCESS_KEY: "{{ mastodon_s3_secret_access_key }}"
     mode: replicated
     force_update: yes
     restart_config:

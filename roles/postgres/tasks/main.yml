@@ -18,8 +18,10 @@
       PGDATA: "/var/lib/postgresql/data/pgdata"
       POSTGRES_INITDB_ARGS: "--auth-local=md5"
     publish:
-      - published_port: "{{ postgres_port }}"
-        target_port: "{{ postgres_port }}"
+      - target_port: "{{ postgres_port }}"
+        published_port: "{{ postgres_port }}"
+        protocol: "tcp"
+        mode: "ingress"
     networks:
       - "{{ traefik_network }}"
     mode: replicated
@@ -44,3 +46,7 @@
     port: "{{ postgres_port }}"
     delay: 15
   tags: postgres
+
+- name: Import Postgres Development Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/development.yml"
+  tags: development

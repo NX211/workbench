@@ -1,0 +1,7 @@
+---
+fileflows_version: "latest"
+fileflows_docker_image: "revenz/fileflows"
+fileflows_node: "toybox"
+fileflows_tld: "fileflows.{{ development_tld }}"
+fileflows_hostname: "fileflows"
+fileflows_port: "5000"

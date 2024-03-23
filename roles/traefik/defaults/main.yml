@@ -1,5 +1,5 @@
 ---
-traefik_version: "v2.9"
+traefik_version: "v2.10"
 traefik_hostname: "traefik"
 traefik_docker_image: "traefik"
 traefik_http_port: "80"

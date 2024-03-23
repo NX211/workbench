@@ -29,3 +29,7 @@
     replicas: 1
     state: present
   tags: redis
+
+- name: Import Redis Development Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/development.yml"
+  tags: development

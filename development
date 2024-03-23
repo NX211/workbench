@@ -1,0 +1,9 @@
+[managers]
+sandbox ansible_port=22 ansible_host=10.70.0.112
+
+[workers]
+toybox ansible_port=22 ansible_host=10.70.0.114
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=ansible

@@ -21,9 +21,9 @@
     mode: 0644
     dest: "{{ item.dest }}"
   with_items:
-    - {src: clickhouse-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml"}
-    - {src: docker-related-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml"}
-    - {src: clickhouse-user-config.xml, dest: "{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml"}
+    - {src: 'clickhouse-config.xml', dest: '{{ project_root_directory }}/plausible/clickhouse/clickhouse-config.xml'}
+    - {src: 'docker-related-config.xml', dest: '{{ project_root_directory }}/plausible/clickhouse/docker-related-config.xml'}
+    - {src: 'clickhouse-user-config.xml', dest: '{{ project_root_directory }}/plausible/clickhouse/clickhouse-user-config.xml'}
   tags: plausible-database
 
 - name: Deploy Plausible Database Service

@@ -1,0 +1,55 @@
+---
+- name: Ensure MariaDB Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "{{ project_root_directory }}/mariadb"
+    mode: 0700
+    state: directory
+  tags:
+    - development
+    - mariadb
+
+- name: Deploy MariaDB Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: mariadb
+    hostname: "{{ mariadb_hostname }}"
+    image: "{{ mariadb_docker_image }}:{{ mariadb_version }}"
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{ default_timezone }}"
+      MYSQL_ROOT_PASSWORD: "{{ development_mariadb_root_password }}"
+    publish:
+      - target_port: "{{ mariadb_port }}"
+        published_port: "{{ mariadb_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: /toybox/apps/mariadb/
+        target: /config/
+        type: bind
+    state: present
+  tags:
+    - development
+    - mariadb
+
+- name: Wait for MariaDB to be up and running
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.wait_for:
+    host: "{{ development_mariadb_localhost }}"
+    port: "{{ mariadb_port }}"
+    delay: 15
+  tags:
+    - development
+    - mariadb

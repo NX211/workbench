@@ -1,6 +1,6 @@
 ---
 - name: Ensure FreshRSS DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ freshrss_domain }}"
@@ -12,7 +12,7 @@
   community.general.zfs:
     name: greytalon/apps/freshrss
     state: present
-  tags: 
+  tags:
     - freshrss
     - zfs
 

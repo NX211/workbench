@@ -11,7 +11,7 @@
     - blacktalon/media/movies
     - blacktalon/media/music
     - blacktalon/media/tv
-  tags: 
+  tags:
     - plex
     - zfs
 
@@ -20,16 +20,16 @@
   community.general.zfs:
     name: blacktalon/apps/plex
     state: present
-  tags: 
+  tags:
     - plex
     - zfs
 
 - name: Ensure Plex DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ media_tld }}"
-  tags: 
+  tags:
    - plex
    - dns
   no_log: true

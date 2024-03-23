@@ -9,7 +9,7 @@
     - blacktalon/media/tv
     - blacktalon/media/kids
     - blacktalon/media/anime
-  tags: 
+  tags:
     - bazarr
     - zfs
 
@@ -18,16 +18,16 @@
   community.general.zfs:
     name: blacktalon/apps/bazarr
     state: present
-  tags: 
+  tags:
     - bazarr
     - zfs
 
 - name: Ensure Bazarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ bazarr_domain }}"
-  tags: 
+  tags:
     - bazarr
     - dns
   no_log: true
@@ -39,7 +39,7 @@
     mode: 0644
     dest: "{{ project_root_directory }}/bazarr/config/config.ini"
   tags: bazarr
-  no_log: true
+  no_log: false
 
 - name: Deploy Bazarr Service
   when: inventory_hostname == groups['managers'][0]
@@ -82,9 +82,7 @@
     labels:
       traefik.http.routers.bazarr.entrypoints: "websecure"
       traefik.http.routers.bazarr.rule: "Host(`{{ bazarr_domain }}`)"
-      traefik.http.middlewares.bazarr_plausible.plugin.rewritebody.rewrites.regex: "</head>"
-      traefik.http.middlewares.bazarr_plausible.plugin.rewritebody.rewrites.replacement: "<script defer data-domain='bazarr.{{ project_tld }}' src='https://plausible.{{ project_tld }}/js/plausible.js'></script></head>"
-      traefik.http.routers.bazarr.middlewares: "default-headers@file,authelia@file,bazarr_plausible"
+      traefik.http.routers.bazarr.middlewares: "default-headers@file,authelia@file"
       traefik.http.routers.bazarr.tls: "true"
       traefik.http.routers.bazarr.service: "bazarr"
       traefik.http.routers.bazarr.tls.certresolver: "{{ default_certificate_resolver }}"

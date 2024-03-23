@@ -1,0 +1,26 @@
+---
+- name: Deploy Gitea Runner Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: gitea_runner
+    hostname: "{{ gitea_runner_hostname }}"
+    image: "{{ gitea_runner_docker_image }}:{{ gitea_runner_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      GITEA_INSTANCE_URL: "https://{{ git_tld }}"
+      GITEA_RUNNER_REGISTRATION_TOKEN: "{{ gitea_runner_registration_token }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+    state: present
+  tags: gitea_runner

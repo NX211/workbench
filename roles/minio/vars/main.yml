@@ -1,5 +1,5 @@
 ---
-minio_site_name: "{{ vault_minio_site_name }}"
-minio_site_region: "{{ vault_minio_site_region }}"
 minio_access_key: "{{ vault_minio_access_key }}"
 minio_secret_key: "{{ vault_minio_secret_key }}"
+minio_site_name: "{{ vault_minio_site_name }}"
+minio_site_region: "{{ vault_minio_site_region }}"

@@ -13,7 +13,7 @@
   when: inventory_hostname == groups['managers'][0]
   community.postgresql.postgresql_user:
     login_host: "{{ postgres_localhost }}"
-    login_port: "{{ postgres_port }}"
+    port: "{{ postgres_port }}"
     login_password: "{{ postgres_root_password }}"
     name: "{{ plausible_database_user }}"
     role_attr_flags: SUPERUSER
@@ -28,11 +28,11 @@
   tags: plausible
 
 - name: Ensure Plausible DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ plausible_domain }}"
-  tags: 
+  tags:
    - plausible
    - dns
   no_log: true

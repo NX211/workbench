@@ -1,0 +1,6 @@
+---
+it_tools_version: "latest"
+it_tools_hostname: "it-tools"
+it_tools_domain: "tools.{{ project_tld }}"
+it_tools_port: "80"
+it_tools_docker_image: "ghcr.io/corentinth/it-tools"

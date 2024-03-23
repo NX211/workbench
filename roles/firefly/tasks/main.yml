@@ -1,0 +1,135 @@
+---
+- name: Ensure Firefly Upload Volume Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_volume:
+    name: firefly_upload
+    state: present
+  tags:
+    - development
+    - firefly
+
+- name: Ensure Firefly DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - firefly
+    - dns
+
+- name: Ensure Firefly Database exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ firefly_database }}"
+    database_user: "{{ firefly_database_user }}"
+    database_password: "{{ firefly_database_password }}"
+  tags:
+    - development
+    - firefly
+  no_log: true
+
+- name: Deploy Firefly Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: firefly
+    hostname: "{{ firefly_hostname }}"
+    image: "{{ firefly_docker_image }}:{{ firefly_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      APP_ENV: "local"
+      APP_DEBUG: "false"
+      SITE_OWNER: "support@{{ project_tld }}"
+      APP_KEY: "{{ firefly_app_key }}"
+      DEFAULT_LANGUAGE: "en_US"
+      DEFAULT_LOCALE: "equal"
+      TZ: "{{ default_timezone }}"
+      TRUSTED_PROXIES: "**"
+      LOG_CHANNEL: "stack"
+      APP_LOG_LEVEL: "notice"
+      AUDIT_LOG_LEVEL: "info"
+      DB_CONNECTION: "pgsql"
+      DB_HOST: "{{ postgres_hostname }}"
+      DB_PORT: "{{ postgres_port }}"
+      DB_DATABASE: "{{ firefly_database }}"
+      DB_USERNAME: "{{ firefly_database_user }}"
+      DB_PASSWORD: "{{ firefly_database_password }}"
+      PGSQL_SSL_MODE: "prefer"
+      PGSQL_SCHEMA: "public"
+      CACHE_DRIVER: "redis"
+      SESSION_DRIVER: "redis"
+      REDIS_SCHEME: "tcp"
+      REDIS_HOST: "{{ redis_hostname }}"
+      REDIS_PORT: "{{ redis_port }}"
+      REDIS_DB: "0"
+      REDIS_CACHE_DB: "1"
+      COOKIE_PATH: "/"
+      COOKIE_DOMAIN: ""
+      COOKIE_SECURE: "false"
+      COOKIE_SAMESITE: "lax"
+      MAIL_MAILER: "smtp"
+      MAIL_HOST: "{{ email_host }}"
+      MAIL_PORT: "{{ email_port }}"
+      MAIL_FROM: "{{ email_user }}"
+      MAIL_USERNAME: "{{ email_user }}"
+      MAIL_PASSWORD: "{{ email_password }}"
+      MAIL_ENCRYPTION: "tls"
+      SEND_ERROR_MESSAGE: "true"
+      SEND_REPORT_JOURNALS: "true"
+      ENABLE_EXTERNAL_MAP: "false"
+      ENABLE_EXTERNAL_RATES: "true"
+      MAP_DEFAULT_LAT: "51.983333"
+      MAP_DEFAULT_LONG: "5.916667"
+      MAP_DEFAULT_ZOOM: "6"
+      AUTHENTICATION_GUARD: "web"
+      DISABLE_FRAME_HEADER: "false"
+      DISABLE_CSP_HEADER: "false"
+      ALLOW_WEBHOOKS: "false"
+      STATIC_CRON_TOKEN: "{{ firefly_cron_token }}"
+      DKR_BUILD_LOCALE: "false"
+      DKR_CHECK_SQLITE: "false"
+      DKR_RUN_MIGRATION: "true"
+      DKR_RUN_UPGRADE: "true"
+      DKR_RUN_VERIFY: "true"
+      DKR_RUN_REPORT: "true"
+      DKR_RUN_PASSPORT_INSTALL: "true"
+      APP_NAME: "{{ firefly_app_name }}"
+      BROADCAST_DRIVER: "log"
+      QUEUE_DRIVER: "sync"
+      CACHE_PREFIX: "firefly"
+      FIREFLY_III_LAYOUT: "v1"
+      APP_URL: "https://{{ firefly_domain }}"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: firefly_upload
+        target: /var/www/html/storage/upload/
+        type: volume
+    labels:
+      traefik.http.routers.firefly.entrypoints: "websecure"
+      traefik.http.routers.firefly.rule: "Host(`{{ firefly_domain }}`)"
+      traefik.http.routers.firefly.middlewares: "default-headers@file"
+      traefik.http.routers.firefly.tls: "true"
+      traefik.http.routers.firefly.service: "firefly"
+      traefik.http.routers.firefly.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.firefly.loadbalancer.server.port: "{{ firefly_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - firefly
+
+- name: Import Firefly Cron Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/cron.yml"
+  tags:
+    - development
+    - firefly

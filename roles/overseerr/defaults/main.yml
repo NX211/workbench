@@ -1,0 +1,6 @@
+---
+overseerr_version: "latest"
+overseerr_hostname: "overseerr"
+overseerr_domain: "request.{{ media_tld }}"
+overseerr_docker_image: "ghcr.io/linuxserver/overseerr"
+overseerr_port: "5055"

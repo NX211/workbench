@@ -1,0 +1,9 @@
+---
+wordpress_version: "latest"
+wordpress_database_version: "8.0"
+wordpress_hostname: "wordpress"
+wordpress_database_hostname: "wordpressdb"
+wordpress_node: "redtalon"
+wordpress_port: "80"
+wordpress_docker_image: "wordpress"
+wordpress_database_docker_image: "mysql"

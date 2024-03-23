@@ -1,0 +1,7 @@
+---
+librum_version: "latest"
+librum_hostname: "librum"
+librum_node: "toybox"
+librum_domain: "librum.{{ development_tld }}"
+librum_port: "5000"
+librum_docker_image: "ghcr.io/librum-reader/librum-server"

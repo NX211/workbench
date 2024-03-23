@@ -1,0 +1,9 @@
+---
+gitea_version: "latest"
+gitea_runner_version: "nightly"
+gitea_hostname: "gitea"
+gitea_runner_hostname: "gitea_runner"
+gitea_domain: "{{ git_tld }}"
+gitea_port: "3000"
+gitea_docker_image: "gitea/gitea"
+gitea_runner_docker_image: "gitea/act_runner"

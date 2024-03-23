@@ -1,0 +1,75 @@
+---
+- name: Ensure FreeScout DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ freescout_domain }}"
+  tags:
+    - freescout
+    - dns
+  no_log: true
+
+- name: Ensure FreeScout Directories Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: /redtalon/apps/freescout
+    mode: 0755
+    state: directory
+  tags: freescout
+
+- name: Ensure FreeScout Databases Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ freescout_database }}"
+    database_user: "{{ freescout_database_user }}"
+    database_password: "{{ freescout_database_password }}"
+  tags: freescout
+  no_log: true
+
+- name: Deploy FreeScout Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: freescout
+    hostname: "{{ freescout_hostname }}"
+    image: "{{ freescout_docker_image }}:{{ freescout_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      SITE_URL: "https://{{ freescout_domain }}"
+      APPLICATION_NAME: "{{ freescout_application_name }}"
+      DB_TYPE: "pgsql"
+      TIMEZONE: "{{ default_timezone }}"
+      ENABLE_SSL_PROXY: "FALSE"
+      DISPLAY_ERRORS: "FALSE"
+      CONTAINER_NAME: "{{ freescout_hostname }}"
+      ADMIN_EMAIL: "{{ freescout_admin_email }}"
+      ADMIN_PASS: "{{ freescout_admin_password }}"
+      DB_HOST: "{{ postgres_hostname }}"
+      DB_PORT: "{{ postgres_port }}"
+      DB_NAME: "{{ freescout_database }}"
+      DB_USER: "{{ freescout_database_user }}"
+      DB_PASS: "{{ freescout_database_password }}"
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /redtalon/apps/freescout/
+        target: /data/
+        type: bind
+    labels:
+      traefik.http.routers.freescout.entrypoints: "websecure"
+      traefik.http.routers.freescout.rule: "Host(`{{ freescout_domain }}`)"
+      traefik.http.routers.freescout.middlewares: "default-headers@file"
+      traefik.http.routers.freescout.tls: "true"
+      traefik.http.routers.freescout.service: "freescout"
+      traefik.http.routers.freescout.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.freescout.loadbalancer.server.port: "{{ freescout_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: freescout

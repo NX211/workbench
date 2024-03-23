@@ -1,0 +1,66 @@
+---
+- name: Ensure Shlink DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ link_tld }}"
+  tags:
+    - shlink
+    - dns
+  no_log: true
+
+- name: Ensure Shlink Database Exist
+  ansible.builtin.import_tasks: roles/postgres/tasks/database_manager.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    database_name: "{{ shlink_database }}"
+    database_user: "{{ shlink_database_user }}"
+    database_password: "{{ shlink_database_password }}"
+  no_log: true
+  tags: shlink
+
+- name: Deploy Shlink Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: shlink
+    hostname: "{{ shlink_hostname }}"
+    image: "{{ shlink_docker_image }}:{{ shlink_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      DEFAULT_DOMAIN: "{{ link_tld }}"
+      IS_HTTPS_ENABLED: "false"
+      GEOLITE_LICENSE_KEY: "{{ shlink_geolite_license_key }}"
+      DB_DRIVER: "postgres"
+      DB_NAME: "{{ shlink_database }}"
+      DB_USER: "{{ shlink_database_user }}"
+      DB_PASSWORD: "{{ shlink_database_password }}"
+      DB_HOST: "{{ postgres_hostname }}"
+      DB_PORT: "{{ postgres_port }}"
+      AUTO_RESOLVE_TITLES: "false"
+      DEFAULT_SHORT_CODES_LENGTH: "6"
+      TIMEZONE: "{{ default_timezone }}"
+      PORT: "{{ shlink_port }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ redtalon_node_id }}
+    replicas: 1
+    labels:
+      traefik.http.routers.shlink.entrypoints: "websecure"
+      traefik.http.routers.shlink.rule: "Host(`{{ link_tld }}`)"
+      traefik.http.routers.shlink.middlewares: "default-headers@file"
+      traefik.http.routers.shlink.tls: "true"
+      traefik.http.routers.shlink.service: "shlink"
+      traefik.http.routers.shlink.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.shlink.loadbalancer.server.port: "{{ shlink_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: shlink
+
+- name: Import Shlink Web Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/web.yml"
+  tags: shlink

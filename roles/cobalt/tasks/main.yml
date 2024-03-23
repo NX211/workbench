@@ -1,0 +1,102 @@
+---
+- name: Ensure Media Datasets Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - blacktalon/media/youtube
+  tags:
+    - cobalt
+    - zfs
+
+- name: Ensure Cobalt Dataset Exist
+  when: inventory_hostname == groups['media'][0]
+  community.general.zfs:
+    name: blacktalon/apps/cobalt
+    state: present
+  tags:
+    - cobalt
+    - zfs
+
+- name: Ensure Cobalt DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    domain_name: "{{ cobalt_domain }}"
+  tags:
+    - cobalt
+    - dns
+  no_log: true
+
+- name: Ensure Cobalt Configuration Files Exist
+  when: inventory_hostname == groups['media'][0]
+  ansible.builtin.template:
+    src: config.ini.j2
+    mode: 0644
+    dest: "{{ project_root_directory }}/cobalt/config/config.ini"
+  tags: cobalt
+  no_log: false
+
+- name: Deploy Cobalt API Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: cobalt-api
+    hostname: "{{ cobalt_hostname }}"
+    image: "{{ cobalt_docker_image }}:{{ cobalt_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      piURL: "https://co.wuk.sh/"
+      apiName: "eu-nl"
+    placement:
+      constraints:
+        - node.id == {{ blacktalon_node_id }}
+    replicas: 1
+    state: present
+  tags: cobalt
+
+- name: Deploy Cobalt Web Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: cobalt-web
+    hostname: "{{ cobalt_hostname }}"
+    image: "{{ cobalt_docker_image }}:{{ cobalt_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      webURL: "https://cobalt.tools/"
+      apiURL: "https://co.wuk.sh/"
+    placement:
+      constraints:
+        - node.id == {{ blacktalon_node_id }}
+    replicas: 1
+    mounts:
+      - source: /blacktalon/apps/cobalt/
+        target: /config/
+        type: bind
+      - source: "{{ project_media_directory }}/movies/"
+        target: /media/movies/
+        type: bind
+      - source: "{{ project_media_directory }}/tv/"
+        target: /media/tv/
+        type: bind
+    labels:
+      traefik.http.routers.cobalt.entrypoints: "websecure"
+      traefik.http.routers.cobalt.rule: "Host(`{{ cobalt_domain }}`)"
+      traefik.http.routers.cobalt.middlewares: "default-headers@file,authelia@file"
+      traefik.http.routers.cobalt.tls: "true"
+      traefik.http.routers.cobalt.service: "cobalt"
+      traefik.http.routers.cobalt.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.cobalt.loadbalancer.server.port: "{{ cobalt_port }}"
+      traefik.enable: "true"
+    state: present
+  tags: cobalt

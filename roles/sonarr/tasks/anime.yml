@@ -4,7 +4,7 @@
   community.general.zfs:
     name: blacktalon/media/anime
     state: present
-  tags: 
+  tags:
     - sonarr-anime
     - zfs
 
@@ -13,7 +13,7 @@
   community.general.zfs:
     name: blacktalon/media/downloads/anime
     state: present
-  tags: 
+  tags:
     - sonarr-anime
     - zfs
 
@@ -22,16 +22,16 @@
   community.general.zfs:
     name: blacktalon/apps/sonarr2
     state: present
-  tags: 
+  tags:
     - sonarr-anime
     - zfs
 
 - name: Ensure Sonarr Anime DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ sonarr_anime_domain }}"
-  tags: 
+  tags:
     - sonarr-anime
     - dns
   no_log: true

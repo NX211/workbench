@@ -23,7 +23,7 @@ def call_api(api_key, command, cmd_params=dict()):
     with urllib.request.urlopen( url ) as response:
         response_text = response.read()
         return json.loads(response_text.decode("utf-8"))
-    
+
 
 def list_records(api_key):
     return call_api(api_key, "dns-list_records")
@@ -79,9 +79,9 @@ def run_module():
     # Prepare the desired state of the record
     target_state = module.params['state'] or "present"
     target_record = dict(
-        record = module.params['name'], 
-        type = module.params['type'], 
-        value = module.params['value'], 
+        record = module.params['name'],
+        type = module.params['type'],
+        value = module.params['value'],
         comment = module.params['comment']
     )
 

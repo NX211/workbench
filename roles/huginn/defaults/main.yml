@@ -1,0 +1,7 @@
+---
+huginn_version: "latest"
+huginn_hostname: "huginn"
+huginn_node: "toybox"
+huginn_domain: "huginn.{{ development_tld }}"
+huginn_port: "3000"
+huginn_docker_image: "ghcr.io/huginn/huginn"

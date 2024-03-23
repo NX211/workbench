@@ -1,0 +1,6 @@
+---
+huginn_app_secret_token: "{{ vault_huginn_app_secret_token }}"
+huginn_database: "{{ vault_huginn_database }}"
+huginn_database_password: "{{ vault_huginn_database_password }}"
+huginn_database_user: "{{ vault_huginn_database_user }}"
+huginn_invitation_code: "{{ vault_huginn_invitation_code }}"

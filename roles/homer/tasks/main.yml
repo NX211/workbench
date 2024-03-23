@@ -2,12 +2,12 @@
 - name: Ensure Homer Directories Exist
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     state: directory
-    mode: 0755
+    mode: "{{ item.mode }}"
   loop:
-    - "{{ project_root_directory }}/homer"
-    - "{{ project_root_directory }}/homer/icons"
+    - {path: '{{ project_root_directory }}/homer', mode: '0755'}
+    - {path: '{{ project_root_directory }}/homer/icons', mode: '0755'}
   tags: homer
 
 - name: Clone a Homer Icons Repository
@@ -79,3 +79,7 @@
       traefik.enable: "true"
     state: present
   tags: homer
+
+- name: Import Homer Development Role
+  ansible.builtin.import_tasks: "{{ role_path }}/tasks/development.yml"
+  tags: development

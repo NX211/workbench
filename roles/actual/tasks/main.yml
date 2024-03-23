@@ -1,0 +1,58 @@
+---
+- name: Ensure Actual DNS Records Exist
+  ansible.builtin.import_tasks: roles/traefik/tasks/cloudflare.yml
+  when: inventory_hostname == groups['managers'][0]
+  vars:
+    tld_name: "{{ development_tld }}"
+    record_name: "{{ role_name }}"
+  tags:
+    - development
+    - actual
+    - dns
+  no_log: true
+
+- name: Ensure Actual Directory Exist
+  when: inventory_hostname == groups['workers'][0]
+  ansible.builtin.file:
+    path: "/{{ actual_node }}/apps/{{ role_name }}"
+    mode: 0755
+    state: directory
+  tags:
+    - development
+    - actual
+
+- name: Deploy Actual Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: actual
+    hostname: "{{ actual_hostname }}"
+    image: "{{ actual_docker_image }}:{{ actual_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      ACTUAL_PORT: "{{ actual_port }}"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    mounts:
+      - source: "/toybox/apps/{{ role_name }}/"
+        target: /data/
+        type: bind
+    labels:
+      traefik.http.routers.actual.entrypoints: "websecure"
+      traefik.http.routers.actual.rule: "Host(`{{ actual_domain }}`)"
+      traefik.http.routers.actual.middlewares: "default-headers@file"
+      traefik.http.routers.actual.tls: "true"
+      traefik.http.routers.actual.service: "{{ role_name }}"
+      traefik.http.routers.actual.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.actual.loadbalancer.server.port: "{{ actual_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - actual

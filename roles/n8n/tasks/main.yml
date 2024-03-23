@@ -10,11 +10,11 @@
   no_log: true
 
 - name: Ensure n8n DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ n8n_domain }}"
-  tags: 
+  tags:
     - n8n
     - dns
   no_log: true

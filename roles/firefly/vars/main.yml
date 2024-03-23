@@ -1,0 +1,9 @@
+---
+firefly_app_key: "{{ vault_firefly_app_key }}"
+firefly_app_name: "{{ vault_firefly_app_name }}"
+firefly_auto_import_secret: "{{ vault_firefly_auto_import_secret }}"
+firefly_cron_token: "{{ vault_firefly_cron_token }}"
+firefly_database: "{{ vault_firefly_database }}"
+firefly_database_password: "{{ vault_firefly_database_password }}"
+firefly_database_user: "{{ vault_firefly_database_user }}"
+firefly_importer_access_token: "{{ vault_firefly_importer_access_token }}"

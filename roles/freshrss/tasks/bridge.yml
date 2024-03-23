@@ -1,10 +1,10 @@
 ---
 - name: Ensure RSS-Bridge DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ freshrss_bridge_domain }}"
-  tags: 
+  tags:
     - rss-bridge
     - dns
   no_log: true
@@ -14,7 +14,7 @@
   community.general.zfs:
     name: greytalon/apps/rssbridge
     state: present
-  tags: 
+  tags:
     - rss-bridge
     - zfs
 

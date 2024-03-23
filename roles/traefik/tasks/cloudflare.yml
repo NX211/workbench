@@ -1,0 +1,8 @@
+---
+- name: Ensure DNS Records Exist
+  community.general.cloudflare_dns:
+    zone: "{{ tld_name }}"
+    record: "{{ record_name }}"
+    type: A
+    value: "{{ external_ipv4_address }}"
+    api_token: "{{ cloudflare_api_token }}"

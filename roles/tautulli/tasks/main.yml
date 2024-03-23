@@ -8,11 +8,11 @@
   tags: tautulli
 
 - name: Ensure Tautulli DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ tautulli_domain }}"
-  tags: 
+  tags:
     - tautulli
     - dns
   no_log: true

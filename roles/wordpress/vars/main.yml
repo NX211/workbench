@@ -1,0 +1,5 @@
+---
+wordpress_database: "{{ vault_wordpress_database }}"
+wordpress_database_user: "{{ vault_wordpress_database_user }}"
+wordpress_database_password: "{{ vault_wordpress_database_password }}"
+wordpress_database_root_password: "{{ vault_wordpress_database_root_password }}"

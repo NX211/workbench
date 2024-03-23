@@ -1,0 +1,7 @@
+---
+actual_version: "latest"
+actual_hostname: "actual"
+actual_node: "toybox"
+actual_domain: "actual.{{ development_tld }}"
+actual_port: "5006"
+actual_docker_image: "actualbudget/actual-server"

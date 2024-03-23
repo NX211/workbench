@@ -1,0 +1,104 @@
+---
+- name: Ensure Traefik Directories Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - {path: '/sandbox/apps/traefik', mode: '0755'}
+    - {path: '/sandbox/apps/traefik/letsencrypt', mode: '0755'}
+  tags:
+    - development
+    - traefik
+
+- name: Ensure Acme File Exists
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.copy:
+    content: ""
+    dest: /sandbox/apps/traefik/letsencrypt/acme.json
+    force: no
+    owner: root
+    mode: 0600
+  no_log: true
+  tags:
+    - development
+    - traefik
+
+- name: Ensure All Root DNS Records Exist
+  when: inventory_hostname == groups['managers'][0]
+  community.general.cloudflare_dns:
+    zone: "{{ item.tld_name }}"
+    record: "{{ item.record_name }}"
+    type: A
+    value: "{{ external_ipv4_address }}"
+    api_token: "{{ cloudflare_api_token }}"
+  with_items:
+    - { tld_name: '{{ development_tld }}', record_name: '@' }
+  tags: traefik
+  no_log: true
+
+- name: Ensure Teaefik Configuration Files Exist
+  when: inventory_hostname == groups['managers'][0]
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    mode: "{{ item.mode }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: 'development_config.yml.j2', dest: '/sandbox/apps/traefik/config.yml', mode: '0644'}
+    - {src: 'development_traefik-conf.yml.j2', dest: '/sandbox/apps/traefik/traefik-conf.yml', mode: '0644'}
+  tags:
+    - development
+    - traefik
+  no_log: true
+
+- name: Deploy Traefik Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: traefik
+    hostname: "{{ traefik_hostname }}"
+    image: "{{ traefik_docker_image }}:{{ traefik_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    env:
+      CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare_api_token }}"
+    publish:
+      - target_port: "{{ traefik_http_port }}"
+        published_port: "{{ traefik_http_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+      - target_port: "{{ traefik_https_port }}"
+        published_port: "{{ traefik_https_port }}"
+        protocol: "tcp"
+        mode: "ingress"
+    mode: global
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    placement:
+      constraints:
+        - node.id == {{ sandbox_node_id }}
+    mounts:
+      - source: /sandbox/apps/traefik/traefik-conf.yml
+        target: /traefik.yml
+        type: bind
+      - source: /sandbox/apps/traefik/letsencrypt/acme.json
+        target: /acme.json
+        type: bind
+      - source: /sandbox/apps/traefik/config.yml
+        target: /config.yml
+        type: bind
+    labels:
+      traefik.http.routers.traefiksecure.entrypoints: "websecure"
+      traefik.http.routers.traefiksecure.rule: "Host(`api.{{ development_tld }}`)"
+      traefik.http.routers.traefiksecure.tls: "true"
+      traefik.http.routers.traefiksecure.service: "api@internal"
+      traefik.http.routers.wildcard.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.routers.wildcard.tls.domains[0].main: "{{ development_tld }}"
+      traefik.http.routers.wildcard.tls.domains[0].sans: "*.{{ development_tld }}"
+      traefik.http.services.dummy-svc.loadbalancer.server.port: "9999"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - traefik

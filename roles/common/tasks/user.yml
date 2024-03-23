@@ -1,27 +1,27 @@
 ---
-- name: Create docker group
-  group:
+- name: Create Docker Group
+  ansible.builtin.group:
     name: docker
     state: present
 
-- name: Create user {{ username }}
-  user:
+- name: Create User {{ username }}
+  ansible.builtin.user:
     name: "{{ username }}"
     groups:
       - sudo
       - docker
     system: false
-    createhome: true
+    create_home: true
     home: "/home/{{ username }}"
 
 - name: Password-less sudo for {{ username }}
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/sudoers
     regexp: "^%wheel"
-    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"  # pragma: allowlist secret
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: Setup ssh for {{ username }}
-  authorized_key:
+- name: Setup SSH for {{ username }}
+  ansible.posix.authorized_key:
     user: "{{ username }}"
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

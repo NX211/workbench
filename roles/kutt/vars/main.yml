@@ -1,6 +1,0 @@
----
-kutt_site_name: "{{ vault_kutt_site_name }}"
-kutt_database_user: "{{ vault_kutt_database_user }}"
-kutt_database_password: "{{ vault_kutt_database_password }}"
-kutt_database: "{{ vault_kutt_database }}"
-kutt_jwt_secret: "{{ vault_kutt_jwt_secret }}"

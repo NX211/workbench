@@ -1,0 +1,3 @@
+---
+mariadb_version: "latest"
+mariadb_docker_image: "lscr.io/linuxserver/mariadb"

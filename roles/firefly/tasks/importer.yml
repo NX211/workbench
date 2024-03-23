@@ -1,0 +1,54 @@
+---
+- name: Deploy Firefly Importer Service
+  when: inventory_hostname == groups['managers'][0]
+  community.docker.docker_swarm_service:
+    name: firefly_cron
+    hostname: "{{ firefly_cron_hostname }}"
+    image: "{{ firefly_cron_docker_image }}:{{ firefly_cron_version }}"
+    networks:
+      - "{{ traefik_network }}"
+    mode: replicated
+    force_update: yes
+    restart_config:
+      condition: on-failure
+    env:
+      FIREFLY_III_URL: "http://{{ firefly_hostname }}:{{ firefly_port }}"
+      VANITY_URL: "https://import.{{ firefly_domain }}"
+      FIREFLY_III_ACCESS_TOKEN: "{{ firefly_importer_access_token }}"
+      USE_CACHE: "false"
+      IGNORE_DUPLICATE_ERRORS: "false"
+      AUTO_IMPORT_SECRET: "{{ firefly_auto_import_secret }}"
+      CAN_POST_AUTOIMPORT: "false"
+      CAN_POST_FILES: "false"
+      VERIFY_TLS_SECURITY: "true"
+      APP_ENV: "local"
+      APP_DEBUG: "false"
+      LOG_CHANNEL: "stack"
+      TRUSTED_PROXIES: "**"
+      TZ: "{{ default_timezone }}"
+      ENABLE_MAIL_REPORT: "true"
+      EXPECT_SECURE_URL: "false"
+      MAIL_MAILER: "smtp"
+      MAIL_HOST: "{{ email_host }}"
+      MAIL_PORT: "{{ email_port }}"
+      MAIL_FROM: "{{ email_user }}"
+      MAIL_USERNAME: "{{ email_user }}"
+      MAIL_PASSWORD: "{{ email_password }}"
+      MAIL_ENCRYPTION: "tls"
+    placement:
+      constraints:
+        - node.id == {{ toybox_node_id }}
+    replicas: 1
+    labels:
+      traefik.http.routers.firefly-importer.entrypoints: "websecure"
+      traefik.http.routers.firefly-importer.rule: "Host(`import.{{ firefly_domain }}`)"
+      traefik.http.routers.firefly-importer.middlewares: "default-headers@file"
+      traefik.http.routers.firefly-importer.tls: "true"
+      traefik.http.routers.firefly-importer.service: "firefly-importer"
+      traefik.http.routers.firefly-importer.tls.certresolver: "{{ default_certificate_resolver }}"
+      traefik.http.services.firefly-importer.loadbalancer.server.port: "{{ firefly_importer_port }}"
+      traefik.enable: "true"
+    state: present
+  tags:
+    - development
+    - firefly

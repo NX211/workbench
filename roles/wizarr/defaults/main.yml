@@ -1,6 +1,6 @@
 ---
-wizarr_version: "latest"
+wizarr_version: "v3-beta"
 wizarr_hostname: "wizarr"
 wizarr_domain: "join.{{ media_tld }}"
 wizarr_port: "5690"
-wizarr_docker_image: "wizarr/wizarr"
+wizarr_docker_image: "ghcr.io/wizarrrr/wizarr"

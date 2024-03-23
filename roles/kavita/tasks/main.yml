@@ -8,7 +8,7 @@
     - blacktalon/media/manga
     - blacktalon/media/books
     - blacktalon/media/comics
-  tags: 
+  tags:
     - kavita
     - zfs
 
@@ -17,16 +17,16 @@
   community.general.zfs:
     name: blacktalon/apps/kavita
     state: present
-  tags: 
+  tags:
     - kavita
     - zfs
 
 - name: Ensure Kavita DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ kavita_domain }}"
-  tags: 
+  tags:
     - kavita
     - dns
   no_log: true

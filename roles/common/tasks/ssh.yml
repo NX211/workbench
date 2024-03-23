@@ -1,6 +1,6 @@
 ---
-- name: Secure ssh config
-  lineinfile:
+- name: Secure SSH config
+  ansible.builtin.lineinfile:
     dest: "/etc/ssh/sshd_config"
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
@@ -21,8 +21,8 @@
     - regexp: "^#?MaxAuthTries.*"
       line: "MaxAuthTries 3"
 
-- name: Enable and restart ssh
-  service:
+- name: Enable and Restart SSH
+  ansible.builtin.service:
     name: sshd
     enabled: true
     state: restarted

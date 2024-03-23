@@ -4,7 +4,7 @@
   community.general.zfs:
     name: greytalon/apps/immich
     state: present
-  tags: 
+  tags:
     - immich
     - zfs
 
@@ -13,27 +13,27 @@
   community.general.zfs:
     name: greytalon/media/photos
     state: present
-  tags: 
+  tags:
     - immich
     - zfs
 
 - name: Ensure Immich Directories Exist
   when: inventory_hostname == groups['workers'][0]
   ansible.builtin.file:
-    path: "{{ item }}"
-    mode: 0755
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
     state: directory
   loop:
-    - /greytalon/apps/immich/config
-    - /greytalon/apps/immich/database
+    - {path: '/greytalon/apps/immich/config', mode: '755'}
+    - {path: '/greytalon/apps/immich/database', mode: '700'}
   tags: immich
 
 - name: Ensure Immich DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ photo_tld }}"
-  tags: 
+  tags:
     - immich
     - dns
   no_log: true
@@ -84,7 +84,6 @@
       DB_PASSWORD: "{{ immich_database_password }}"
       DB_DATABASE_NAME: "{{ immich_database }}"
       REDIS_HOSTNAME: "{{ redis_hostname }}"
-      JWT_SECRET: "{{ immich_jwt_secret }}"
       DB_PORT: "{{ immich_database_port }}"
       REDIS_PORT: "{{ redis_port }}"
     placement:

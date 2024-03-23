@@ -1,5 +1,7 @@
 ---
 readarr_version: "nightly"
 readarr_hostname: "readarr"
+readarr2_hostname: "readarr2"
 readarr_domain: "readarr.{{ project_tld }}"
+readarr2_domain: "readarr2.{{ project_tld }}"
 readarr_docker_image: "ghcr.io/linuxserver/readarr"

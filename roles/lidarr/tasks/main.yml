@@ -7,7 +7,7 @@
   loop:
     - blacktalon/media/music
     - blacktalon/media/music-videos
-  tags: 
+  tags:
     - lidarr
     - zfs
 
@@ -19,7 +19,7 @@
   loop:
     - blacktalon/media/downloads/music
     - blacktalon/media/downloads/music-videos
-  tags: 
+  tags:
     - lidarr
     - zfs
 
@@ -28,16 +28,16 @@
   community.general.zfs:
     name: blacktalon/apps/lidarr
     state: present
-  tags: 
+  tags:
    - lidarr
    - zfs
 
 - name: Ensure Lidarr DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ lidarr_domain }}"
-  tags: 
+  tags:
     - lidarr
     - dns
   no_log: true
@@ -80,7 +80,7 @@
       - source: "{{ project_media_directory }}/music/"
         target: /media/music/
         type: bind
-      - source: "{{ project_download_directory }}"
+      - source: "{{ project_download_directory }}/"
         target: /media/downloads/
         type: bind
     labels:
@@ -93,12 +93,4 @@
       traefik.http.services.lidarr.loadbalancer.server.port: "{{ lidarr_port }}"
       traefik.enable: "true"
     state: present
-  tags: lidarr
-
-- name: Import Automated Music Downloader
-  ansible.builtin.import_tasks: "{{ role_path }}/tasks/amd.yml"
-  tags: lidarr
-
-- name: Import Automated Music Video Downloader
-  ansible.builtin.import_tasks: "{{ role_path }}/tasks/amvd.yml"
   tags: lidarr

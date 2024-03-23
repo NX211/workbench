@@ -1,0 +1,2 @@
+---
+fasten_jwt_secret: "{{ vault_fasten_jwt_secret }}"

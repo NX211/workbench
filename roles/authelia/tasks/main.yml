@@ -2,20 +2,20 @@
 - name: Ensure Authelia Directories Exist
   when: inventory_hostname == groups['managers'][0]
   ansible.builtin.file:
-    path: "{{ item }}"
-    mode: 0644
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
     state: directory
   loop:
-    - "{{ project_root_directory }}/authelia"
-    - "{{ project_root_directory }}/authelia/assets"
+    - {path: '{{ project_root_directory }}/authelia', mode: '0644'}
+    - {path: '{{ project_root_directory }}/authelia/assets', mode: '0644'}
   tags: authelia
 
 - name: Ensure Authelia DNS Records Exist
-  ansible.builtin.import_tasks: roles/traefik/tasks/dns.yml
+  ansible.builtin.import_tasks: roles/traefik/tasks/dreamhost.yml
   when: inventory_hostname == groups['managers'][0]
   vars:
     domain_name: "{{ authelia_domain }}"
-  tags: 
+  tags:
     - authelia
     - dns
   no_log: true
@@ -27,8 +27,8 @@
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: logo.png, dest: "{{ project_root_directory }}/authelia/assets/logo.png" }
-    - { src: favicon.ico, dest: "{{ project_root_directory }}/authelia/assets/favicon.ico" }
+    - { src: 'logo.png', dest: '{{ project_root_directory }}/authelia/assets/logo.png' }
+    - { src: 'favicon.ico', dest: '{{ project_root_directory }}/authelia/assets/favicon.ico' }
   tags: authelia
   no_log: true
 
@@ -49,8 +49,8 @@
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: configuration.yml.j2, dest: "{{ project_root_directory }}/authelia/configuration.yml" }
-    - { src: users.yml.j2, dest: "{{ project_root_directory }}/authelia/users.yml" }
+    - { src: 'configuration.yml.j2', dest: '{{ project_root_directory }}/authelia/configuration.yml' }
+    - { src: 'users.yml.j2', dest: '{{ project_root_directory }}/authelia/users.yml' }
   tags: authelia
   no_log: true
 

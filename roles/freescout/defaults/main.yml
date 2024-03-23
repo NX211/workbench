@@ -1,0 +1,6 @@
+---
+freescout_version: "latest"
+freescout_hostname: "freescout"
+freescout_domain: "helpdesk.{{ project_tld }}"
+freescout_port: "80"
+freescout_docker_image: "tiredofit/freescout"

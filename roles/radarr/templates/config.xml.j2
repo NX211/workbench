@@ -6,7 +6,7 @@
   <SslPort>9898</SslPort>
   <EnableSsl>False</EnableSsl>
   <ApiKey>{{ radarr_api_key }}</ApiKey>
-  <AuthenticationMethod>None</AuthenticationMethod>
+  <AuthenticationMethod>Forms</AuthenticationMethod>
   <Branch>nightly</Branch>
   <LaunchBrowser>True</LaunchBrowser>
   <UpdateMechanism>Docker</UpdateMechanism>
@@ -14,4 +14,5 @@
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
   <InstanceName>Radarr</InstanceName>
+  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
 </Config>

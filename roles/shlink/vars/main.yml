@@ -1,0 +1,6 @@
+---
+shlink_database: "{{ vault_shlink_database }}"
+shlink_database_password: "{{ vault_shlink_database_password }}"
+shlink_database_user: "{{ vault_shlink_database_user }}"
+shlink_geolite_license_key: "{{ vault_shlink_geolite_license_key }}"
+shlink_server_api_key: "{{ vault_shlink_server_api_key }}"
